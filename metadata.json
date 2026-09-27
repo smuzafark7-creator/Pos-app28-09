@@ -1,0 +1,6 @@
+{
+  "name": "Restaurant POS & Billing System",
+  "description": "Multi-branch Restaurant POS, Table Management, KOT, Kitchen Display System, Split Billing, and Reporting.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

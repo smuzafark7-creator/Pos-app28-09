@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en" class="dark" style="color-scheme: dark; background-color: #0b1120;">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1120" />
+    <meta name="color-scheme" content="dark" />
+    <title>Restaurant POS & Billing System</title>
+    <meta name="description" content="Multi-branch Restaurant POS, Table Management, KOT, Kitchen Display System, Split Billing, and Reporting." />
+    <meta property="og:title" content="Restaurant POS & Billing System" />
+    <meta property="og:description" content="Multi-branch Restaurant POS, Table Management, KOT, Kitchen Display System, Split Billing, and Reporting." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      // Automatically target and style topmost app bar / preview header if present
+      (function() {
+        function styleTopBar() {
+          function apply(doc) {
+            if (!doc) return;
+            try {
+              // Find header/toolbar bars containing "Restaurant POS & Billing System" or "Remix" / "Device"
+              var elements = doc.querySelectorAll('header, nav, [role="banner"], [class*="header"], [class*="toolbar"], [class*="topbar"], [class*="bar"], [class*="preview"], div');
+              elements.forEach(function(el) {
+                var text = el.textContent || '';
+                var hasTitle = text.indexOf('Restaurant POS & Billing System') !== -1;
+                var hasButtons = text.indexOf('Remix') !== -1 || text.indexOf('Device') !== -1;
+                if (hasTitle || hasButtons) {
+                  // Only style bars that look like the header strip (not the entire body/root)
+                  if (el.offsetHeight > 0 && el.offsetHeight < 120 && el.id !== 'root' && el.id !== 'cashier-global-header') {
+                    el.style.setProperty('background-color', '#0b1120', 'important');
+                    el.style.setProperty('border-bottom', '1px solid #1e293b', 'important');
+                    
+                    // Style title
+                    el.querySelectorAll('*').forEach(function(c) {
+                      if (c.textContent && c.textContent.trim() === 'Restaurant POS & Billing System') {
+                        c.style.setProperty('color', '#e2e8f0', 'important');
+                        c.style.setProperty('font-weight', '700', 'important');
+                        c.style.setProperty('font-size', '14px', 'important');
+                      }
+                    });
+
+                    // Style buttons & icons
+                    el.querySelectorAll('button, a, [role="button"], input, select').forEach(function(b) {
+                      b.style.setProperty('background-color', '#1e293b', 'important');
+                      b.style.setProperty('color', '#cbd5e1', 'important');
+                      b.style.setProperty('border', '1px solid #334155', 'important');
+                      b.querySelectorAll('svg, i, path, span').forEach(function(icon) {
+                        icon.style.setProperty('color', '#cbd5e1', 'important');
+                        icon.style.setProperty('fill', '#cbd5e1', 'important');
+                      });
+                    });
+                  }
+                }
+              });
+            } catch (err) {}
+          }
+
+          apply(document);
+          try {
+            if (window.parent && window.parent !== window) apply(window.parent.document);
+          } catch (e) {}
+          try {
+            if (window.top && window.top !== window) apply(window.top.document);
+          } catch (e) {}
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', styleTopBar);
+        } else {
+          styleTopBar();
+        }
+        setInterval(styleTopBar, 1000);
+      })();
+    </script>
+  </head>
+  <body class="overflow-x-hidden w-full max-w-[100vw] m-0 p-0 bg-[#0b1120] text-slate-200">
+    <div id="root" class="overflow-x-hidden w-full max-w-[100vw]"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

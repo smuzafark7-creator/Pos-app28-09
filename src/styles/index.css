@@ -1,0 +1,4661 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *, .dark, .dark *));
+@custom-variant light (&:where([data-theme=light], [data-theme=light] *, .light, .light *));
+
+/* Theme CSS Variables - Unified Global Dark Theme with Bilaal Luxury Palette */
+:root,
+html.dark,
+html.light {
+  color-scheme: dark;
+  --theme-bg-app: #0a0f1d;
+  --theme-bg-surface: #0d1527;
+  --theme-bg-card: #0d1527;
+  --theme-bg-elevated: #111c2e;
+  --theme-border-base: #1e293b;
+  --theme-border-card: #334155;
+  --theme-text-primary: #ffffff;
+  --theme-text-secondary: #94a3b8;
+  --theme-text-muted: #64748b;
+}
+
+/* Base HTML and Body layout defaults */
+html,
+body {
+  height: 100%;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  background-color: #0a0f1d !important;
+  color: #ffffff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth color and background transitions across themes */
+html.dark,
+html.light,
+html.dark body,
+html.light body,
+header,
+main,
+aside,
+nav,
+footer {
+  transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1), 
+              border-color 200ms cubic-bezier(0.4, 0, 0.2, 1), 
+              color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hide scrollbar utility while maintaining scroll functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* POS workspace viewport lock (applied when authenticated) */
+html.pos-locked,
+body.pos-locked {
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Failsafe: Ensure login view and admin console root are never locked */
+html:has(#login-root-wrapper),
+body:has(#login-root-wrapper),
+html:has(#admin-root-wrapper),
+body:has(#admin-root-wrapper) {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  height: auto !important;
+  min-height: 100% !important;
+}
+
+/* Modern POS Subtle Card Elevation */
+.pos-card {
+  background-color: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pos-card:hover {
+  border-color: #334155;
+}
+
+/* Custom POS & Receipt Styling */
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    width: 80mm !important;
+  }
+  body * {
+    visibility: hidden;
+  }
+  #printable-thermal-slip,
+  #printable-thermal-slip * {
+    visibility: visible;
+  }
+  #printable-thermal-slip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 78mm;
+    max-width: 78mm;
+    margin: 0 !important;
+    padding: 4mm 2mm !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-family: monospace, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* Custom scrollbar for high-density POS views */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #080d1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Custom thin scrollbar for Categories sidebar */
+.sidebar-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+.sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* ========================================================================= */
+/* LIGHT MODE COMPREHENSIVE MAPPINGS */
+/* ========================================================================= */
+
+html.light,
+html.light body {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+/* 1. App Canvas Backgrounds -> Clean crisp light gray (#f1f5f9 / #f8fafc) */
+html.light [id="login-root-wrapper"],
+html.light [id="admin-root-wrapper"],
+html.light .bg-\[\#080d1a\],
+html.light .bg-\[\#090e17\],
+html.light .bg-\[\#060b17\],
+html.light .bg-\[\#0c131f\],
+html.light .bg-\[\#080e18\],
+html.light .bg-\[\#090f19\],
+html.light .bg-\[\#070c14\],
+html.light .bg-\[\#0B0E14\],
+html.light .bg-\[\#0e131f\],
+html.light .bg-slate-950 {
+  background-color: #f1f5f9 !important;
+}
+
+/* 2. Panels, Cards, Modals, Headers & Sidebars -> Pure white (#ffffff) */
+html.light .pos-card,
+html.light .bg-\[\#0f172a\]\/90,
+html.light .bg-\[\#0f172a\]\/95,
+html.light .bg-\[\#111c2e\],
+html.light .bg-\[\#161B26\],
+html.light .bg-\[\#161b26\],
+html.light .bg-\[\#1E2433\],
+html.light .bg-\[\#1e2433\],
+html.light .bg-\[\#0D111A\],
+html.light .bg-\[\#0d111a\],
+html.light .bg-\[\#18191D\],
+html.light .bg-\[\#18191d\],
+html.light .bg-\[\#161f38\],
+html.light .bg-\[\#111a2e\],
+html.light .bg-\[\#121620\],
+html.light .bg-\[\#151e2e\],
+html.light .bg-\[\#242E42\],
+html.light .bg-\[\#1a2233\],
+html.light .bg-\[\#131d31\],
+html.light .bg-\[\#121722\],
+html.light .bg-\[\#111827\],
+html.light .bg-\[\#0d1522\],
+html.light .bg-\[\#0c1424\],
+html.light .bg-\[\#0c1222\],
+html.light .bg-slate-900 {
+  background-color: #ffffff !important;
+}
+
+/* 3. Elevated Surfaces, Sub-cards, Table Headers & Inner Panels -> Light slate (#f8fafc) */
+html.light .bg-\[\#1F2637\],
+html.light .bg-\[\#1f2637\],
+html.light .bg-\[\#1A202C\],
+html.light .bg-slate-800,
+html.light .bg-slate-800\/80,
+html.light .bg-slate-800\/60,
+html.light .bg-slate-800\/50,
+html.light .bg-slate-800\/40 {
+  background-color: #f8fafc !important;
+}
+
+/* 4. Borders -> Subtle light border (#e2e8f0 / #cbd5e1) */
+html.light .pos-card,
+html.light .border-slate-800,
+html.light .border-slate-800\/80,
+html.light .border-slate-800\/60,
+html.light .border-slate-800\/50,
+html.light .border-slate-800\/40,
+html.light .border-slate-700,
+html.light .border-slate-700\/80,
+html.light .border-slate-700\/60,
+html.light .border-slate-700\/50,
+html.light .border-slate-900,
+html.light .border-slate-900\/50,
+html.light .border-white\/10,
+html.light .border-white\/5,
+html.light .border-white\/\[0\.08\],
+html.light .border-white\/\[0\.14\],
+html.light .divide-slate-800 > :not([hidden]) ~ :not([hidden]),
+html.light .divide-slate-800\/80 > :not([hidden]) ~ :not([hidden]),
+html.light .divide-slate-800\/60 > :not([hidden]) ~ :not([hidden]),
+html.light .divide-slate-700 > :not([hidden]) ~ :not([hidden]),
+html.light .divide-white\/10 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #e2e8f0 !important;
+}
+
+/* 5. Shadows -> Crisp soft drop shadows */
+html.light .pos-card,
+html.light .shadow-2xs,
+html.light .shadow-xs,
+html.light .shadow-sm {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.04) !important;
+}
+
+html.light .shadow-md,
+html.light .shadow-lg,
+html.light .shadow-xl,
+html.light .shadow-2xl {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* 6. Hover Backgrounds */
+html.light .hover\:bg-slate-800:hover,
+html.light .hover\:bg-slate-800\/90:hover,
+html.light .hover\:bg-slate-800\/80:hover,
+html.light .hover\:bg-slate-800\/70:hover,
+html.light .hover\:bg-slate-700:hover,
+html.light .hover\:bg-slate-700\/80:hover,
+html.light .hover\:bg-\[\#1F2637\]:hover,
+html.light .hover\:bg-\[\#242E42\]:hover,
+html.light .hover\:bg-white\/10:hover,
+html.light .hover\:bg-white\/5:hover {
+  background-color: #f1f5f9 !important;
+}
+
+/* 7. Primary Text -> Rich Dark Slate (#0f172a) */
+html.light .text-white:not([class*="bg-emerald-"]):not([class*="bg-teal-"]):not([class*="bg-amber-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="bg-purple-"]):not([class*="bg-violet-"]):not([class*="bg-green-"]):not(button[class*="bg-emerald"]):not(button[class*="bg-teal"]):not(button[class*="bg-rose"]):not(button[class*="bg-amber"]):not(button[class*="bg-indigo"]):not(button[class*="bg-blue"]):not(button[class*="bg-\[\#8b0000\]"]):not(button[class*="bg-\[\#8b0000\]"] *):not(button[class*="bg-\[\#1e3a8a\]"]):not(button[class*="bg-\[\#1e3a8a\]"] *):not(.btn-table-bill):not(.btn-table-bill *):not(.btn-table-pos):not(.btn-table-pos *):not(.btn-mark-available):not(.btn-mark-available *):not(.pos-card-btn):not(.pos-card-btn *):not(.pos-food-card button):not(.pos-food-card button *):not([class*="text-black"]):not(.bill-modal):not(.bill-modal *):not(.category-counter-bubble):not(.category-counter-bubble *):not(.waiter-categories-title):not(.waiter-categories-items-pill):not(.waiter-cart-kot-header-badge):not(.category-name-text):not(#waiter-menu-categories-sidebar *):not(#cashier-menu-categories-sidebar *):not(.waiter-cart-item-title):not(.waiter-cart-portion-tag):not(.waiter-cart-rate-tag):not(#waiter-cart-middle-section *):not(#cashier-cart-items-container *):not(#kds-global-header *):not(#kds-global-header):not(#waiter-global-header *):not(#waiter-global-header):not(#waiter-global-header-secondary *):not(#waiter-global-header-secondary),
+html.light .text-slate-100:not([class*="bg-emerald-"]):not([class*="bg-teal-"]):not([class*="bg-amber-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="bg-purple-"]):not(.pos-card-btn):not(.pos-card-btn *):not(.bill-modal):not(.bill-modal *):not(.waiter-cart-item-title):not(#waiter-cart-middle-section *):not(#cashier-cart-items-container *):not(#kds-global-header *):not(#kds-global-header):not(#waiter-global-header *):not(#waiter-global-header):not(#waiter-global-header-secondary *):not(#waiter-global-header-secondary),
+html.light .text-slate-200:not([class*="bg-emerald-"]):not([class*="bg-teal-"]):not([class*="bg-amber-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="bg-purple-"]):not(.pos-card-btn):not(.pos-card-btn *):not(.bill-modal):not(.bill-modal *):not(#waiter-cart-middle-section *):not(#cashier-cart-items-container *):not(#kds-global-header *):not(#kds-global-header):not(#waiter-global-header *):not(#waiter-global-header):not(#waiter-global-header-secondary *):not(#waiter-global-header-secondary),
+html.light .text-\[\#E2E8F0\]:not(.bill-modal):not(.bill-modal *):not(#waiter-cart-middle-section *):not(#cashier-cart-items-container *):not(#kds-global-header *):not(#kds-global-header):not(#waiter-global-header *):not(#waiter-global-header):not(#waiter-global-header-secondary *):not(#waiter-global-header-secondary) {
+  color: #0f172a !important;
+}
+
+/* Keep text inside filled action buttons bright and readable */
+button[class*="bg-\[\#8b0000\]"],
+button[class*="bg-\[\#8b0000\]"] span,
+button[class*="bg-\[\#8b0000\]"] svg,
+button[class*="bg-\[\#1e3a8a\]"],
+button[class*="bg-\[\#1e3a8a\]"] span,
+button[class*="bg-\[\#1e3a8a\]"] svg,
+html.light button[class*="bg-\[\#8b0000\]"],
+html.light button[class*="bg-\[\#8b0000\]"] span,
+html.light button[class*="bg-\[\#8b0000\]"] svg,
+html.light button[class*="bg-\[\#1e3a8a\]"],
+html.light button[class*="bg-\[\#1e3a8a\]"] span,
+html.light button[class*="bg-\[\#1e3a8a\]"] svg,
+html.dark button[class*="bg-\[\#8b0000\]"],
+html.dark button[class*="bg-\[\#8b0000\]"] span,
+html.dark button[class*="bg-\[\#8b0000\]"] svg,
+html.dark button[class*="bg-\[\#1e3a8a\]"],
+html.dark button[class*="bg-\[\#1e3a8a\]"] span,
+html.dark button[class*="bg-\[\#1e3a8a\]"] svg {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Floor Areas Label & Inactive Badges */
+.floor-areas-label,
+.floor-areas-label span,
+html.light .floor-areas-label,
+html.light .floor-areas-label span,
+html.dark .floor-areas-label,
+html.dark .floor-areas-label span {
+  color: #cbd5e1 !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+}
+
+.floor-inactive-badge,
+html.light .floor-inactive-badge,
+html.dark .floor-inactive-badge {
+  background-color: #eaddd0 !important;
+  background: #eaddd0 !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 800 !important;
+  font-size: 11px !important;
+  padding: 2px 7px !important;
+  border-radius: 9999px !important;
+  text-shadow: none !important;
+}
+
+/* Premium Dark Theme Table Cards (T1 - T10) */
+.table-card,
+html.light .table-card,
+html.dark .table-card {
+  background-color: #0d1527 !important;
+  border: 1px solid rgba(59, 130, 246, 0.25) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* 1. Table Name & Details */
+.table-card .table-name,
+html.light .table-card .table-name,
+html.dark .table-card .table-name {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 1.1rem !important;
+}
+
+.table-card .table-seats-floor,
+.table-card .table-seats-floor *,
+html.light .table-card .table-seats-floor,
+html.light .table-card .table-seats-floor *,
+html.dark .table-card .table-seats-floor,
+html.dark .table-card .table-seats-floor * {
+  color: #94a3b8 !important;
+  font-weight: 500 !important;
+}
+
+.table-card .table-time-kot,
+.table-card .table-time-kot *,
+html.light .table-card .table-time-kot,
+html.light .table-card .table-time-kot *,
+html.dark .table-card .table-time-kot,
+html.dark .table-card .table-time-kot * {
+  color: #cbd5e1 !important;
+}
+
+.table-card .table-running-total,
+html.light .table-card .table-running-total,
+html.dark .table-card .table-running-total {
+  color: #34d399 !important;
+  font-weight: 800 !important;
+}
+
+/* 2. Table Number Tag (T1, T2) */
+.table-card .table-tag-t,
+html.light .table-card .table-tag-t,
+html.dark .table-card .table-tag-t {
+  background-color: #1e293b !important;
+  color: #fcd34d !important;
+  border: 1px solid #334155 !important;
+  font-weight: 700 !important;
+}
+
+/* 3. Staff Pill */
+.table-card .table-staff-pill,
+html.light .table-card .table-staff-pill,
+html.dark .table-card .table-staff-pill {
+  background-color: rgba(30, 41, 59, 0.9) !important;
+  color: #e2e8f0 !important;
+  border: 1px solid rgba(51, 65, 85, 0.8) !important;
+  font-size: 0.75rem !important;
+}
+
+/* 4. Status Badges */
+.table-card .table-badge-available,
+html.light .table-card .table-badge-available,
+html.dark .table-card .table-badge-available {
+  background-color: rgba(6, 78, 59, 0.8) !important;
+  color: #6ee7b7 !important;
+  border: 1px solid rgba(5, 150, 105, 0.5) !important;
+  font-weight: 700 !important;
+}
+
+.table-card .table-badge-occupied,
+html.light .table-card .table-badge-occupied,
+html.dark .table-card .table-badge-occupied {
+  background-color: rgba(69, 26, 3, 0.8) !important;
+  color: #fcd34d !important;
+  border: 1px solid rgba(217, 119, 6, 0.5) !important;
+  font-weight: 700 !important;
+}
+
+.table-card .table-badge-cleaning,
+html.light .table-card .table-badge-cleaning,
+html.dark .table-card .table-badge-cleaning {
+  background-color: rgba(8, 47, 73, 0.8) !important;
+  color: #7dd3fc !important;
+  border: 1px solid rgba(2, 132, 199, 0.5) !important;
+  font-weight: 700 !important;
+}
+
+/* 5. Card Bottom Buttons: [Clean], [POS], [KOT] */
+.table-card .btn-table-clean,
+html.light .table-card .btn-table-clean,
+html.dark .table-card .btn-table-clean,
+.table-card .btn-table-dark,
+html.light .table-card .btn-table-dark,
+html.dark .table-card .btn-table-dark {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+}
+
+.table-card .btn-table-clean:hover,
+html.light .table-card .btn-table-clean:hover,
+html.dark .table-card .btn-table-clean:hover,
+.table-card .btn-table-dark:hover,
+html.light .table-card .btn-table-dark:hover,
+html.dark .table-card .btn-table-dark:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+}
+
+html.light button[class*="bg-emerald-"] span,
+html.light button[class*="bg-emerald-"] svg,
+html.light button[class*="bg-rose-"] span,
+html.light button[class*="bg-rose-"] svg,
+html.light button[class*="bg-amber-"] span,
+html.light button[class*="bg-amber-"] svg,
+html.light button[class*="bg-teal-"] span,
+html.light button[class*="bg-teal-"] svg,
+html.light button[class*="bg-indigo-"] span,
+html.light button[class*="bg-indigo-"] svg,
+html.light button[class*="bg-blue-"] span,
+html.light button[class*="bg-blue-"] svg,
+html.light .pos-card-btn,
+html.light .pos-card-btn span,
+html.light .pos-card-btn svg,
+html.light .pos-food-card button span {
+  color: inherit;
+}
+
+/* 8. Secondary & Muted Text -> Balanced Slate Gray (#64748b) */
+html.light .text-slate-300:not([class*="bg-emerald-"]):not([class*="bg-rose-"]):not([class*="bg-amber-"]):not(button[class*="bg-emerald-"]):not(button[class*="bg-teal-"]) {
+  color: #334155 !important;
+}
+html.light .text-slate-400:not([class*="bg-emerald-"]):not([class*="bg-rose-"]):not([class*="bg-amber-"]):not(button[class*="bg-emerald-"]):not(button[class*="bg-teal-"]) {
+  color: #64748b !important;
+}
+html.light .text-slate-500:not([class*="bg-emerald-"]):not([class*="bg-rose-"]):not([class*="bg-amber-"]):not(button[class*="bg-emerald-"]):not(button[class*="bg-teal-"]) {
+  color: #64748b !important;
+}
+html.light .text-\[\#94A3B8\] {
+  color: #64748b !important;
+}
+html.light .bg-\[\#2D3748\] {
+  background-color: #e2e8f0 !important;
+  color: #334155 !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* 9. Badges and Status Pills in Light Mode - Fresh & high contrast */
+html.light .bg-emerald-950,
+html.light .bg-emerald-950\/80,
+html.light .bg-emerald-950\/60,
+html.light .bg-emerald-950\/50,
+html.light .bg-emerald-950\/40 {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+}
+html.light .bg-emerald-950 .text-emerald-400,
+html.light .bg-emerald-950\/80 .text-emerald-400,
+html.light .bg-emerald-950\/60 .text-emerald-400,
+html.light .bg-emerald-950\/50 .text-emerald-400,
+html.light .bg-emerald-950\/40 .text-emerald-400 {
+  color: #047857 !important;
+}
+
+html.light .bg-amber-950,
+html.light .bg-amber-950\/80,
+html.light .bg-amber-950\/60,
+html.light .bg-amber-950\/50,
+html.light .bg-amber-950\/40 {
+  background-color: #fffbeb !important;
+  border-color: #fde68a !important;
+}
+html.light .bg-amber-950 .text-amber-400,
+html.light .bg-amber-950\/80 .text-amber-400,
+html.light .bg-amber-950\/60 .text-amber-400,
+html.light .bg-amber-950\/50 .text-amber-400,
+html.light .bg-amber-950\/40 .text-amber-400 {
+  color: #b45309 !important;
+}
+
+html.light .bg-rose-950,
+html.light .bg-rose-950\/80,
+html.light .bg-rose-950\/60,
+html.light .bg-rose-950\/50,
+html.light .bg-rose-950\/40 {
+  background-color: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+}
+html.light .bg-rose-950 .text-rose-400,
+html.light .bg-rose-950\/80 .text-rose-400,
+html.light .bg-rose-950\/60 .text-rose-400,
+html.light .bg-rose-950\/50 .text-rose-400,
+html.light .bg-rose-950\/40 .text-rose-400 {
+  color: #be123c !important;
+}
+
+html.light .bg-purple-950,
+html.light .bg-purple-950\/80,
+html.light .bg-purple-950\/60,
+html.light .bg-purple-950\/50,
+html.light .bg-purple-950\/40 {
+  background-color: #faf5ff !important;
+  border-color: #e9d5ff !important;
+}
+html.light .bg-purple-950 .text-purple-400,
+html.light .bg-purple-950\/80 .text-purple-400,
+html.light .bg-purple-950\/60 .text-purple-400,
+html.light .bg-purple-950\/50 .text-purple-400,
+html.light .bg-purple-950\/40 .text-purple-400 {
+  color: #6d28d9 !important;
+}
+
+/* 10. Kitchen KDS Card Headers in Light Mode */
+html.light .bg-\[\#3b1219\] {
+  background-color: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+}
+html.light .bg-\[\#3b1219\] .text-white,
+html.light .bg-\[\#3b1219\] .text-rose-200,
+html.light .bg-\[\#3b1219\] .text-rose-300 {
+  color: #9f1239 !important;
+}
+
+html.light .bg-\[\#35210c\] {
+  background-color: #fffbeb !important;
+  border-color: #fde68a !important;
+}
+html.light .bg-\[\#35210c\] .text-white,
+html.light .bg-\[\#35210c\] .text-amber-200,
+html.light .bg-\[\#35210c\] .text-amber-300 {
+  color: #92400e !important;
+}
+
+html.light .bg-\[\#0c2e1f\] {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+}
+html.light .bg-\[\#0c2e1f\] .text-white,
+html.light .bg-\[\#0c2e1f\] .text-emerald-200,
+html.light .bg-\[\#0c2e1f\] .text-emerald-300 {
+  color: #065f46 !important;
+}
+
+html.light .bg-\[\#08283b\] {
+  background-color: #ecfeff !important;
+  border-color: #a5f3fc !important;
+}
+html.light .bg-\[\#08283b\] .text-white,
+html.light .bg-\[\#08283b\] .text-cyan-200,
+html.light .bg-\[\#08283b\] .text-cyan-300 {
+  color: #155e75 !important;
+}
+
+/* 11. Form Controls: Inputs, Search Fields & Textareas */
+html.light input:not([type="checkbox"]):not([type="radio"]),
+html.light select,
+html.light textarea {
+  color: #0f172a !important;
+}
+html.light input::placeholder,
+html.light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+html.light input:focus,
+html.light select:focus,
+html.light textarea:focus {
+  border-color: #10b981 !important;
+}
+
+/* 12. Tables & Ledgers in Light Mode */
+html.light tr.hover\:bg-slate-800\/50:hover,
+html.light tr.hover\:bg-slate-800\/40:hover,
+html.light tr.hover\:bg-slate-800\/60:hover {
+  background-color: #f8fafc !important;
+}
+html.light thead {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+html.light th {
+  color: #475569 !important;
+  border-color: #e2e8f0 !important;
+}
+html.light td {
+  border-color: #f1f5f9 !important;
+}
+
+/* 13. Custom Scrollbars in Light Mode */
+html.light ::-webkit-scrollbar-track {
+  background: #f1f5f9 !important;
+}
+html.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1 !important;
+}
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8 !important;
+}
+html.light .sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1 !important;
+}
+html.light .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8 !important;
+}
+
+/* 14. Modals Backdrop */
+html.light .fixed.inset-0.bg-black\/60,
+html.light .fixed.inset-0.bg-black\/70,
+html.light .fixed.inset-0.bg-black\/80,
+html.light .fixed.inset-0.bg-slate-950\/80 {
+  background-color: rgba(15, 23, 42, 0.45) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+/* 15. POS Food Item Cards: Warm Biscuit / Creamy Theme (bg-[#f8f3e6], dark espresso dish names, rich emerald prices) */
+.pos-food-card,
+html.light .pos-food-card,
+html.dark .pos-food-card {
+  background-color: #f8f3e6 !important;
+  border: 1px solid #e2d5be !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+.pos-food-card:hover,
+html.light .pos-food-card:hover,
+html.dark .pos-food-card:hover {
+  border-color: rgba(217, 119, 6, 0.4) !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Subtle delicate borders for active/in-cart cards without heavy borders */
+.pos-food-card-crimson,
+html.light .pos-food-card-crimson,
+html.dark .pos-food-card-crimson {
+  border: 1px solid rgba(139, 0, 0, 0.6) !important;
+}
+
+.pos-food-card-navy,
+html.light .pos-food-card-navy,
+html.dark .pos-food-card-navy {
+  border: 1px solid rgba(30, 58, 138, 0.6) !important;
+}
+
+.pos-food-card-sold-out,
+html.light .pos-food-card-sold-out,
+html.dark .pos-food-card-sold-out {
+  border: 1px solid #fca5a5 !important;
+  background-color: #f1ebe0 !important;
+  opacity: 0.65 !important;
+}
+
+/* 15b. Center Menu Grid Vertical Scrollbar - Crimson Red (Matching [ALL] badge) */
+.pos-center-grid-scroll::-webkit-scrollbar,
+html.light .pos-center-grid-scroll::-webkit-scrollbar,
+html.dark .pos-center-grid-scroll::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+
+.pos-center-grid-scroll::-webkit-scrollbar-track,
+html.light .pos-center-grid-scroll::-webkit-scrollbar-track,
+html.dark .pos-center-grid-scroll::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.pos-center-grid-scroll::-webkit-scrollbar-thumb,
+html.light .pos-center-grid-scroll::-webkit-scrollbar-thumb,
+html.dark .pos-center-grid-scroll::-webkit-scrollbar-thumb {
+  background: #8b0000 !important;
+  border-radius: 9999px !important;
+}
+
+.pos-center-grid-scroll::-webkit-scrollbar-thumb:hover,
+html.light .pos-center-grid-scroll::-webkit-scrollbar-thumb:hover,
+html.dark .pos-center-grid-scroll::-webkit-scrollbar-thumb:hover {
+  background: #a81919 !important;
+}
+
+.pos-center-grid-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #8b0000 transparent;
+}
+
+/* 15c. Right Divider Border separating Middle Menu Grid from Billing Cart Panel */
+.pos-middle-panel,
+html.light .pos-middle-panel,
+html.dark .pos-middle-panel {
+  border-right-color: rgba(139, 0, 0, 0.6) !important;
+}
+
+#cashier-billing-panel,
+.waiter-billing-panel,
+html.light #cashier-billing-panel,
+html.dark #cashier-billing-panel,
+html.light .waiter-billing-panel,
+html.dark .waiter-billing-panel {
+  border-left-color: rgba(139, 0, 0, 0.6) !important;
+}
+
+/* Dish name typography: High-contrast dark espresso/black text-slate-900 */
+.pos-food-card .line-clamp-2,
+html.light .pos-food-card .line-clamp-2,
+html.dark .pos-food-card .line-clamp-2 {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.375 !important;
+}
+
+/* Price typography: Rich emerald green text-emerald-700 font-extrabold text-base */
+.pos-food-card .text-\[\#10b981\],
+.pos-food-card .text-emerald-400,
+.pos-food-card .text-emerald-700,
+html.light .pos-food-card .text-emerald-700,
+html.dark .pos-food-card .text-emerald-700,
+html.dark .pos-food-card .text-emerald-400 {
+  color: #047857 !important;
+  font-weight: 800 !important;
+  font-size: 1rem !important;
+}
+
+/* Dish divider line: Soft biscuit divider */
+.pos-food-card .border-t,
+.pos-food-card .border-b,
+html.light .pos-food-card .border-t,
+html.dark .pos-food-card .border-t {
+  border-color: #e5d9c5 !important;
+}
+
+/* Food Card Action Buttons (+ Add & Stepper) with High-Contrast Pure White Text */
+.pos-card-btn,
+.pos-card-btn *,
+.pos-food-card .pos-card-btn,
+.pos-food-card .pos-card-btn *,
+.pos-food-card button.pos-card-btn,
+.pos-food-card button.pos-card-btn *,
+html.light .pos-card-btn,
+html.light .pos-card-btn *,
+html.light .pos-food-card .pos-card-btn,
+html.light .pos-food-card .pos-card-btn *,
+html.dark .pos-card-btn,
+html.dark .pos-card-btn *,
+html.dark .pos-food-card .pos-card-btn,
+html.dark .pos-food-card .pos-card-btn * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.pos-card-btn-crimson,
+html.light .pos-card-btn-crimson,
+html.dark .pos-card-btn-crimson {
+  background-color: #8b0000 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: rgba(112, 0, 0, 0.5) !important;
+}
+.pos-card-btn-crimson:hover,
+html.light .pos-card-btn-crimson:hover,
+html.dark .pos-card-btn-crimson:hover {
+  background-color: #730000 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.pos-card-btn-navy,
+html.light .pos-card-btn-navy,
+html.dark .pos-card-btn-navy {
+  background-color: #0b1e3b !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: rgba(30, 58, 138, 0.5) !important;
+}
+.pos-card-btn-navy:hover,
+html.light .pos-card-btn-navy:hover,
+html.dark .pos-card-btn-navy:hover {
+  background-color: #162e56 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* 17. Bottom Action Buttons in Billing Cart Panel (Send KOT, Settle, Save & Print) */
+#cashier-cart-btn-send-kot,
+html.light #cashier-cart-btn-send-kot,
+html.dark #cashier-cart-btn-send-kot,
+#cashier-cart-btn-settle,
+html.light #cashier-cart-btn-settle,
+html.dark #cashier-cart-btn-settle {
+  background-color: #8b0000 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#cashier-cart-btn-send-kot *,
+html.light #cashier-cart-btn-send-kot *,
+html.dark #cashier-cart-btn-send-kot *,
+#cashier-cart-btn-settle *,
+html.light #cashier-cart-btn-settle *,
+html.dark #cashier-cart-btn-settle * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#cashier-cart-btn-send-kot:hover,
+html.light #cashier-cart-btn-send-kot:hover,
+html.dark #cashier-cart-btn-send-kot:hover,
+#cashier-cart-btn-settle:hover,
+html.light #cashier-cart-btn-settle:hover,
+html.dark #cashier-cart-btn-settle:hover {
+  background-color: #730000 !important;
+}
+
+#cashier-cart-btn-save-print,
+html.light #cashier-cart-btn-save-print,
+html.dark #cashier-cart-btn-save-print {
+  background-color: #0b1e3b !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#cashier-cart-btn-save-print *,
+html.light #cashier-cart-btn-save-print *,
+html.dark #cashier-cart-btn-save-print * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#cashier-cart-btn-save-print:hover,
+html.light #cashier-cart-btn-save-print:hover,
+html.dark #cashier-cart-btn-save-print:hover {
+  background-color: #162e56 !important;
+}
+
+/* 16. Left Categories Sidebar Crimson Red & Navy Blue Badge System */
+.category-badge-btn {
+  color: #ffffff !important;
+}
+.category-badge-btn span {
+  color: #ffffff !important;
+}
+.category-badge-btn.category-crimson {
+  background-color: #8b0000 !important;
+  border-color: rgba(153, 27, 27, 0.6) !important;
+}
+.category-badge-btn.category-crimson:hover {
+  background-color: #991b1b !important;
+}
+.category-badge-btn.category-navy {
+  background-color: #0b1e3b !important;
+  border-color: rgba(30, 58, 138, 0.5) !important;
+}
+.category-badge-btn.category-navy:hover {
+  background-color: #152a4e !important;
+}
+.category-badge-btn.category-active-crimson {
+  background-color: #991b1b !important;
+  border-color: #fb7185 !important;
+  box-shadow: 0 4px 18px rgba(153, 27, 27, 0.55) !important;
+}
+.category-badge-btn.category-active-navy {
+  background-color: #1e3a8a !important;
+  border-color: #7dd3fc !important;
+  box-shadow: 0 4px 18px rgba(30, 58, 138, 0.55) !important;
+}
+.category-counter-bubble {
+  background-color: rgba(0, 0, 0, 0.35) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* 17. Cashier Global Top Header Dark Crimson Red Styling (Preserving All Buttons & Controls) */
+#cashier-global-header,
+html.light #cashier-global-header,
+html.dark #cashier-global-header {
+  background-color: #5c0b16 !important;
+  border-bottom: 1px solid #3d060e !important;
+}
+
+#cashier-global-header .header-brand-title,
+html.light #cashier-global-header .header-brand-title,
+#cashier-global-header .header-user-name,
+html.light #cashier-global-header .header-user-name,
+#cashier-global-header .text-white,
+html.light #cashier-global-header .text-white {
+  color: #ffffff !important;
+}
+
+#cashier-global-header .header-brand-sub,
+html.light #cashier-global-header .header-brand-sub,
+#cashier-global-header .header-user-sub,
+html.light #cashier-global-header .header-user-sub {
+  color: rgba(254, 205, 211, 0.8) !important;
+}
+
+/* 18. Cashier POS Deep Navy Slate Workspace Theme */
+#cashier-workspace-root,
+#cashier-workspace,
+html.light #cashier-workspace-root,
+html.light #cashier-workspace,
+html.dark #cashier-workspace-root,
+html.dark #cashier-workspace {
+  background-color: #070b12 !important;
+}
+
+/* Left Sidebar Backdrop: Seamless blend with #090e18 */
+#cashier-menu-categories-sidebar,
+html.light #cashier-menu-categories-sidebar,
+html.dark #cashier-menu-categories-sidebar {
+  background-color: #090e18 !important;
+  border-right-color: #1e293b !important;
+}
+
+#cashier-menu-categories-sidebar > div,
+html.light #cashier-menu-categories-sidebar > div,
+html.dark #cashier-menu-categories-sidebar > div {
+  background-color: #090e18 !important;
+  border-color: #1e293b !important;
+}
+
+/* Right Billing Panel: Dark Canvas matching Middle Panel (#070b12 border-l border-[#8b0000]/60) */
+#cashier-billing-panel,
+html.light #cashier-billing-panel,
+html.dark #cashier-billing-panel {
+  background-color: #070b12 !important;
+  border-left-color: rgba(139, 0, 0, 0.6) !important;
+  color: #f1f5f9 !important;
+}
+
+#cashier-billing-panel .text-slate-100 {
+  color: #f1f5f9 !important;
+}
+
+#cashier-billing-panel .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+/* Right Billing Panel Inputs: bg-[#0e1624] border border-slate-700/60 text-white */
+#cashier-billing-panel input,
+#cashier-billing-panel select,
+html.light #cashier-billing-panel input,
+html.light #cashier-billing-panel select,
+html.dark #cashier-billing-panel input,
+html.dark #cashier-billing-panel select {
+  background-color: #0e1624 !important;
+  border-color: rgba(51, 65, 85, 0.6) !important;
+  color: #ffffff !important;
+}
+
+#cashier-billing-panel input::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* 19. Cashier POS Dish Search Bar & Filter Pills Dark Slate Theme */
+#cashier-search-filter-bar,
+html.light #cashier-search-filter-bar,
+html.dark #cashier-search-filter-bar {
+  background-color: #070b12 !important;
+  border-bottom: 1px solid #1e293b !important;
+}
+
+#cashier-search-wrapper,
+html.light #cashier-search-wrapper,
+html.dark #cashier-search-wrapper,
+#cashier-dietary-pills,
+html.light #cashier-dietary-pills,
+html.dark #cashier-dietary-pills {
+  background-color: #0f172a !important;
+  border: 1px solid rgba(51, 65, 85, 0.8) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+#cashier-search-wrapper:focus-within,
+html.light #cashier-search-wrapper:focus-within,
+html.dark #cashier-search-wrapper:focus-within {
+  border-color: rgba(16, 185, 129, 0.8) !important;
+}
+
+#cashier-dish-search-input,
+html.light #cashier-dish-search-input,
+html.dark #cashier-dish-search-input {
+  background-color: transparent !important;
+  color: #ffffff !important;
+  font-size: 0.875rem !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+#cashier-dish-search-input::placeholder,
+html.light #cashier-dish-search-input::placeholder,
+html.dark #cashier-dish-search-input::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* 18. Order Type Switcher Tabs in Right Billing Panel - Permanent Colors */
+#cashier-order-type-switcher,
+html.light #cashier-order-type-switcher,
+html.dark #cashier-order-type-switcher {
+  border: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+#order-type-dine-in,
+html.light #order-type-dine-in,
+html.dark #order-type-dine-in {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#order-type-takeaway,
+html.light #order-type-takeaway,
+html.dark #order-type-takeaway {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#order-type-delivery,
+html.light #order-type-delivery,
+html.dark #order-type-delivery {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#order-type-dine-in *,
+#order-type-takeaway *,
+#order-type-delivery * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* 19. Item Variation Modal High-Contrast & Theme Sync */
+#item-variation-modal,
+html.light #item-variation-modal,
+html.dark #item-variation-modal {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+#item-variation-modal-title,
+html.light #item-variation-modal-title,
+html.dark #item-variation-modal-title {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.item-variation-portion-name,
+html.light .item-variation-portion-name,
+html.dark .item-variation-portion-name {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+#item-variation-modal button.bg-\[\#0b1e3b\],
+html.light #item-variation-modal button.bg-\[\#0b1e3b\],
+html.dark #item-variation-modal button.bg-\[\#0b1e3b\] {
+  background-color: #0b1e3b !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#item-variation-modal button.bg-\[\#0b1e3b\]:hover,
+html.light #item-variation-modal button.bg-\[\#0b1e3b\]:hover,
+html.dark #item-variation-modal button.bg-\[\#0b1e3b\]:hover {
+  background-color: #162e56 !important;
+}
+
+#item-variation-modal button.bg-\[\#8b0000\],
+html.light #item-variation-modal button.bg-\[\#8b0000\],
+html.dark #item-variation-modal button.bg-\[\#8b0000\] {
+  background-color: #8b0000 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#item-variation-modal button.bg-\[\#8b0000\]:hover,
+html.light #item-variation-modal button.bg-\[\#8b0000\]:hover,
+html.dark #item-variation-modal button.bg-\[\#8b0000\]:hover {
+  background-color: #a10d0d !important;
+}
+
+/* 20. Categories Header, Table Details, and KOT Ribbon High-Contrast */
+#cashier-categories-title,
+html.light #cashier-categories-title,
+html.dark #cashier-categories-title {
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+}
+
+#cashier-categories-badge,
+html.light #cashier-categories-badge,
+html.dark #cashier-categories-badge {
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+  background-color: rgba(30, 41, 59, 0.8) !important;
+  border-color: rgba(51, 65, 85, 0.8) !important;
+}
+
+#cashier-table-info-summary .table-name,
+html.light #cashier-table-info-summary .table-name,
+html.dark #cashier-table-info-summary .table-name {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#cashier-table-info-summary .table-seats,
+html.light #cashier-table-info-summary .table-seats,
+html.dark #cashier-table-info-summary .table-seats {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+}
+
+#cashier-table-info-summary .table-waiter,
+html.light #cashier-table-info-summary .table-waiter,
+html.dark #cashier-table-info-summary .table-waiter {
+  color: #34d399 !important;
+  -webkit-text-fill-color: #34d399 !important;
+}
+
+.kot-badge-ribbon,
+html.light .kot-badge-ribbon,
+html.dark .kot-badge-ribbon {
+  color: #fcd34d !important;
+  -webkit-text-fill-color: #fcd34d !important;
+  background-color: rgba(139, 0, 0, 0.6) !important;
+  border-color: rgba(239, 68, 68, 0.4) !important;
+}
+
+/* 21. Payment Method Selector Contrast */
+#cashier-payment-methods-selector button.payment-method-active,
+html.light #cashier-payment-methods-selector button.payment-method-active,
+html.dark #cashier-payment-methods-selector button.payment-method-active {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border-color: #ffffff !important;
+}
+
+#cashier-payment-methods-selector button.payment-method-active svg {
+  color: #0f172a !important;
+  stroke: #0f172a !important;
+}
+
+#cashier-payment-methods-selector button.payment-method-inactive,
+html.light #cashier-payment-methods-selector button.payment-method-inactive,
+html.dark #cashier-payment-methods-selector button.payment-method-inactive {
+  background-color: #131f33 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: rgba(51, 65, 85, 0.8) !important;
+}
+
+#cashier-payment-methods-selector button.payment-method-inactive:hover,
+html.light #cashier-payment-methods-selector button.payment-method-inactive:hover,
+html.dark #cashier-payment-methods-selector button.payment-method-inactive:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#cashier-payment-methods-selector button.payment-method-inactive svg {
+  color: #f1f5f9 !important;
+}
+
+/* 22. Cart Item Stepper Quantity Contrast */
+.cart-item-stepper-qty,
+html.light .cart-item-stepper-qty,
+html.dark .cart-item-stepper-qty {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* 23. Takeaway Order Header Badges Dark Accents */
+#cashier-new-order-btn,
+html.light #cashier-new-order-btn,
+html.dark #cashier-new-order-btn {
+  background-color: #1e293b !important;
+  color: #34d399 !important;
+  -webkit-text-fill-color: #34d399 !important;
+  border-color: rgba(16, 185, 129, 0.5) !important;
+}
+
+#cashier-new-order-btn:hover,
+html.light #cashier-new-order-btn:hover,
+html.dark #cashier-new-order-btn:hover {
+  background-color: #334155 !important;
+}
+
+#cashier-takeaway-id-badge,
+.cashier-takeaway-solid-badge,
+span#cashier-takeaway-id-badge,
+html.light #cashier-takeaway-id-badge,
+html.light .cashier-takeaway-solid-badge,
+html.light span#cashier-takeaway-id-badge,
+html.dark #cashier-takeaway-id-badge,
+html.dark .cashier-takeaway-solid-badge,
+html.dark span#cashier-takeaway-id-badge {
+  background-color: #1e3a8a !important;
+  background: #1e3a8a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: #3b82f6 !important;
+  border: 1px solid #3b82f6 !important;
+  opacity: 1 !important;
+}
+
+#cashier-takeaway-id-badge *,
+.cashier-takeaway-solid-badge * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.takeaway-ticket-chip,
+.takeaway-ticket-inactive,
+html.light .takeaway-ticket-chip,
+html.light .takeaway-ticket-inactive,
+html.dark .takeaway-ticket-chip,
+html.dark .takeaway-ticket-inactive {
+  background-color: rgba(30, 41, 59, 0.6) !important;
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  border-color: #334155 !important;
+}
+
+.takeaway-ticket-active,
+html.light .takeaway-ticket-active,
+html.dark .takeaway-ticket-active {
+  background-color: #1e3a8a !important;
+  background: #1e3a8a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  border: 1px solid #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  padding: 3px 8px !important;
+  border-radius: 6px !important;
+  outline: none !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+.takeaway-ticket-active:hover,
+html.light .takeaway-ticket-active:hover,
+html.dark .takeaway-ticket-active:hover {
+  background-color: #1d4ed8 !important;
+  background: #1d4ed8 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid #3b82f6 !important;
+  border-color: #3b82f6 !important;
+}
+
+.takeaway-ticket-active:active,
+.takeaway-ticket-active:focus,
+html.light .takeaway-ticket-active:active,
+html.light .takeaway-ticket-active:focus,
+html.dark .takeaway-ticket-active:active,
+html.dark .takeaway-ticket-active:focus {
+  background-color: #1e3a8a !important;
+  background: #1e3a8a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid #3b82f6 !important;
+  border-color: #3b82f6 !important;
+}
+
+.takeaway-ticket-active *,
+.takeaway-ticket-active span,
+html.light .takeaway-ticket-active *,
+html.dark .takeaway-ticket-active * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+/* 24. Cart Saved Items Ribbon Background & Text */
+.cart-saved-items-ribbon,
+html.light .cart-saved-items-ribbon,
+html.dark .cart-saved-items-ribbon {
+  background-color: transparent !important;
+  background: transparent !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.8) !important;
+}
+
+.cart-saved-items-ribbon .saved-items-title,
+html.light .cart-saved-items-ribbon .saved-items-title,
+html.dark .cart-saved-items-ribbon .saved-items-title {
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+}
+
+.cart-saved-items-ribbon .clear-cart-btn,
+html.light .cart-saved-items-ribbon .clear-cart-btn,
+html.dark .cart-saved-items-ribbon .clear-cart-btn {
+  color: #f87171 !important;
+  -webkit-text-fill-color: #f87171 !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+}
+
+.cart-saved-items-ribbon .clear-cart-btn:hover,
+html.light .cart-saved-items-ribbon .clear-cart-btn:hover,
+html.dark .cart-saved-items-ribbon .clear-cart-btn:hover {
+  color: #fca5a5 !important;
+  -webkit-text-fill-color: #fca5a5 !important;
+}
+
+/* 25. High-Contrast White Cart Quantity Badge for Saved Items */
+.cart-saved-qty-badge,
+html.light .cart-saved-qty-badge,
+html.dark .cart-saved-qty-badge {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 800 !important;
+  font-size: 13px !important;
+  padding: 2px 8px !important;
+  border-radius: 6px !important;
+  min-width: 28px !important;
+  text-align: center !important;
+  display: inline-block !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+}
+
+/* 26. Cart Interactive Stepper Button Contrast */
+.cart-stepper-borderless,
+html.light .cart-stepper-borderless,
+html.dark .cart-stepper-borderless {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.cart-qty-btn-minus,
+html.light .cart-qty-btn-minus,
+html.dark .cart-qty-btn-minus {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: none !important;
+}
+
+.cart-qty-btn-minus:hover,
+html.light .cart-qty-btn-minus:hover,
+html.dark .cart-qty-btn-minus:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.cart-qty-btn-plus,
+html.light .cart-qty-btn-plus,
+html.dark .cart-qty-btn-plus {
+  background-color: #1e3a8a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: none !important;
+}
+
+.cart-qty-btn-plus:hover,
+html.light .cart-qty-btn-plus:hover,
+html.dark .cart-qty-btn-plus:hover {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* ==========================================================================
+   27. DARK TABLE CARDS (T1 - T10) HIGH CONTRAST & VISIBILITY OVERRIDES
+   Positioned at the very end of index.css for absolute highest cascade priority
+   ========================================================================== */
+
+/* Dark Card Canvas */
+.table-card,
+html.light .table-card,
+html.dark .table-card {
+  background-color: #0d1527 !important;
+  border: 1px solid rgba(59, 130, 246, 0.25) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Waiter/Staff Pills (T1 - T10) */
+.table-card .table-staff-pill,
+.table-card .table-staff-pill *,
+html.light .table-card .table-staff-pill,
+html.light .table-card .table-staff-pill *,
+html.dark .table-card .table-staff-pill,
+html.dark .table-card .table-staff-pill * {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+  font-weight: 600 !important;
+  font-size: 11px !important;
+}
+
+/* Table Name ("Table 1", "Table 2", etc.) */
+.table-card .table-name,
+.table-card .table-name *,
+html.light .table-card .table-name,
+html.light .table-card .table-name *,
+html.dark .table-card .table-name,
+html.dark .table-card .table-name * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 16px !important;
+}
+
+/* Floor labels ("Ground Floor", "First Floor", "Outdoor / Terrace") */
+.table-card .table-floor-label,
+.table-card .table-floor-label *,
+html.light .table-card .table-floor-label,
+html.light .table-card .table-floor-label *,
+html.dark .table-card .table-floor-label,
+html.dark .table-card .table-floor-label * {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  font-weight: 500 !important;
+}
+
+/* Seat counts ("2 Seats", "4 Seats", etc.) */
+.table-card .table-seats-count,
+.table-card .table-seats-count *,
+html.light .table-card .table-seats-count,
+html.light .table-card .table-seats-count *,
+html.dark .table-card .table-seats-count,
+html.dark .table-card .table-seats-count * {
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+  font-weight: 600 !important;
+}
+
+/* Secondary Bottom Buttons: [Clean] */
+.table-card .btn-table-clean,
+.table-card .btn-table-clean *,
+html.light .table-card .btn-table-clean,
+html.light .table-card .btn-table-clean *,
+html.dark .table-card .btn-table-clean,
+html.dark .table-card .btn-table-clean * {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  font-weight: 600 !important;
+}
+
+.table-card .btn-table-clean:hover,
+html.light .table-card .btn-table-clean:hover,
+html.dark .table-card .btn-table-clean:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* [Mark Available] Vibrant Emerald Green Action Button */
+.table-card .btn-mark-available,
+.table-card .btn-mark-available *,
+html.light .table-card .btn-mark-available,
+html.light .table-card .btn-mark-available *,
+html.dark .table-card .btn-mark-available,
+html.dark .table-card .btn-mark-available * {
+  background-color: #059669 !important;
+  border: 1px solid #10b981 !important;
+  border-color: #10b981 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+}
+
+.table-card .btn-mark-available:hover,
+html.light .table-card .btn-mark-available:hover,
+html.dark .table-card .btn-mark-available:hover {
+  background-color: #10b981 !important;
+  border-color: #34d399 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* POS & KOT secondary dark buttons */
+.table-card .btn-table-dark,
+.table-card .btn-table-dark *,
+html.light .table-card .btn-table-dark,
+html.light .table-card .btn-table-dark *,
+html.dark .table-card .btn-table-dark,
+html.dark .table-card .btn-table-dark * {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+}
+
+.table-card .btn-table-dark:hover,
+html.light .table-card .btn-table-dark:hover,
+html.dark .table-card .btn-table-dark:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Occupied Table [POS] Solid Crimson Red Button (Synced exactly with [Bill] button typography) */
+.table-card .btn-table-pos,
+.table-card button[class*="bg-[#8b0000]"],
+html.light .table-card .btn-table-pos,
+html.light .table-card button[class*="bg-[#8b0000]"],
+html.dark .table-card .btn-table-pos,
+html.dark .table-card button[class*="bg-[#8b0000]"] {
+  background-color: #8b0000 !important;
+  border: 1px solid #b91c1c !important;
+  border-color: #b91c1c !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+
+.table-card .btn-table-pos:hover,
+.table-card button[class*="bg-[#8b0000]"]:hover,
+html.light .table-card .btn-table-pos:hover,
+html.light .table-card button[class*="bg-[#8b0000]"]:hover,
+html.dark .table-card .btn-table-pos:hover,
+html.dark .table-card button[class*="bg-[#8b0000]"]:hover {
+  background-color: #a10000 !important;
+  border-color: #dc2626 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* Occupied Table [Bill] & [Settle] Solid Navy Blue Button - Pure Crisp White Text */
+.table-card .btn-table-bill,
+.table-card .btn-table-bill span,
+.table-card .btn-table-bill *,
+.table-card button[class*="bg-[#1e3a8a]"],
+.table-card button[class*="bg-[#1e3a8a]"] span,
+.table-card button[class*="bg-[#1e3a8a]"] *,
+html.light .table-card .btn-table-bill,
+html.light .table-card .btn-table-bill span,
+html.light .table-card .btn-table-bill *,
+html.light .table-card button[class*="bg-[#1e3a8a]"],
+html.light .table-card button[class*="bg-[#1e3a8a]"] span,
+html.light .table-card button[class*="bg-[#1e3a8a]"] *,
+html.dark .table-card .btn-table-bill,
+html.dark .table-card .btn-table-bill span,
+html.dark .table-card .btn-table-bill *,
+html.dark .table-card button[class*="bg-[#1e3a8a]"],
+html.dark .table-card button[class*="bg-[#1e3a8a]"] span,
+html.dark .table-card button[class*="bg-[#1e3a8a]"] * {
+  background-color: #1e3a8a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  opacity: 1 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+.table-card .btn-table-bill:hover,
+.table-card .btn-table-bill:hover span,
+.table-card button[class*="bg-[#1e3a8a]"]:hover,
+.table-card button[class*="bg-[#1e3a8a]"]:hover span,
+html.light .table-card .btn-table-bill:hover,
+html.light .table-card .btn-table-bill:hover span,
+html.light .table-card button[class*="bg-[#1e3a8a]"]:hover,
+html.light .table-card button[class*="bg-[#1e3a8a]"]:hover span,
+html.dark .table-card .btn-table-bill:hover,
+html.dark .table-card .btn-table-bill:hover span,
+html.dark .table-card button[class*="bg-[#1e3a8a]"]:hover,
+html.dark .table-card button[class*="bg-[#1e3a8a]"]:hover span {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* ============================================================== */
+/* Bill & Settlement Modal High-Contrast Dark Theme Overrides     */
+/* ============================================================== */
+
+.bill-modal,
+html.light .bill-modal,
+html.dark .bill-modal {
+  background-color: #0b1120 !important;
+  border-color: rgba(59, 130, 246, 0.18) !important;
+  color: #e2e8f0 !important;
+}
+
+/* 1. Header & Restaurant Branding */
+.bill-header-title,
+html.light .bill-header-title,
+html.dark .bill-header-title,
+.bill-modal .bill-header-title,
+html.light .bill-modal .bill-header-title,
+html.dark .bill-modal .bill-header-title {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+}
+
+.bill-header-subtitle,
+html.light .bill-header-subtitle,
+html.dark .bill-header-subtitle,
+.bill-modal .bill-header-subtitle,
+html.light .bill-modal .bill-header-subtitle,
+html.dark .bill-modal .bill-header-subtitle {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  font-weight: 500 !important;
+}
+
+/* 2. Bill Table & Item Names (Force Bright Pure White) */
+.bill-items-table,
+html.light .bill-items-table,
+html.dark .bill-items-table,
+.bill-modal .bill-items-table,
+html.light .bill-modal .bill-items-table {
+  background-color: #0d1527 !important;
+  border: 1px solid rgba(59, 130, 246, 0.18) !important;
+  border-radius: 12px !important;
+}
+
+.bill-items-thead,
+html.light .bill-items-thead,
+html.dark .bill-items-thead,
+.bill-modal .bill-items-thead,
+html.light .bill-modal .bill-items-thead {
+  background-color: #090e1a !important;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.15) !important;
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+}
+
+.bill-items-thead span,
+html.light .bill-items-thead span,
+html.dark .bill-items-thead span,
+.bill-modal .bill-items-thead span,
+html.light .bill-modal .bill-items-thead span {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+}
+
+.bill-item-row,
+html.light .bill-item-row,
+html.dark .bill-item-row,
+.bill-modal .bill-item-row,
+html.light .bill-modal .bill-item-row {
+  background-color: transparent !important;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.6) !important;
+}
+
+.bill-item-name,
+html.light .bill-item-name,
+html.dark .bill-item-name,
+.bill-modal .bill-item-name,
+html.light .bill-modal .bill-item-name,
+html.dark .bill-modal .bill-item-name,
+.bill-item-row .bill-item-name,
+html.light .bill-item-row .bill-item-name,
+html.dark .bill-item-row .bill-item-name {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+}
+
+.bill-item-qty,
+html.light .bill-item-qty,
+.bill-modal .bill-item-qty,
+html.light .bill-modal .bill-item-qty {
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+}
+
+.bill-item-rate,
+html.light .bill-item-rate,
+.bill-modal .bill-item-rate,
+html.light .bill-modal .bill-item-rate {
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+  font-size: 12px !important;
+}
+
+.bill-item-amount,
+html.light .bill-item-amount,
+html.dark .bill-item-amount,
+.bill-modal .bill-item-amount,
+html.light .bill-modal .bill-item-amount {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+}
+
+/* 3. Subtotal / Total Container (Dark Slate Styling) */
+.bill-totals-container,
+html.light .bill-totals-container,
+html.dark .bill-totals-container,
+.bill-modal .bill-totals-container,
+html.light .bill-modal .bill-totals-container {
+  background-color: #0d1527 !important;
+  border: 1px solid rgba(59, 130, 246, 0.18) !important;
+  border-radius: 12px !important;
+  margin-bottom: 2px !important;
+}
+
+.bill-discount-controls-row,
+.bill-modal .bill-discount-controls-row,
+html.light .bill-modal .bill-discount-controls-row,
+html.dark .bill-modal .bill-discount-controls-row {
+  margin-top: 2px !important;
+  margin-bottom: 4px !important;
+  padding-top: 0 !important;
+}
+
+.bill-discount-action-btn,
+.bill-modal .bill-discount-action-btn,
+html.light .bill-modal .bill-discount-action-btn,
+html.dark .bill-modal .bill-discount-action-btn,
+html.light .bill-discount-action-btn,
+html.dark .bill-discount-action-btn {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  padding: 4px 10px !important;
+  border-radius: 6px !important;
+  line-height: 1.2 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.15s ease !important;
+}
+
+.bill-discount-action-btn span,
+.bill-discount-action-btn svg,
+html.light .bill-discount-action-btn span,
+html.light .bill-discount-action-btn svg,
+.bill-modal .bill-discount-action-btn span,
+.bill-modal .bill-discount-action-btn svg,
+html.light .bill-modal .bill-discount-action-btn span,
+html.light .bill-modal .bill-discount-action-btn svg {
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  font-weight: 700 !important;
+}
+
+.bill-discount-action-btn svg {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.bill-discount-action-btn:hover,
+html.light .bill-discount-action-btn:hover,
+html.dark .bill-discount-action-btn:hover,
+.bill-modal .bill-discount-action-btn:hover,
+html.light .bill-modal .bill-discount-action-btn:hover {
+  background-color: #334155 !important;
+  border-color: #64748b !important;
+  color: #ffffff !important;
+}
+
+.bill-discount-action-btn.active-bogo,
+html.light .bill-discount-action-btn.active-bogo,
+html.dark .bill-discount-action-btn.active-bogo {
+  background-color: #d97706 !important;
+  border-color: #f59e0b !important;
+  color: #ffffff !important;
+}
+
+.bill-discount-action-btn.active-bogo span,
+.bill-discount-action-btn.active-bogo svg {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.bill-discount-action-btn.active-comp,
+html.light .bill-discount-action-btn.active-comp,
+html.dark .bill-discount-action-btn.active-comp {
+  background-color: #9333ea !important;
+  border-color: #a855f7 !important;
+  color: #ffffff !important;
+}
+
+.bill-discount-action-btn.active-comp span,
+.bill-discount-action-btn.active-comp svg {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.bill-discount-action-btn.active-discount,
+html.light .bill-discount-action-btn.active-discount,
+html.dark .bill-discount-action-btn.active-discount {
+  background-color: rgba(76, 5, 25, 0.9) !important;
+  border-color: #be123c !important;
+  color: #f43f5e !important;
+}
+
+.bill-discount-action-btn.active-discount span,
+.bill-discount-action-btn.active-discount svg {
+  color: #f43f5e !important;
+  -webkit-text-fill-color: #f43f5e !important;
+}
+
+.bill-payment-tabs-container,
+.bill-modal .bill-payment-tabs-container,
+html.light .bill-modal .bill-payment-tabs-container,
+html.dark .bill-modal .bill-payment-tabs-container,
+.bill-modal div.bill-payment-tabs-container,
+.bill-modal .space-y-2 > .bill-payment-tabs-container {
+  margin-top: 0px !important;
+}
+
+/* 4. Cash Amount / Tender Input Field */
+.bill-cash-input,
+html.light .bill-cash-input,
+html.dark .bill-cash-input,
+.bill-modal .bill-cash-input,
+html.light .bill-modal .bill-cash-input,
+.bill-modal input.bill-cash-input,
+html.light .bill-modal input.bill-cash-input {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  background-color: #0f172a !important;
+  border: 1px solid #334155 !important;
+  opacity: 1 !important;
+}
+
+.bill-currency-symbol,
+html.light .bill-currency-symbol,
+html.dark .bill-currency-symbol,
+.bill-modal .bill-currency-symbol,
+html.light .bill-modal .bill-currency-symbol {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+
+.bill-modal input[type="number"],
+html.light .bill-modal input[type="number"] {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+.bill-calc-label,
+html.light .bill-calc-label,
+html.dark .bill-calc-label,
+.bill-totals-container .bill-calc-label,
+html.light .bill-totals-container .bill-calc-label,
+.bill-modal .bill-calc-label,
+html.light .bill-modal .bill-calc-label {
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+  font-weight: 500 !important;
+}
+
+.bill-calc-label *,
+html.light .bill-calc-label *,
+html.dark .bill-calc-label *,
+.bill-modal .bill-calc-label * {
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+}
+
+.bill-calc-val,
+html.light .bill-calc-val,
+html.dark .bill-calc-val,
+.bill-totals-container .bill-calc-val,
+html.light .bill-totals-container .bill-calc-val,
+.bill-modal .bill-calc-val,
+html.light .bill-modal .bill-calc-val {
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  font-weight: 600 !important;
+}
+
+.bill-grand-total-label,
+html.light .bill-grand-total-label,
+html.dark .bill-grand-total-label,
+.bill-totals-container .bill-grand-total-label,
+html.light .bill-totals-container .bill-grand-total-label,
+.bill-modal .bill-grand-total-label,
+html.light .bill-modal .bill-grand-total-label {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 16px !important;
+}
+
+.bill-grand-total-value,
+html.light .bill-grand-total-value,
+html.dark .bill-grand-total-value,
+.bill-totals-container .bill-grand-total-value,
+html.light .bill-totals-container .bill-grand-total-value,
+.bill-modal .bill-grand-total-value,
+html.light .bill-modal .bill-grand-total-value {
+  color: #10b981 !important;
+  -webkit-text-fill-color: #10b981 !important;
+  font-weight: 800 !important;
+  font-size: 18px !important;
+}
+
+/* 4. Payment Mode Buttons (Active Navy Blue / Inactive Dark Slate) */
+.bill-payment-btn-active,
+html.light .bill-payment-btn-active,
+html.dark .bill-payment-btn-active,
+.bill-modal .bill-payment-btn-active,
+html.light .bill-modal .bill-payment-btn-active {
+  background-color: #1e3a8a !important;
+  border: 1px solid #3b82f6 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(30, 58, 138, 0.4) !important;
+}
+
+.bill-payment-btn-active *,
+html.light .bill-payment-btn-active *,
+html.dark .bill-payment-btn-active *,
+.bill-modal .bill-payment-btn-active *,
+html.light .bill-modal .bill-payment-btn-active * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.bill-payment-btn-inactive,
+html.light .bill-payment-btn-inactive,
+html.dark .bill-payment-btn-inactive,
+.bill-modal .bill-payment-btn-inactive,
+html.light .bill-modal .bill-payment-btn-inactive {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+  font-weight: 600 !important;
+}
+
+.bill-payment-btn-inactive *,
+html.light .bill-payment-btn-inactive *,
+html.dark .bill-payment-btn-inactive *,
+.bill-modal .bill-payment-btn-inactive *,
+html.light .bill-modal .bill-payment-btn-inactive * {
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+}
+
+/* 5. Bottom [MARK AS PAID] Solid Crimson Red Button (Option A) */
+.bill-btn-mark-paid:not(:disabled),
+html.light .bill-btn-mark-paid:not(:disabled),
+html.dark .bill-btn-mark-paid:not(:disabled),
+.bill-modal .bill-btn-mark-paid:not(:disabled),
+html.light .bill-modal .bill-btn-mark-paid:not(:disabled) {
+  background-color: #8b0000 !important;
+  border: 1px solid #b91c1c !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 12px rgba(139, 0, 0, 0.4) !important;
+}
+
+.bill-btn-mark-paid:not(:disabled) *,
+html.light .bill-btn-mark-paid:not(:disabled) *,
+html.dark .bill-btn-mark-paid:not(:disabled) *,
+.bill-modal .bill-btn-mark-paid:not(:disabled) *,
+html.light .bill-modal .bill-btn-mark-paid:not(:disabled) * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+.bill-btn-mark-paid:hover:not(:disabled),
+html.light .bill-btn-mark-paid:hover:not(:disabled),
+html.dark .bill-btn-mark-paid:hover:not(:disabled),
+.bill-modal .bill-btn-mark-paid:hover:not(:disabled),
+html.light .bill-modal .bill-btn-mark-paid:hover:not(:disabled) {
+  background-color: #a10000 !important;
+  border-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+/* ========================================================
+   BILL REQUESTED STATUS BADGE - DARK SLATE / INDIGO STYLING
+   ======================================================== */
+.table-badge-billing,
+html.light .table-badge-billing,
+html.dark .table-badge-billing,
+span.table-badge-billing {
+  background-color: rgba(30, 58, 138, 0.4) !important;
+  border: 1px solid #3b82f6 !important;
+  color: #93c5fd !important;
+  -webkit-text-fill-color: #93c5fd !important;
+  font-weight: 800 !important;
+  font-size: 11px !important;
+  letter-spacing: 0.5px !important;
+  padding: 2px 10px !important;
+  border-radius: 9999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.2) !important;
+}
+
+.table-badge-billing *,
+html.light .table-badge-billing *,
+html.dark .table-badge-billing * {
+  color: #93c5fd !important;
+  -webkit-text-fill-color: #93c5fd !important;
+}
+
+/* ========================================================
+   BILLS REGISTER & INVOICES LEDGER - DARK THEME STYLING
+   ======================================================== */
+.bills-container,
+.bills-card-surface,
+html.light .bills-container,
+html.light .bills-card-surface {
+  background-color: #0d1527 !important;
+  border: 1px solid #334155 !important;
+}
+
+.bills-page-title,
+html.light .bills-page-title,
+html.dark .bills-page-title {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 18px !important;
+}
+
+.bills-page-subtitle,
+html.light .bills-page-subtitle,
+html.dark .bills-page-subtitle {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  font-size: 12px !important;
+}
+
+.bills-kpi-label,
+html.light .bills-kpi-label,
+html.dark .bills-kpi-label {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  font-weight: 600 !important;
+}
+
+.bills-kpi-value,
+html.light .bills-kpi-value,
+html.dark .bills-kpi-value {
+  color: #10b981 !important;
+  -webkit-text-fill-color: #10b981 !important;
+  font-weight: 800 !important;
+}
+
+.bills-tab-active,
+html.light .bills-tab-active,
+html.dark .bills-tab-active {
+  background-color: #8b0000 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: #b91c1c !important;
+}
+
+.bills-count-active,
+html.light .bills-count-active,
+html.dark .bills-count-active {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+.bills-tab-inactive,
+html.light .bills-tab-inactive,
+html.dark .bills-tab-inactive {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  border: 1px solid #334155 !important;
+  font-weight: 600 !important;
+}
+
+.bills-tab-inactive:hover,
+html.light .bills-tab-inactive:hover,
+html.dark .bills-tab-inactive:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: #475569 !important;
+}
+
+/* 3 Vanilla Ice Cream Filter Buttons ([Dine In], [Takeaway], [Delivery]) */
+.bills-tab-vanilla,
+#filter-pill-dine-in,
+#filter-pill-takeaway,
+#filter-pill-delivery,
+button#filter-pill-dine-in,
+button#filter-pill-takeaway,
+button#filter-pill-delivery,
+html.light #filter-pill-dine-in,
+html.light #filter-pill-takeaway,
+html.light #filter-pill-delivery,
+html.light button#filter-pill-dine-in,
+html.light button#filter-pill-takeaway,
+html.light button#filter-pill-delivery,
+html.dark #filter-pill-dine-in,
+html.dark #filter-pill-takeaway,
+html.dark #filter-pill-delivery,
+html.dark button#filter-pill-dine-in,
+html.dark button#filter-pill-takeaway,
+html.dark button#filter-pill-delivery {
+  background-color: #faf5ef !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border: 1px solid #f1e9db !important;
+  border-radius: 9999px !important;
+  font-weight: 700 !important;
+}
+
+.bills-tab-vanilla:hover,
+#filter-pill-dine-in:hover,
+#filter-pill-takeaway:hover,
+#filter-pill-delivery:hover,
+button#filter-pill-dine-in:hover,
+button#filter-pill-takeaway:hover,
+button#filter-pill-delivery:hover,
+html.light #filter-pill-dine-in:hover,
+html.light #filter-pill-takeaway:hover,
+html.light #filter-pill-delivery:hover,
+html.dark #filter-pill-dine-in:hover,
+html.dark #filter-pill-takeaway:hover,
+html.dark #filter-pill-delivery:hover {
+  background-color: #f3ebd9 !important;
+  border-color: #e5dac7 !important;
+}
+
+.bills-tab-vanilla *,
+#filter-pill-dine-in span:first-child,
+#filter-pill-takeaway span:first-child,
+#filter-pill-delivery span:first-child,
+html.light #filter-pill-dine-in span:first-child,
+html.light #filter-pill-takeaway span:first-child,
+html.light #filter-pill-delivery span:first-child,
+html.dark #filter-pill-dine-in span:first-child,
+html.dark #filter-pill-takeaway span:first-child,
+html.dark #filter-pill-delivery span:first-child {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+.bills-count-vanilla,
+.bills-tab-vanilla .bills-count-vanilla,
+#filter-pill-dine-in .bills-count-vanilla,
+#filter-pill-takeaway .bills-count-vanilla,
+#filter-pill-delivery .bills-count-vanilla,
+html.light #filter-pill-dine-in .bills-count-vanilla,
+html.light #filter-pill-takeaway .bills-count-vanilla,
+html.light #filter-pill-delivery .bills-count-vanilla,
+html.dark #filter-pill-dine-in .bills-count-vanilla,
+html.dark #filter-pill-takeaway .bills-count-vanilla,
+html.dark #filter-pill-delivery .bills-count-vanilla {
+  background-color: #eaddd0 !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 800 !important;
+  padding: 2px 8px !important;
+  border-radius: 9999px !important;
+}
+
+#filter-pill-dine-in.bills-tab-active,
+#filter-pill-takeaway.bills-tab-active,
+#filter-pill-delivery.bills-tab-active,
+button#filter-pill-dine-in.bills-tab-active,
+button#filter-pill-takeaway.bills-tab-active,
+button#filter-pill-delivery.bills-tab-active,
+html.light #filter-pill-dine-in.bills-tab-active,
+html.light button#filter-pill-dine-in.bills-tab-active,
+html.dark #filter-pill-dine-in.bills-tab-active,
+html.dark button#filter-pill-dine-in.bills-tab-active {
+  background-color: #8b0000 !important;
+  border-color: #b91c1c !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#filter-pill-dine-in.bills-tab-active span:first-child,
+#filter-pill-takeaway.bills-tab-active span:first-child,
+#filter-pill-delivery.bills-tab-active span:first-child {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#filter-pill-dine-in.bills-tab-active .bills-count-vanilla,
+#filter-pill-takeaway.bills-tab-active .bills-count-vanilla,
+#filter-pill-delivery.bills-tab-active .bills-count-vanilla {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.bills-search-input,
+html.light .bills-search-input,
+html.dark .bills-search-input {
+  background-color: #0f172a !important;
+  border: 1px solid #334155 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.bills-search-input::placeholder {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+}
+
+.bills-select-filter,
+html.light .bills-select-filter,
+html.dark .bills-select-filter,
+select.bills-select-filter {
+  background-color: #0f172a !important;
+  border: 1px solid #334155 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+
+.bills-select-filter option,
+html.light .bills-select-filter option,
+html.dark .bills-select-filter option {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+
+.bills-table-header,
+html.light .bills-table-header,
+html.dark .bills-table-header {
+  background-color: #0b1120 !important;
+  border-bottom: 2px solid #334155 !important;
+}
+
+.bills-table-header th,
+html.light .bills-table-header th,
+html.dark .bills-table-header th {
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+  font-weight: 700 !important;
+}
+
+.bills-row-even,
+html.light .bills-row-even,
+html.dark .bills-row-even {
+  background-color: #0d1527 !important;
+}
+
+.bills-row-odd,
+html.light .bills-row-odd,
+html.dark .bills-row-odd {
+  background-color: #090e1a !important;
+}
+
+.bills-data-text,
+html.light .bills-data-text,
+html.dark .bills-data-text {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+.bills-table-num,
+html.light .bills-table-num,
+html.dark .bills-table-num,
+td .bills-table-num {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.bills-guest-name,
+html.light .bills-guest-name,
+html.dark .bills-guest-name,
+td .bills-guest-name {
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+  font-weight: 600 !important;
+}
+
+.bills-payment-mode,
+html.light .bills-payment-mode,
+html.dark .bills-payment-mode,
+td .bills-payment-mode {
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+}
+
+.bills-amount-val,
+html.light .bills-amount-val,
+html.dark .bills-amount-val {
+  color: #10b981 !important;
+  -webkit-text-fill-color: #10b981 !important;
+  font-weight: 800 !important;
+  font-size: 14px !important;
+}
+
+/* ========================================================
+   BILLS TABLE ROW HOVER & ACTIVE (DARK BLUE-950 #172554)
+   ======================================================== */
+.bills-table-row:hover,
+.bills-table-row:active,
+.bills-table-row:focus,
+.bills-table-row.bills-row-selected,
+tr.bills-table-row:hover,
+tr.bills-table-row:active,
+tr.bills-table-row:focus,
+tr.bills-table-row.bills-row-selected,
+html.light .bills-table-row:hover,
+html.light .bills-table-row:active,
+html.light .bills-table-row:focus,
+html.light .bills-table-row.bills-row-selected,
+html.light tr.bills-table-row:hover,
+html.light tr.bills-table-row:active,
+html.light tr.bills-table-row:focus,
+html.light tr.bills-table-row.bills-row-selected,
+html.dark .bills-table-row:hover,
+html.dark .bills-table-row:active,
+html.dark .bills-table-row:focus,
+html.dark .bills-table-row.bills-row-selected,
+html.dark tr.bills-table-row:hover,
+html.dark tr.bills-table-row:active,
+html.dark tr.bills-table-row:focus,
+html.dark tr.bills-table-row.bills-row-selected {
+  background-color: #172554 !important;
+}
+
+.bills-table-row:hover td,
+.bills-table-row:active td,
+.bills-table-row:focus td,
+.bills-table-row.bills-row-selected td,
+html.light .bills-table-row:hover td,
+html.light .bills-table-row:active td,
+html.light .bills-table-row:focus td,
+html.light .bills-table-row.bills-row-selected td,
+html.dark .bills-table-row:hover td,
+html.dark .bills-table-row:active td,
+html.dark .bills-table-row:focus td,
+html.dark .bills-table-row.bills-row-selected td {
+  background-color: #172554 !important;
+}
+
+.bills-table-row:hover .bills-data-text,
+.bills-table-row:hover .bills-table-num,
+.bills-table-row:hover .bills-guest-name,
+.bills-table-row.bills-row-selected .bills-data-text,
+.bills-table-row.bills-row-selected .bills-table-num,
+.bills-table-row.bills-row-selected .bills-guest-name,
+html.light .bills-table-row:hover .bills-data-text,
+html.light .bills-table-row:hover .bills-table-num,
+html.light .bills-table-row:hover .bills-guest-name,
+html.light .bills-table-row.bills-row-selected .bills-data-text,
+html.light .bills-table-row.bills-row-selected .bills-table-num,
+html.light .bills-table-row.bills-row-selected .bills-guest-name,
+html.dark .bills-table-row:hover .bills-data-text,
+html.dark .bills-table-row:hover .bills-table-num,
+html.dark .bills-table-row:hover .bills-guest-name,
+html.dark .bills-table-row.bills-row-selected .bills-data-text,
+html.dark .bills-table-row.bills-row-selected .bills-table-num,
+html.dark .bills-table-row.bills-row-selected .bills-guest-name {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* ========================================================
+   BILLS ORDER BADGES & ACTION BUTTONS (DARK SLATE ONLY)
+   ======================================================== */
+.bills-order-badge,
+html.light .bills-order-badge,
+html.dark .bills-order-badge,
+span.bills-order-badge,
+html.light span.bills-order-badge {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  border: 1px solid #475569 !important;
+}
+
+.bills-btn-print,
+html.light .bills-btn-print,
+html.dark .bills-btn-print,
+button.bills-btn-print,
+html.light button.bills-btn-print {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  border: 1px solid #334155 !important;
+}
+
+.bills-btn-print:hover,
+html.light .bills-btn-print:hover,
+html.dark .bills-btn-print:hover,
+button.bills-btn-print:hover,
+html.light button.bills-btn-print:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: #475569 !important;
+}
+
+.bills-btn-kot,
+html.light .bills-btn-kot,
+html.dark .bills-btn-kot,
+button.bills-btn-kot,
+html.light button.bills-btn-kot {
+  background-color: #1e293b !important;
+  color: #fcd34d !important;
+  -webkit-text-fill-color: #fcd34d !important;
+  border: 1px solid rgba(245, 158, 11, 0.4) !important;
+}
+
+.bills-btn-kot:hover,
+html.light .bills-btn-kot:hover,
+html.dark .bills-btn-kot:hover,
+button.bills-btn-kot:hover,
+html.light button.bills-btn-kot:hover {
+  background-color: #334155 !important;
+  color: #fef08a !important;
+  -webkit-text-fill-color: #fef08a !important;
+  border-color: rgba(245, 158, 11, 0.6) !important;
+}
+
+.bills-btn-view,
+html.light .bills-btn-view,
+html.dark .bills-btn-view,
+button.bills-btn-view,
+html.light button.bills-btn-view {
+  background-color: #1e3a8a !important;
+  border: 1px solid rgba(59, 130, 246, 0.5) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.bills-btn-view:hover,
+html.light .bills-btn-view:hover,
+html.dark .bills-btn-view:hover,
+button.bills-btn-view:hover,
+html.light button.bills-btn-view:hover {
+  background-color: #1e40af !important;
+}
+
+.bills-badge-paid,
+.bills-badge-kot,
+html.light .bills-badge-paid,
+html.light .bills-badge-kot,
+html.dark .bills-badge-paid,
+html.dark .bills-badge-kot {
+  background-color: rgba(6, 78, 59, 0.7) !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  color: #34d399 !important;
+  -webkit-text-fill-color: #34d399 !important;
+}
+
+/* ========================================================
+   VIEW TAX INVOICE DETAILS MODAL - PREMIUM DARK THEME
+   ======================================================== */
+.tax-invoice-modal-box,
+html.light .tax-invoice-modal-box,
+html.dark .tax-invoice-modal-box {
+  background-color: #0b1120 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75) !important;
+}
+
+.tax-invoice-header,
+html.light .tax-invoice-header,
+html.dark .tax-invoice-header {
+  background-color: #0b1120 !important;
+  border-bottom: 1px solid #1e293b !important;
+}
+
+.tax-invoice-title,
+html.light .tax-invoice-title,
+html.dark .tax-invoice-title {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 18px !important;
+}
+
+.tax-invoice-subtitle,
+html.light .tax-invoice-subtitle,
+html.dark .tax-invoice-subtitle {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  font-size: 11px !important;
+}
+
+.tax-invoice-status-paid,
+html.light .tax-invoice-status-paid,
+html.dark .tax-invoice-status-paid {
+  background-color: rgba(6, 78, 59, 0.5) !important;
+  color: #34d399 !important;
+  -webkit-text-fill-color: #34d399 !important;
+  border: 1px solid #059669 !important;
+  border-radius: 9999px !important;
+  font-weight: 800 !important;
+  font-size: 10px !important;
+}
+
+.tax-invoice-close-btn,
+html.light .tax-invoice-close-btn,
+html.dark .tax-invoice-close-btn {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+}
+
+.tax-invoice-close-btn:hover,
+html.light .tax-invoice-close-btn:hover,
+html.dark .tax-invoice-close-btn:hover {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Info Tiles (Order Details Box) & KOT Strip */
+.tax-invoice-info-box,
+html.light .tax-invoice-info-box,
+html.dark .tax-invoice-info-box {
+  background-color: #0d1527 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 0.75rem !important;
+}
+
+.tax-invoice-field-label,
+html.light .tax-invoice-field-label,
+html.dark .tax-invoice-field-label {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+.tax-invoice-field-val,
+html.light .tax-invoice-field-val,
+html.dark .tax-invoice-field-val {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+.tax-invoice-kot-strip,
+html.light .tax-invoice-kot-strip,
+html.dark .tax-invoice-kot-strip {
+  background-color: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 0.75rem !important;
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+}
+
+/* Item Description Table */
+.tax-invoice-items-container,
+html.light .tax-invoice-items-container,
+html.dark .tax-invoice-items-container {
+  background-color: #0d1527 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 0.75rem !important;
+  overflow: hidden !important;
+}
+
+.tax-invoice-items-header,
+html.light .tax-invoice-items-header,
+html.dark .tax-invoice-items-header {
+  background-color: #0d1527 !important;
+  border-bottom: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+}
+
+.tax-invoice-item-row,
+html.light .tax-invoice-item-row,
+html.dark .tax-invoice-item-row {
+  border-color: #1e293b !important;
+  background-color: #0d1527 !important;
+}
+
+.tax-invoice-item-name,
+html.light .tax-invoice-item-name,
+html.dark .tax-invoice-item-name {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+}
+
+.tax-invoice-item-badge,
+html.light .tax-invoice-item-badge,
+html.dark .tax-invoice-item-badge {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+  border: 1px solid #334155 !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  border-radius: 4px !important;
+}
+
+/* Totals Summary Box */
+.tax-invoice-totals-box,
+html.light .tax-invoice-totals-box,
+html.dark .tax-invoice-totals-box {
+  background-color: #0d1527 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 0.75rem !important;
+}
+
+.tax-invoice-totals-row,
+html.light .tax-invoice-totals-row,
+html.dark .tax-invoice-totals-row {
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+}
+
+.tax-invoice-grand-label,
+html.light .tax-invoice-grand-label,
+html.dark .tax-invoice-grand-label {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+}
+
+.tax-invoice-grand-val,
+html.light .tax-invoice-grand-val,
+html.dark .tax-invoice-grand-val {
+  color: #10b981 !important;
+  -webkit-text-fill-color: #10b981 !important;
+  font-weight: 900 !important;
+  font-size: 18px !important;
+}
+
+/* Payment Strip & Bottom Action Buttons */
+.tax-invoice-payment-strip,
+html.light .tax-invoice-payment-strip,
+html.dark .tax-invoice-payment-strip {
+  background-color: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 0.75rem !important;
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+}
+
+.tax-invoice-btn-close,
+html.light .tax-invoice-btn-close,
+html.dark .tax-invoice-btn-close {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+  border: 1px solid #334155 !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  border-radius: 8px !important;
+}
+
+.tax-invoice-btn-close:hover,
+html.light .tax-invoice-btn-close:hover,
+html.dark .tax-invoice-btn-close:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.tax-invoice-btn-void,
+html.light .tax-invoice-btn-void,
+html.dark .tax-invoice-btn-void {
+  background-color: rgba(69, 10, 10, 0.4) !important;
+  color: #f87171 !important;
+  -webkit-text-fill-color: #f87171 !important;
+  border: 1px solid #991b1b !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  border-radius: 8px !important;
+}
+
+.tax-invoice-btn-void:hover,
+html.light .tax-invoice-btn-void:hover,
+html.dark .tax-invoice-btn-void:hover {
+  background-color: rgba(127, 29, 29, 0.6) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.tax-invoice-btn-secondary,
+html.light .tax-invoice-btn-secondary,
+html.dark .tax-invoice-btn-secondary {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  border-radius: 8px !important;
+}
+
+.tax-invoice-btn-secondary:hover,
+html.light .tax-invoice-btn-secondary:hover,
+html.dark .tax-invoice-btn-secondary:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: #475569 !important;
+}
+
+.tax-invoice-btn-reprint,
+html.light .tax-invoice-btn-reprint,
+html.dark .tax-invoice-btn-reprint {
+  background-color: #8b0000 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid #dc2626 !important;
+  font-weight: 800 !important;
+  font-size: 12px !important;
+  border-radius: 8px !important;
+}
+
+.tax-invoice-btn-reprint:hover,
+html.light .tax-invoice-btn-reprint:hover,
+html.dark .tax-invoice-btn-reprint:hover {
+  background-color: #991b1b !important;
+  border-color: #ef4444 !important;
+}
+
+/* ========================================================
+   PRINT BILL / THERMAL RECEIPT MODAL - DARK FRAME & BUTTONS
+   ======================================================== */
+.thermal-modal-box,
+html.light .thermal-modal-box,
+html.dark .thermal-modal-box {
+  background-color: #0b1120 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75) !important;
+}
+
+.thermal-modal-header,
+html.light .thermal-modal-header,
+html.dark .thermal-modal-header {
+  background-color: #0b1120 !important;
+  border-bottom: 1px solid #1e293b !important;
+}
+
+.thermal-modal-scroll,
+html.light .thermal-modal-scroll,
+html.dark .thermal-modal-scroll {
+  background-color: #0b1120 !important;
+}
+
+.thermal-modal-footer,
+html.light .thermal-modal-footer,
+html.dark .thermal-modal-footer {
+  background-color: #0b1120 !important;
+  border-top: 1px solid #1e293b !important;
+}
+
+/* Primary Print Button: High-contrast pure white text on Solid Crimson Red */
+.thermal-modal-btn-print,
+html.light .thermal-modal-btn-print,
+html.dark .thermal-modal-btn-print,
+button.thermal-modal-btn-print,
+html.light button.thermal-modal-btn-print,
+html.dark button.thermal-modal-btn-print {
+  background-color: #8b0000 !important;
+  border: 1px solid #b91c1c !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 850 !important;
+  font-size: 13px !important;
+  opacity: 1 !important;
+}
+
+.thermal-modal-btn-print:hover,
+html.light .thermal-modal-btn-print:hover,
+html.dark .thermal-modal-btn-print:hover,
+button.thermal-modal-btn-print:hover {
+  background-color: #991b1b !important;
+  opacity: 0.9 !important;
+}
+
+.thermal-modal-btn-print *,
+html.light .thermal-modal-btn-print *,
+html.dark .thermal-modal-btn-print *,
+button.thermal-modal-btn-print * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 850 !important;
+  font-size: 13px !important;
+}
+
+/* Secondary [Close] & [Download] Buttons */
+.thermal-modal-btn-close,
+.thermal-modal-btn-download,
+html.light .thermal-modal-btn-close,
+html.light .thermal-modal-btn-download,
+html.dark .thermal-modal-btn-close,
+html.dark .thermal-modal-btn-download,
+button.thermal-modal-btn-close,
+button.thermal-modal-btn-download,
+html.light button.thermal-modal-btn-close,
+html.light button.thermal-modal-btn-download,
+html.dark button.thermal-modal-btn-close,
+html.dark button.thermal-modal-btn-download {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  border: 1px solid #334155 !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+
+.thermal-modal-btn-close:hover,
+.thermal-modal-btn-download:hover,
+html.light .thermal-modal-btn-close:hover,
+html.light .thermal-modal-btn-download:hover,
+html.dark .thermal-modal-btn-close:hover,
+html.dark .thermal-modal-btn-download:hover,
+button.thermal-modal-btn-close:hover,
+button.thermal-modal-btn-download:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.thermal-modal-btn-close *,
+.thermal-modal-btn-download *,
+html.light .thermal-modal-btn-close *,
+html.light .thermal-modal-btn-download *,
+html.dark .thermal-modal-btn-close *,
+html.dark .thermal-modal-btn-download * {
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+}
+
+/* Ensure receipt paper stays crisp pure white from top to bottom with sharp black text */
+#printable-thermal-slip,
+.thermal-receipt-sheet,
+html.light #printable-thermal-slip,
+html.dark #printable-thermal-slip,
+html.light .thermal-receipt-sheet,
+html.dark .thermal-receipt-sheet {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  width: 100% !important;
+  max-width: 360px !important;
+  margin: 0 auto !important;
+  padding: 10px 14px !important;
+  line-height: 1.2 !important;
+  font-size: 11px !important;
+  font-family: monospace !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+  height: auto !important;
+  min-height: fit-content !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+#printable-thermal-slip *,
+.thermal-receipt-sheet *,
+html.light #printable-thermal-slip *,
+html.dark #printable-thermal-slip *,
+html.light .thermal-receipt-sheet *,
+html.dark .thermal-receipt-sheet * {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  font-family: monospace !important;
+}
+
+#printable-thermal-slip div,
+#printable-thermal-slip p,
+#printable-thermal-slip span,
+#printable-thermal-slip h1,
+#printable-thermal-slip h2,
+#printable-thermal-slip table,
+.thermal-receipt-sheet div,
+.thermal-receipt-sheet p,
+.thermal-receipt-sheet span,
+.thermal-receipt-sheet h1,
+.thermal-receipt-sheet h2 {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+#printable-thermal-slip .bg-neutral-900,
+html.light #printable-thermal-slip .bg-neutral-900,
+html.dark #printable-thermal-slip .bg-neutral-900 {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.thermal-modal-scroll,
+html.light .thermal-modal-scroll,
+html.dark .thermal-modal-scroll {
+  background-color: #0b1120 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  overflow-y: visible !important;
+}
+
+/* ========================================================
+   RECEIPT MODAL PERFECT VIEWPORT CENTERING (Z-INDEX 9999)
+   ======================================================== */
+.thermal-receipt-backdrop-wrapper,
+html.light .thermal-receipt-backdrop-wrapper,
+html.dark .thermal-receipt-backdrop-wrapper {
+  position: fixed !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 9999 !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  padding: 24px 16px !important;
+}
+
+.thermal-modal-box,
+html.light .thermal-modal-box,
+html.dark .thermal-modal-box {
+  margin: auto !important;
+}
+
+/* ========================================================
+   TOPMOST APP BAR (HEADER STRIP) - DARK NAVY/SLATE CANVAS
+   ======================================================== */
+.top-app-bar,
+.app-header-strip,
+.preview-header-bar,
+[data-testid="header-strip"],
+#app-top-header {
+  background-color: #0b1120 !important;
+  border-bottom: 1px solid #1e293b !important;
+}
+
+/* ========================================================
+   KOTS SCREEN - PREMIUM DARK THEME
+   ======================================================== */
+
+/* Filter Bar & Pills */
+.kot-filter-bar,
+html.light .kot-filter-bar,
+html.dark .kot-filter-bar {
+  background-color: #0a0f18 !important;
+  border-bottom: 1px solid #1e293b !important;
+}
+
+.kot-filter-pill-active,
+html.light .kot-filter-pill-active,
+html.dark .kot-filter-pill-active,
+button.kot-filter-pill-active,
+html.light button.kot-filter-pill-active,
+html.dark button.kot-filter-pill-active {
+  background-color: #8b0000 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid #b91c1c !important;
+  font-weight: 800 !important;
+}
+
+.kot-filter-pill-active *,
+html.light .kot-filter-pill-active *,
+html.dark .kot-filter-pill-active * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.kot-filter-pill-inactive,
+html.light .kot-filter-pill-inactive,
+html.dark .kot-filter-pill-inactive,
+button.kot-filter-pill-inactive,
+html.light button.kot-filter-pill-inactive,
+html.dark button.kot-filter-pill-inactive {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  border: 1px solid #334155 !important;
+  font-weight: 700 !important;
+}
+
+.kot-filter-pill-inactive *,
+html.light .kot-filter-pill-inactive *,
+html.dark .kot-filter-pill-inactive * {
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+}
+
+.kot-btn-columns-active,
+.kot-btn-grid-active,
+html.light .kot-btn-columns-active,
+html.light .kot-btn-grid-active,
+html.dark .kot-btn-columns-active,
+html.dark .kot-btn-grid-active {
+  background-color: #1e3a8a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid rgba(59, 130, 246, 0.5) !important;
+}
+
+.kot-btn-columns-active *,
+.kot-btn-grid-active *,
+html.light .kot-btn-columns-active *,
+html.light .kot-btn-grid-active * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Columns & Column Headers */
+.kot-column-box,
+html.light .kot-column-box,
+html.dark .kot-column-box {
+  background-color: #0b1120 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 1rem !important;
+}
+
+.kot-col-header,
+html.light .kot-col-header,
+html.dark .kot-col-header {
+  background-color: #0d1527 !important;
+  border: 1px solid #1e293b !important;
+}
+
+.kot-col-badge-new,
+html.light .kot-col-badge-new,
+html.dark .kot-col-badge-new {
+  background-color: #8b0000 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid rgba(244, 63, 94, 0.5) !important;
+}
+
+.kot-col-badge-prep,
+html.light .kot-col-badge-prep,
+html.dark .kot-col-badge-prep {
+  background-color: #d97706 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid rgba(245, 158, 11, 0.5) !important;
+}
+
+.kot-col-badge-ready,
+html.light .kot-col-badge-ready,
+html.dark .kot-col-badge-ready {
+  background-color: #1e3a8a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid rgba(59, 130, 246, 0.5) !important;
+}
+
+/* KOT Cards */
+.kot-card-box,
+html.light .kot-card-box,
+html.dark .kot-card-box {
+  background-color: #0d1527 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 12px !important;
+}
+
+.kot-card-header,
+html.light .kot-card-header,
+html.dark .kot-card-header {
+  background-color: #0f172a !important;
+  border-bottom: 1px solid #1e293b !important;
+}
+
+.kot-card-title,
+html.light .kot-card-title,
+html.dark .kot-card-title {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 850 !important;
+  font-size: 15px !important;
+}
+
+.kot-card-destination,
+html.light .kot-card-destination,
+html.dark .kot-card-destination {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 850 !important;
+  font-size: 15px !important;
+}
+
+.kot-card-branch,
+html.light .kot-card-branch,
+html.dark .kot-card-branch {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  font-size: 11px !important;
+}
+
+.kot-card-time,
+.kot-card-time span,
+html.light .kot-card-time,
+html.light .kot-card-time span,
+html.dark .kot-card-time,
+html.dark .kot-card-time span {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  font-size: 11px !important;
+}
+
+.kot-card-status-bar,
+html.light .kot-card-status-bar,
+html.dark .kot-card-status-bar {
+  background-color: #090d16 !important;
+  border-bottom: 1px solid #1e293b !important;
+}
+
+.kot-card-items,
+html.light .kot-card-items,
+html.dark .kot-card-items {
+  background-color: #0d1527 !important;
+}
+
+.kot-item-name,
+html.light .kot-item-name,
+html.dark .kot-item-name {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.kot-item-qty,
+html.light .kot-item-qty,
+html.dark .kot-item-qty {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid #334155 !important;
+  font-weight: 800 !important;
+}
+
+.kot-card-footer,
+html.light .kot-card-footer,
+html.dark .kot-card-footer {
+  background-color: #0a0f1d !important;
+  border-top: 1px solid #1e293b !important;
+}
+
+.kot-btn-action-handover,
+html.light .kot-btn-action-handover,
+html.dark .kot-btn-action-handover {
+  background-color: #1e3a8a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid rgba(59, 130, 246, 0.5) !important;
+}
+
+.kot-btn-view-bill,
+html.light .kot-btn-view-bill,
+html.dark .kot-btn-view-bill {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+}
+
+.kot-btn-start-prep,
+html.light .kot-btn-start-prep,
+html.dark .kot-btn-start-prep {
+  background-color: #8b0000 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid #b91c1c !important;
+}
+
+.kot-btn-mark-ready,
+html.light .kot-btn-mark-ready,
+html.dark .kot-btn-mark-ready {
+  background-color: #1e3a8a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid rgba(59, 130, 246, 0.5) !important;
+}
+
+/* ========================================================
+   Z-REPORT / SHIFT CLOSE AUDIT - PREMIUM DARK THEME
+   ======================================================== */
+
+.zreport-screen,
+html.light .zreport-screen,
+html.dark .zreport-screen {
+  background-color: #080c16 !important;
+  color: #f1f5f9 !important;
+}
+
+/* Header Banner */
+.zreport-header-card,
+html.light .zreport-header-card,
+html.dark .zreport-header-card {
+  background-color: #0d1527 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 16px !important;
+}
+
+.zreport-header-card h1,
+html.light .zreport-header-card h1,
+html.dark .zreport-header-card h1 {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+/* Header Buttons */
+.zreport-btn-print,
+html.light .zreport-btn-print,
+html.dark .zreport-btn-print {
+  background-color: #1e3a8a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid rgba(59, 130, 246, 0.5) !important;
+  font-weight: 700 !important;
+}
+
+.zreport-btn-settle,
+html.light .zreport-btn-settle,
+html.dark .zreport-btn-settle {
+  background-color: #8b0000 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid #b91c1c !important;
+  font-weight: 800 !important;
+}
+
+/* KPI Summary Cards */
+.zreport-kpi-card,
+html.light .zreport-kpi-card,
+html.dark .zreport-kpi-card {
+  background-color: #0d1527 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 12px !important;
+}
+
+/* Cash Drawer & Breakdown */
+.zreport-drawer-card,
+html.light .zreport-drawer-card,
+html.dark .zreport-drawer-card {
+  background-color: #0d1527 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 16px !important;
+}
+
+.zreport-float-card,
+html.light .zreport-float-card,
+html.dark .zreport-float-card {
+  background-color: #080c16 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 12px !important;
+}
+
+/* Breakdown Table */
+.zreport-table-wrapper,
+html.light .zreport-table-wrapper,
+html.dark .zreport-table-wrapper {
+  border: 1px solid #1e293b !important;
+  border-radius: 12px !important;
+}
+
+.zreport-table thead tr,
+html.light .zreport-table thead tr,
+html.dark .zreport-table thead tr {
+  background-color: #080c16 !important;
+  border-bottom: 1px solid #1e293b !important;
+}
+
+.zreport-table tbody tr,
+html.light .zreport-table tbody tr,
+html.dark .zreport-table tbody tr {
+  background-color: #0d1527 !important;
+  border-bottom: 1px solid #1e293b !important;
+}
+
+.zreport-table tfoot,
+html.light .zreport-table tfoot,
+html.dark .zreport-table tfoot {
+  background-color: #080c16 !important;
+  border-top: 1px solid #1e293b !important;
+}
+
+/* Category Sales */
+.zreport-category-card,
+html.light .zreport-category-card,
+html.dark .zreport-category-card {
+  background-color: #0d1527 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 16px !important;
+}
+
+/* Shift Settlement Modal */
+.zreport-modal-card,
+html.light .zreport-modal-card,
+html.dark .zreport-modal-card {
+  background-color: #0d1527 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 16px !important;
+}
+
+/* ========================================================================= */
+/* GLOBAL THEME UNIFICATION & BRAND WATERMARK ENFORCEMENT                   */
+/* ========================================================================= */
+
+/* 1. Global Canvas Background: Deep Navy/Slate #0a0f1d / #0b1120 */
+html,
+body,
+#root,
+#app,
+#login-root-wrapper,
+#admin-root-wrapper,
+#cashier-workspace-root,
+#cashier-workspace {
+  background-color: #0a0f1d !important;
+}
+
+/* 2. Unified Form Controls: Eliminate Default White Backgrounds */
+select,
+option {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border-color: #334155;
+}
+
+select:focus,
+option:focus {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+/* 3. Table Rows & Hover States: Zero White Row Hovers */
+.bills-table-row:hover,
+tr.bills-table-row:hover {
+  background-color: #172554 !important;
+}
+
+.bills-row-selected {
+  background-color: #172554 !important;
+}
+
+/* 4. Unified Modal Containers: Framed in Dark Navy Slate #0b1120 */
+.modal-backdrop-dark {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.82);
+}
+
+.modal-dialog-dark {
+  background-color: #0b1120 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 16px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* 5. Primary Action Trigger: Deep Crimson Red #8b0000 */
+.btn-primary-crimson {
+  background-color: #8b0000 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid #b91c1c !important;
+  font-weight: 800 !important;
+}
+
+/* 6. Secondary / Navigation Color: Solid Navy Blue #1e3a8a */
+.btn-secondary-navy {
+  background-color: #1e3a8a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid rgba(59, 130, 246, 0.5) !important;
+  font-weight: 700 !important;
+}
+
+/* 7. Positive Financial Values & Totals: Vibrant Emerald Green */
+.val-emerald {
+  color: #10b981 !important;
+  -webkit-text-fill-color: #10b981 !important;
+  font-weight: 800 !important;
+}
+
+/* 8. Attention & Delay Badges: Warm Glowing Amber */
+.badge-amber-attention {
+  background-color: rgba(180, 83, 9, 0.25) !important;
+  color: #fbbf24 !important;
+  -webkit-text-fill-color: #fbbf24 !important;
+  border: 1px solid #d97706 !important;
+  font-weight: 700 !important;
+}
+
+/* 9. Preserve Physical White Thermal Paper */
+#printable-thermal-slip,
+.thermal-receipt-sheet,
+#printable-thermal-slip *,
+.thermal-receipt-sheet * {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* ========================================================================= */
+/* WAITER & KDS HEADER VISIBLE TEXT ENFORCEMENT                              */
+/* ========================================================================= */
+.waiter-header-title,
+.kds-header-title,
+#waiter-header-brand-title {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 16px !important;
+}
+
+.waiter-header-subtitle,
+.kds-header-subtitle,
+#waiter-header-role-subtitle {
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+
+/* ========================================================================= */
+/* FLOOR AREAS AND TABLE STATUS FILTER PILLS - Warm Vanilla Cream Theme      */
+/* ========================================================================= */
+.floor-pill-inactive,
+html.light .floor-pill-inactive,
+html.dark .floor-pill-inactive,
+.status-pill-inactive,
+html.light .status-pill-inactive,
+html.dark .status-pill-inactive,
+.status-filter-pill:not(.status-pill-active),
+html.light .status-filter-pill:not(.status-pill-active),
+html.dark .status-filter-pill:not(.status-pill-active) {
+  background-color: #faf5ef !important;
+  background: #faf5ef !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border: 1px solid #f1e9db !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+}
+
+.floor-pill-inactive span:not(.floor-inactive-badge):not(.status-inactive-badge),
+.status-pill-inactive span:not(.floor-inactive-badge):not(.status-inactive-badge),
+.status-filter-pill:not(.status-pill-active) span:not(.status-inactive-badge),
+html.light .floor-pill-inactive span:not(.floor-inactive-badge):not(.status-inactive-badge),
+html.dark .floor-pill-inactive span:not(.floor-inactive-badge):not(.status-inactive-badge) {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+}
+
+.floor-pill-inactive:hover,
+html.light .floor-pill-inactive:hover,
+html.dark .floor-pill-inactive:hover,
+.status-pill-inactive:hover,
+html.light .status-pill-inactive:hover,
+html.dark .status-pill-inactive:hover,
+.status-filter-pill:not(.status-pill-active):hover {
+  background-color: #f3ebd9 !important;
+  background: #f3ebd9 !important;
+  border-color: #e2d5bd !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+.floor-inactive-badge,
+.status-inactive-badge,
+html.light .floor-inactive-badge,
+html.dark .floor-inactive-badge,
+html.light .status-inactive-badge,
+html.dark .status-inactive-badge {
+  background-color: #eaddd0 !important;
+  background: #eaddd0 !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 800 !important;
+  font-size: 11px !important;
+  padding: 2px 7px !important;
+  border-radius: 9999px !important;
+  text-shadow: none !important;
+}
+
+.floor-pill-active,
+html.light .floor-pill-active,
+html.dark .floor-pill-active {
+  background-color: #1e3a8a !important;
+  background: #1e3a8a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid #3b82f6 !important;
+}
+
+.status-pill-active,
+html.light .status-pill-active,
+html.dark .status-pill-active {
+  background-color: #8b0000 !important;
+  background: #8b0000 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid #b91c1c !important;
+}
+
+/* ========================================================================= */
+/* WAITER LEFT SIDEBAR NAVIGATION - CASHIER POS ALTERNATING THEME            */
+/* ========================================================================= */
+#waiter-bottom-navigation,
+#waiter-bottom-navigation-comp {
+  background-color: #0b1120 !important;
+  background: #0b1120 !important;
+  border-right: 1px solid #1e293b !important;
+}
+
+/* 1. Deep Navy Button (Floor/Tables, KOTs, Call Kitchen) */
+.waiter-nav-navy-btn,
+#waiter-bottom-navigation .waiter-nav-navy-btn,
+#waiter-bottom-navigation-comp .waiter-nav-navy-btn,
+html.light #waiter-bottom-navigation .waiter-nav-navy-btn,
+html.dark #waiter-bottom-navigation .waiter-nav-navy-btn {
+  background-color: #1e3a8a !important;
+  background: #1e3a8a !important;
+  border: 1px solid #3b82f6 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-radius: 12px !important;
+  margin-bottom: 8px !important;
+  width: 100% !important;
+  padding: 8px 4px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+.waiter-nav-navy-btn:hover,
+#waiter-bottom-navigation .waiter-nav-navy-btn:hover,
+#waiter-bottom-navigation-comp .waiter-nav-navy-btn:hover,
+html.light #waiter-bottom-navigation .waiter-nav-navy-btn:hover,
+html.dark #waiter-bottom-navigation .waiter-nav-navy-btn:hover,
+.waiter-nav-navy-btn:focus,
+#waiter-bottom-navigation .waiter-nav-navy-btn:focus,
+#waiter-bottom-navigation-comp .waiter-nav-navy-btn:focus {
+  background-color: #2563eb !important;
+  background: #2563eb !important;
+  border-color: #60a5fa !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* 2. Deep Crimson Red Button (Quick Punch, Bill Requests) */
+.waiter-nav-crimson-btn,
+#waiter-bottom-navigation .waiter-nav-crimson-btn,
+#waiter-bottom-navigation-comp .waiter-nav-crimson-btn,
+html.light #waiter-bottom-navigation .waiter-nav-crimson-btn,
+html.dark #waiter-bottom-navigation .waiter-nav-crimson-btn {
+  background-color: #8b0000 !important;
+  background: #8b0000 !important;
+  border: 1px solid #dc2626 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-radius: 12px !important;
+  margin-bottom: 8px !important;
+  width: 100% !important;
+  padding: 8px 4px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+.waiter-nav-crimson-btn:hover,
+#waiter-bottom-navigation .waiter-nav-crimson-btn:hover,
+#waiter-bottom-navigation-comp .waiter-nav-crimson-btn:hover,
+html.light #waiter-bottom-navigation .waiter-nav-crimson-btn:hover,
+html.dark #waiter-bottom-navigation .waiter-nav-crimson-btn:hover,
+.waiter-nav-crimson-btn:focus,
+#waiter-bottom-navigation .waiter-nav-crimson-btn:focus,
+#waiter-bottom-navigation-comp .waiter-nav-crimson-btn:focus {
+  background-color: #991b1b !important;
+  background: #991b1b !important;
+  border-color: #ef4444 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Pure Crisp White Text and Icons on Sidebar Buttons (Never white background) */
+.waiter-nav-navy-btn span,
+.waiter-nav-crimson-btn span,
+#waiter-bottom-navigation .waiter-nav-navy-btn span,
+#waiter-bottom-navigation .waiter-nav-crimson-btn span,
+html.light #waiter-bottom-navigation .waiter-nav-navy-btn span,
+html.light #waiter-bottom-navigation .waiter-nav-crimson-btn span {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 11px !important;
+}
+
+.waiter-nav-navy-btn svg,
+.waiter-nav-crimson-btn svg,
+#waiter-bottom-navigation .waiter-nav-navy-btn svg,
+#waiter-bottom-navigation .waiter-nav-crimson-btn svg,
+html.light #waiter-bottom-navigation .waiter-nav-navy-btn svg,
+html.light #waiter-bottom-navigation .waiter-nav-crimson-btn svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* Badge exception: Black text inside amber/emerald counter badge */
+#waiter-bottom-navigation .badge-counter,
+#waiter-bottom-navigation-comp .badge-counter,
+html.light #waiter-bottom-navigation .badge-counter,
+html.light #waiter-bottom-navigation-comp .badge-counter {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* ========================================================================= */
+/* TABLE CARD [REQ'D] (BILL REQUESTED) ACTION BUTTON - WARM VANILLA CREAM    */
+/* ========================================================================= */
+.btn-table-reqd,
+html.light .btn-table-reqd,
+html.dark .btn-table-reqd,
+button.btn-table-reqd,
+html.light button.btn-table-reqd,
+html.dark button.btn-table-reqd,
+button[id^="btn-table-reqd-"],
+html.light button[id^="btn-table-reqd-"],
+html.dark button[id^="btn-table-reqd-"] {
+  background-color: #faf5ef !important;
+  background: #faf5ef !important;
+  border: 1px solid #f1e9db !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 800 !important;
+  font-size: 11px !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.btn-table-reqd:hover,
+html.light .btn-table-reqd:hover,
+html.dark .btn-table-reqd:hover,
+button.btn-table-reqd:hover,
+html.light button.btn-table-reqd:hover,
+html.dark button.btn-table-reqd:hover,
+button[id^="btn-table-reqd-"]:hover,
+html.light button[id^="btn-table-reqd-"]:hover,
+html.dark button[id^="btn-table-reqd-"]:hover {
+  background-color: #f3ebd9 !important;
+  background: #f3ebd9 !important;
+  border-color: #e2d5bd !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+.btn-table-reqd span,
+html.light .btn-table-reqd span,
+html.dark .btn-table-reqd span,
+button[id^="btn-table-reqd-"] span,
+html.light button[id^="btn-table-reqd-"] span,
+html.dark button[id^="btn-table-reqd-"] span {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 800 !important;
+  font-size: 11px !important;
+}
+
+/* ========================================================================= */
+/* WAITER TOP HEADER CONTROLS - EXACT WARM VANILLA CREAM THEME               */
+/* ========================================================================= */
+
+/* 1. Search Bar Wrapper & Input */
+#waiter-table-search-wrapper,
+.waiter-header-search-wrapper,
+html.light #waiter-table-search-wrapper,
+html.dark #waiter-table-search-wrapper {
+  background-color: #faf5ef !important;
+  background: #faf5ef !important;
+  border: 1px solid #f1e9db !important;
+}
+
+#waiter-table-search-input,
+.waiter-header-search-input,
+html.light #waiter-table-search-input,
+html.dark #waiter-table-search-input {
+  background-color: #faf5ef !important;
+  background: #faf5ef !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 600 !important;
+  border: none !important;
+}
+
+#waiter-table-search-input::placeholder,
+.waiter-header-search-input::placeholder,
+html.light #waiter-table-search-input::placeholder,
+html.dark #waiter-table-search-input::placeholder {
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+  opacity: 1 !important;
+}
+
+#waiter-table-search-wrapper svg,
+.waiter-header-search-wrapper svg {
+  color: #0f172a !important;
+  stroke: #0f172a !important;
+}
+
+/* 2. Header Metric Badges */
+#waiter-header-floor-badge,
+.waiter-header-floor-badge,
+html.light #waiter-header-floor-badge,
+html.dark #waiter-header-floor-badge,
+#waiter-header-active-tables-badge,
+.waiter-header-active-tables-badge,
+html.light #waiter-header-active-tables-badge,
+html.dark #waiter-header-active-tables-badge {
+  background-color: #faf5ef !important;
+  background: #faf5ef !important;
+  border: 1px solid #f1e9db !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+#waiter-header-floor-badge span,
+#waiter-header-active-tables-badge span,
+.waiter-header-floor-badge span,
+.waiter-header-active-tables-badge span {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+#waiter-header-floor-badge svg,
+#waiter-header-active-tables-badge svg,
+.waiter-header-floor-badge svg,
+.waiter-header-active-tables-badge svg {
+  color: #0f172a !important;
+  stroke: #0f172a !important;
+}
+
+/* 3. Light/Dark Mode Toggle Icon Button */
+.waiter-header-theme-toggle-wrapper button,
+.waiter-header-theme-toggle-btn,
+html.light .waiter-header-theme-toggle-wrapper button,
+html.dark .waiter-header-theme-toggle-wrapper button,
+html.light .waiter-header-theme-toggle-btn,
+html.dark .waiter-header-theme-toggle-btn {
+  background-color: #faf5ef !important;
+  background: #faf5ef !important;
+  border: 1px solid #f1e9db !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border-radius: 8px !important;
+}
+
+.waiter-header-theme-toggle-wrapper button:hover,
+.waiter-header-theme-toggle-btn:hover,
+html.light .waiter-header-theme-toggle-wrapper button:hover,
+html.dark .waiter-header-theme-toggle-wrapper button:hover {
+  background-color: #f3ebd9 !important;
+  background: #f3ebd9 !important;
+  border-color: #e2d5bd !important;
+}
+
+.waiter-header-theme-toggle-wrapper svg,
+.waiter-header-theme-toggle-btn svg {
+  color: #0f172a !important;
+  stroke: #0f172a !important;
+  fill: rgba(15, 23, 42, 0.15) !important;
+}
+
+/* 4. Notification Bell Icon Button */
+#waiter-ready-notifications-bell,
+.waiter-header-bell-btn,
+html.light #waiter-ready-notifications-bell,
+html.dark #waiter-ready-notifications-bell,
+html.light .waiter-header-bell-btn,
+html.dark .waiter-header-bell-btn {
+  background-color: #faf5ef !important;
+  background: #faf5ef !important;
+  border: 1px solid #f1e9db !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+#waiter-ready-notifications-bell:hover,
+.waiter-header-bell-btn:hover,
+html.light #waiter-ready-notifications-bell:hover,
+html.dark #waiter-ready-notifications-bell:hover {
+  background-color: #f3ebd9 !important;
+  background: #f3ebd9 !important;
+  border-color: #e2d5bd !important;
+}
+
+#waiter-ready-notifications-bell svg,
+.waiter-header-bell-btn svg {
+  color: #0f172a !important;
+  stroke: #0f172a !important;
+}
+
+/* 5. User Profile Badge */
+#waiter-header-user-profile,
+.waiter-header-user-profile,
+html.light #waiter-header-user-profile,
+html.dark #waiter-header-user-profile {
+  background-color: #faf5ef !important;
+  background: #faf5ef !important;
+  border: 1px solid #f1e9db !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+#waiter-header-user-profile span,
+.waiter-header-user-profile span,
+html.light #waiter-header-user-profile span,
+html.dark #waiter-header-user-profile span {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+/* ========================================================================= */
+/* WAITER ORDER PAD RIGHT-SIDE CART / ORDER SUMMARY PANEL - CASHIER DARK     */
+/* ========================================================================= */
+
+/* 1. Outer Right Sidebar Container: #0b1120 */
+.waiter-billing-panel,
+#waiter-cart-panel,
+html.light .waiter-billing-panel,
+html.dark .waiter-billing-panel,
+html.light #waiter-cart-panel,
+html.dark #waiter-cart-panel,
+#waiter-cart-top-section,
+html.light #waiter-cart-top-section,
+html.dark #waiter-cart-top-section,
+#waiter-cart-middle-section,
+html.light #waiter-cart-middle-section,
+html.dark #waiter-cart-middle-section,
+#waiter-cart-bottom-section,
+html.light #waiter-cart-bottom-section,
+html.dark #waiter-cart-bottom-section {
+  background-color: #0b1120 !important;
+  background: #0b1120 !important;
+  border-left-color: rgba(139, 0, 0, 0.6) !important;
+}
+
+/* 2. Table Info & Total Bar: #0d1527 */
+#waiter-table-info-bar,
+.waiter-table-info-bar,
+html.light #waiter-table-info-bar,
+html.dark #waiter-table-info-bar,
+html.light .waiter-table-info-bar,
+html.dark .waiter-table-info-bar {
+  background-color: #0d1527 !important;
+  background: #0d1527 !important;
+}
+
+/* Table Selector Dropdown: #080c16 with #1e293b border */
+#waiter-table-selector,
+html.light #waiter-table-selector,
+html.dark #waiter-table-selector {
+  background-color: #080c16 !important;
+  background: #080c16 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid #1e293b !important;
+}
+
+/* 3. Phone & Guest Name Inputs: #080c16 with #1e293b border & #ffffff text */
+#waiter-customer-mobile-input,
+#waiter-customer-name-input,
+.waiter-cart-input,
+html.light #waiter-customer-mobile-input,
+html.dark #waiter-customer-mobile-input,
+html.light #waiter-customer-name-input,
+html.dark #waiter-customer-name-input,
+html.light .waiter-cart-input,
+html.dark .waiter-cart-input {
+  background-color: #080c16 !important;
+  background: #080c16 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid #1e293b !important;
+}
+
+#waiter-customer-mobile-input::placeholder,
+#waiter-customer-name-input::placeholder,
+.waiter-cart-input::placeholder,
+html.light #waiter-customer-mobile-input::placeholder,
+html.dark #waiter-customer-mobile-input::placeholder,
+html.light #waiter-customer-name-input::placeholder,
+html.dark #waiter-customer-name-input::placeholder {
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+}
+
+/* 4. "No active orders..." Center Empty Cart Box: #080c16 with dashed #1e293b border & #64748b text */
+#waiter-cart-empty-box,
+.waiter-cart-empty-box,
+html.light #waiter-cart-empty-box,
+html.dark #waiter-cart-empty-box,
+html.light .waiter-cart-empty-box,
+html.dark .waiter-cart-empty-box {
+  background-color: #080c16 !important;
+  background: #080c16 !important;
+  border: 1px dashed #1e293b !important;
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+}
+
+/* 5. Bottom Kitchen Instruction Input: #080c16 with #1e293b border & #ffffff text */
+#waiter-cart-kitchen-note-input,
+html.light #waiter-cart-kitchen-note-input,
+html.dark #waiter-cart-kitchen-note-input {
+  background-color: #080c16 !important;
+  background: #080c16 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid #1e293b !important;
+}
+
+#waiter-cart-kitchen-note-input::placeholder,
+html.light #waiter-cart-kitchen-note-input::placeholder,
+html.dark #waiter-cart-kitchen-note-input::placeholder {
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+}
+
+/* ========================================================================= */
+/* WAITER ORDER PAD MIDDLE DISH GRID PANEL - EXACT CASHIER DARK CANVAS       */
+/* ========================================================================= */
+.pos-middle-panel,
+#waiter-middle-dish-panel,
+#waiter-dish-grid-container,
+.pos-center-grid-scroll,
+html.light .pos-middle-panel,
+html.dark .pos-middle-panel,
+html.light #waiter-middle-dish-panel,
+html.dark #waiter-middle-dish-panel,
+html.light #waiter-dish-grid-container,
+html.dark #waiter-dish-grid-container,
+html.light .pos-center-grid-scroll,
+html.dark .pos-center-grid-scroll {
+  background-color: #0a0f1d !important;
+  background: #0a0f1d !important;
+}
+
+#waiter-search-filter-bar,
+html.light #waiter-search-filter-bar,
+html.dark #waiter-search-filter-bar {
+  background-color: #070b12 !important;
+  background: #070b12 !important;
+  border-bottom: 1px solid rgba(139, 0, 0, 0.3) !important;
+}
+
+/* ========================================================================= */
+/* WAITER ORDER CART PANEL - REMOVE REMAINING WHITE UI ELEMENTS              */
+/* ========================================================================= */
+
+/* 1. "[NEW PUNCH ITEMS (X)]" Header Badge */
+#waiter-cart-new-punch-badge,
+.waiter-new-punch-badge,
+html.light #waiter-cart-new-punch-badge,
+html.dark #waiter-cart-new-punch-badge,
+html.light .waiter-new-punch-badge,
+html.dark .waiter-new-punch-badge {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #fbbf24 !important;
+  -webkit-text-fill-color: #fbbf24 !important;
+  font-weight: 800 !important;
+  font-size: 11px !important;
+  border: 1px solid rgba(245, 158, 11, 0.4) !important;
+  border-radius: 6px !important;
+  padding: 2px 8px !important;
+}
+
+/* 2. "Order: [Dine-In v]" Dropdown Select Box */
+.waiter-cart-order-select,
+select.waiter-cart-order-select,
+html.light select.waiter-cart-order-select,
+html.dark select.waiter-cart-order-select,
+.waiter-billing-panel select.waiter-cart-order-select,
+html.light .waiter-billing-panel select.waiter-cart-order-select,
+html.dark .waiter-billing-panel select.waiter-cart-order-select,
+select[id^="waiter-cart-order-select-"],
+html.light select[id^="waiter-cart-order-select-"],
+html.dark select[id^="waiter-cart-order-select-"] {
+  background-color: #0f172a !important;
+  background: #0f172a !important;
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  border: 1px solid #334155 !important;
+  border-radius: 6px !important;
+  padding: 2px 8px !important;
+  outline: none !important;
+}
+
+.waiter-cart-order-select option,
+select.waiter-cart-order-select option,
+html.light select.waiter-cart-order-select option,
+html.dark select.waiter-cart-order-select option,
+select[id^="waiter-cart-order-select-"] option,
+html.light select[id^="waiter-cart-order-select-"] option,
+html.dark select[id^="waiter-cart-order-select-"] option {
+  background-color: #0f172a !important;
+  background: #0f172a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* 3. Quantity Decrement "[-]" Button */
+.waiter-cart-qty-btn-minus,
+button.waiter-cart-qty-btn-minus,
+html.light .waiter-cart-qty-btn-minus,
+html.dark .waiter-cart-qty-btn-minus,
+html.light button.waiter-cart-qty-btn-minus,
+html.dark button.waiter-cart-qty-btn-minus {
+  background-color: #1e293b !important;
+  background: #1e293b !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid #334155 !important;
+  border-radius: 6px !important;
+}
+
+.waiter-cart-qty-btn-minus:hover,
+button.waiter-cart-qty-btn-minus:hover,
+html.light .waiter-cart-qty-btn-minus:hover,
+html.dark .waiter-cart-qty-btn-minus:hover,
+html.light button.waiter-cart-qty-btn-minus:hover,
+html.dark button.waiter-cart-qty-btn-minus:hover {
+  background-color: #334155 !important;
+  background: #334155 !important;
+  border-color: #475569 !important;
+}
+
+/* ========================================================================= */
+/* WAITER BILL REQUESTS MODAL - DARK SLATE THEME                             */
+/* ========================================================================= */
+#bill-requests-modal-card,
+#bill-requests-comp-modal-card,
+html.light #bill-requests-modal-card,
+html.dark #bill-requests-modal-card,
+html.light #bill-requests-comp-modal-card,
+html.dark #bill-requests-comp-modal-card {
+  background-color: #0b1120 !important;
+  background: #0b1120 !important;
+  border: 1px solid #1e293b !important;
+}
+
+#bill-requests-pending-badge,
+html.light #bill-requests-pending-badge,
+html.dark #bill-requests-pending-badge {
+  background-color: rgba(245, 158, 11, 0.2) !important;
+  background: rgba(245, 158, 11, 0.2) !important;
+  color: #fbbf24 !important;
+  -webkit-text-fill-color: #fbbf24 !important;
+  border: 1px solid #b45309 !important;
+}
+
+#close-bill-requests-modal,
+#close-bill-requests-comp-modal,
+#close-bill-requests-footer-btn,
+#close-bill-requests-comp-footer-btn,
+html.light #close-bill-requests-modal,
+html.dark #close-bill-requests-modal,
+html.light #close-bill-requests-comp-modal,
+html.dark #close-bill-requests-comp-modal,
+html.light #close-bill-requests-footer-btn,
+html.dark #close-bill-requests-footer-btn,
+html.light #close-bill-requests-comp-footer-btn,
+html.dark #close-bill-requests-comp-footer-btn {
+  background-color: #1e293b !important;
+  background: #1e293b !important;
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+}
+
+#close-bill-requests-modal:hover,
+#close-bill-requests-comp-modal:hover,
+#close-bill-requests-footer-btn:hover,
+#close-bill-requests-comp-footer-btn:hover,
+html.light #close-bill-requests-modal:hover,
+html.dark #close-bill-requests-modal:hover,
+html.light #close-bill-requests-comp-modal:hover,
+html.dark #close-bill-requests-comp-modal:hover,
+html.light #close-bill-requests-footer-btn:hover,
+html.dark #close-bill-requests-footer-btn:hover,
+html.light #close-bill-requests-comp-footer-btn:hover,
+html.dark #close-bill-requests-comp-footer-btn:hover {
+  background-color: #334155 !important;
+  background: #334155 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* ========================================================================= */
+/* POS CATEGORIES SIDEBAR & ORDER SUMMARY HEADER - CONTRAST FIXES            */
+/* ========================================================================= */
+
+/* 1. Left Category Sidebar "CATEGORIES" Header & Items Pill */
+#waiter-categories-title,
+.waiter-categories-title,
+#cashier-categories-title,
+html.light #waiter-categories-title,
+html.dark #waiter-categories-title,
+html.light .waiter-categories-title,
+html.dark .waiter-categories-title,
+html.light #cashier-categories-title,
+html.dark #cashier-categories-title {
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+  font-weight: 800 !important;
+  font-size: 11px !important;
+  letter-spacing: 0.05em !important;
+}
+
+#waiter-categories-items-pill,
+.waiter-categories-items-pill,
+#cashier-categories-badge,
+html.light #waiter-categories-items-pill,
+html.dark #waiter-categories-items-pill,
+html.light .waiter-categories-items-pill,
+html.dark .waiter-categories-items-pill,
+html.light #cashier-categories-badge,
+html.dark #cashier-categories-badge {
+  background-color: #1e293b !important;
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  border: 1px solid #334155 !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+}
+
+/* 2. Category Item Count Badges (Biryani, Main Course, Rice, Desserts) */
+.category-counter-bubble,
+span.category-counter-bubble,
+html.light .category-counter-bubble,
+html.dark .category-counter-bubble,
+html.light span.category-counter-bubble,
+html.dark span.category-counter-bubble {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 11px !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Category item name label within button */
+.category-name-text,
+.category-badge-btn .category-name-text,
+.category-badge-btn > span,
+html.light .category-name-text,
+html.dark .category-name-text,
+html.light .category-badge-btn .category-name-text,
+html.dark .category-badge-btn .category-name-text,
+html.light .category-badge-btn > span,
+html.dark .category-badge-btn > span {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* 3. Right Cart Panel KOT Header ("KOT-10105") */
+.waiter-cart-kot-header-badge,
+span.waiter-cart-kot-header-badge,
+html.light .waiter-cart-kot-header-badge,
+html.dark .waiter-cart-kot-header-badge,
+html.light span.waiter-cart-kot-header-badge,
+html.dark span.waiter-cart-kot-header-badge {
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  font-weight: 850 !important;
+  font-size: 13px !important;
+}
+
+.waiter-cart-kot-print-btn,
+button.waiter-cart-kot-print-btn,
+html.light .waiter-cart-kot-print-btn,
+html.dark .waiter-cart-kot-print-btn,
+html.light button.waiter-cart-kot-print-btn,
+html.dark button.waiter-cart-kot-print-btn {
+  background-color: #1e293b !important;
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  border: 1px solid #334155 !important;
+}
+
+.waiter-cart-kot-print-btn:hover,
+button.waiter-cart-kot-print-btn:hover,
+html.light .waiter-cart-kot-print-btn:hover,
+html.dark .waiter-cart-kot-print-btn:hover {
+  background-color: #334155 !important;
+  background: #334155 !important;
+}
+
+.waiter-cart-kot-status-badge,
+span.waiter-cart-kot-status-badge,
+html.light .waiter-cart-kot-status-badge,
+html.dark .waiter-cart-kot-status-badge,
+html.light span.waiter-cart-kot-status-badge,
+html.dark span.waiter-cart-kot-status-badge {
+  border: 1px solid #334155 !important;
+}
+
+/* ==========================================================================
+   Waiter Cart Item Names, Portion Tags, and Rates
+   ========================================================================== */
+.waiter-cart-item-title,
+html.light .waiter-cart-item-title,
+html.dark .waiter-cart-item-title,
+#waiter-cart-middle-section .waiter-cart-item-title,
+html.light #waiter-cart-middle-section .waiter-cart-item-title,
+html.dark #waiter-cart-middle-section .waiter-cart-item-title {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 750 !important;
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+}
+
+.waiter-cart-portion-tag,
+html.light .waiter-cart-portion-tag,
+html.dark .waiter-cart-portion-tag,
+#waiter-cart-middle-section .waiter-cart-portion-tag,
+html.light #waiter-cart-middle-section .waiter-cart-portion-tag,
+html.dark #waiter-cart-middle-section .waiter-cart-portion-tag {
+  color: #fbbf24 !important;
+  -webkit-text-fill-color: #fbbf24 !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+}
+
+.waiter-cart-rate-tag,
+html.light .waiter-cart-rate-tag,
+html.dark .waiter-cart-rate-tag,
+#waiter-cart-middle-section .waiter-cart-rate-tag,
+html.light #waiter-cart-middle-section .waiter-cart-rate-tag,
+html.dark #waiter-cart-middle-section .waiter-cart-rate-tag {
+  color: #10b981 !important;
+  -webkit-text-fill-color: #10b981 !important;
+  font-weight: 800 !important;
+  font-size: 13px !important;
+}
+
+/* ========================================================================= */
+/* KITCHEN DISPLAY SYSTEM (KDS) CRIMSON HEADER BAR STYLING                   */
+/* ========================================================================= */
+#kds-global-header,
+html.light #kds-global-header,
+html.dark #kds-global-header {
+  background-color: #6b0716 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4) !important;
+}
+
+#kds-chef-hat-icon-container,
+html.light #kds-chef-hat-icon-container,
+html.dark #kds-chef-hat-icon-container {
+  background-color: #1e293b !important;
+  color: #fbbf24 !important;
+  border: 1px solid #334155 !important;
+}
+
+#kds-chef-hat-icon-container svg,
+html.light #kds-chef-hat-icon-container svg,
+html.dark #kds-chef-hat-icon-container svg {
+  color: #fbbf24 !important;
+  stroke: #fbbf24 !important;
+}
+
+#kds-global-header .kds-header-title,
+html.light #kds-global-header .kds-header-title,
+html.dark #kds-global-header .kds-header-title,
+#kds-global-header .kds-header-subtitle,
+html.light #kds-global-header .kds-header-subtitle,
+html.dark #kds-global-header .kds-header-subtitle {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+}
+
+#kds-search-bar,
+html.light #kds-search-bar,
+html.dark #kds-search-bar {
+  background-color: rgba(11, 17, 32, 0.6) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 8px !important;
+}
+
+#kds-search-bar input,
+html.light #kds-search-bar input,
+html.dark #kds-search-bar input {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#kds-search-bar input::placeholder,
+html.light #kds-search-bar input::placeholder,
+html.dark #kds-search-bar input::placeholder {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+}
+
+#kds-clock-badge,
+html.light #kds-clock-badge,
+html.dark #kds-clock-badge {
+  background-color: #0b1120 !important;
+  color: #34d399 !important;
+  border: 1px solid #1e293b !important;
+}
+
+#kds-clock-badge span,
+#kds-clock-badge svg,
+html.light #kds-clock-badge span,
+html.light #kds-clock-badge svg,
+html.dark #kds-clock-badge span,
+html.dark #kds-clock-badge svg {
+  color: #34d399 !important;
+  -webkit-text-fill-color: #34d399 !important;
+}
+
+#kds-theme-toggle-wrapper button,
+.kds-theme-toggle-btn,
+#kds-audio-btn,
+html.light #kds-theme-toggle-wrapper button,
+html.light .kds-theme-toggle-btn,
+html.light #kds-audio-btn,
+html.dark #kds-theme-toggle-wrapper button,
+html.dark .kds-theme-toggle-btn,
+html.dark #kds-audio-btn {
+  background-color: #0b1120 !important;
+  color: #f1f5f9 !important;
+  border: 1px solid #1e293b !important;
+}
+
+#kds-exit-btn,
+html.light #kds-exit-btn,
+html.dark #kds-exit-btn {
+  background-color: rgba(11, 17, 32, 0.7) !important;
+  color: #f87171 !important;
+  -webkit-text-fill-color: #f87171 !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+}
+
+#kds-exit-btn svg,
+html.light #kds-exit-btn svg,
+html.dark #kds-exit-btn svg {
+  color: #f87171 !important;
+  stroke: #f87171 !important;
+}
+
+/* ========================================================================= */
+/* WAITER ORDER PAD CRIMSON HEADER BAR STYLING                              */
+/* ========================================================================= */
+#waiter-global-header,
+#waiter-global-header-secondary,
+html.light #waiter-global-header,
+html.light #waiter-global-header-secondary,
+html.dark #waiter-global-header,
+html.dark #waiter-global-header-secondary {
+  background-color: #6b0716 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4) !important;
+}
+
+#waiter-utensils-icon-container,
+html.light #waiter-utensils-icon-container,
+html.dark #waiter-utensils-icon-container {
+  background-color: #1e293b !important;
+  color: #fbbf24 !important;
+  border: 1px solid #334155 !important;
+}
+
+#waiter-global-header #waiter-header-brand-title,
+#waiter-global-header .waiter-header-title,
+#waiter-global-header-secondary .waiter-header-title,
+html.light #waiter-global-header #waiter-header-brand-title,
+html.light #waiter-global-header .waiter-header-title,
+html.light #waiter-global-header-secondary .waiter-header-title,
+html.dark #waiter-global-header #waiter-header-brand-title,
+html.dark #waiter-global-header .waiter-header-title,
+html.dark #waiter-global-header-secondary .waiter-header-title {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 16px !important;
+}
+
+#waiter-global-header #waiter-header-role-badge,
+html.light #waiter-global-header #waiter-header-role-badge,
+html.dark #waiter-global-header #waiter-header-role-badge {
+  background-color: rgba(16, 185, 129, 0.2) !important;
+  color: #6ee7b7 !important;
+  -webkit-text-fill-color: #6ee7b7 !important;
+  border: 1px solid rgba(16, 185, 129, 0.4) !important;
+}
+
+#waiter-global-header .waiter-header-subtitle,
+#waiter-global-header .waiter-header-subtitle span,
+#waiter-global-header-secondary .waiter-header-subtitle,
+#waiter-global-header-secondary .waiter-header-subtitle span,
+html.light #waiter-global-header .waiter-header-subtitle,
+html.light #waiter-global-header .waiter-header-subtitle span,
+html.light #waiter-global-header-secondary .waiter-header-subtitle,
+html.light #waiter-global-header-secondary .waiter-header-subtitle span,
+html.dark #waiter-global-header .waiter-header-subtitle,
+html.dark #waiter-global-header .waiter-header-subtitle span,
+html.dark #waiter-global-header-secondary .waiter-header-subtitle,
+html.dark #waiter-global-header-secondary .waiter-header-subtitle span {
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+  font-size: 12px !important;
+}
+
+#waiter-table-search-wrapper,
+html.light #waiter-table-search-wrapper,
+html.dark #waiter-table-search-wrapper {
+  background-color: rgba(11, 17, 32, 0.6) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 8px !important;
+}
+
+#waiter-table-search-input,
+#waiter-table-search-wrapper input,
+html.light #waiter-table-search-input,
+html.light #waiter-table-search-wrapper input,
+html.dark #waiter-table-search-input,
+html.dark #waiter-table-search-wrapper input {
+  background-color: transparent !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#waiter-table-search-input::placeholder,
+#waiter-table-search-wrapper input::placeholder,
+html.light #waiter-table-search-input::placeholder,
+html.light #waiter-table-search-wrapper input::placeholder,
+html.dark #waiter-table-search-input::placeholder,
+html.dark #waiter-table-search-wrapper input::placeholder {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+}
+
+#waiter-table-search-wrapper svg,
+html.light #waiter-table-search-wrapper svg,
+html.dark #waiter-table-search-wrapper svg {
+  color: #94a3b8 !important;
+}
+
+#waiter-header-floor-badge,
+#waiter-header-active-tables-badge,
+html.light #waiter-header-floor-badge,
+html.light #waiter-header-active-tables-badge,
+html.dark #waiter-header-floor-badge,
+html.dark #waiter-header-active-tables-badge {
+  background-color: #0b1120 !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 8px !important;
+}
+
+#waiter-header-floor-badge span,
+#waiter-header-active-tables-badge span,
+html.light #waiter-header-floor-badge span,
+html.light #waiter-header-active-tables-badge span,
+html.dark #waiter-header-floor-badge span,
+html.dark #waiter-header-active-tables-badge span {
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+}
+
+#waiter-header-floor-badge svg,
+#waiter-header-active-tables-badge svg,
+html.light #waiter-header-floor-badge svg,
+html.light #waiter-header-active-tables-badge svg,
+html.dark #waiter-header-floor-badge svg,
+html.dark #waiter-header-active-tables-badge svg {
+  color: #94a3b8 !important;
+}
+
+.waiter-header-theme-toggle-wrapper button,
+.waiter-header-theme-toggle-btn,
+#waiter-ready-notifications-bell,
+html.light .waiter-header-theme-toggle-wrapper button,
+html.light .waiter-header-theme-toggle-btn,
+html.light #waiter-ready-notifications-bell,
+html.dark .waiter-header-theme-toggle-wrapper button,
+html.dark .waiter-header-theme-toggle-btn,
+html.dark #waiter-ready-notifications-bell {
+  background-color: #0b1120 !important;
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 8px !important;
+}
+
+.waiter-header-theme-toggle-wrapper button svg,
+.waiter-header-theme-toggle-btn svg,
+#waiter-ready-notifications-bell svg,
+html.light .waiter-header-theme-toggle-wrapper button svg,
+html.light .waiter-header-theme-toggle-btn svg,
+html.light #waiter-ready-notifications-bell svg,
+html.dark .waiter-header-theme-toggle-wrapper button svg,
+html.dark .waiter-header-theme-toggle-btn svg,
+html.dark #waiter-ready-notifications-bell svg {
+  color: #f1f5f9 !important;
+}
+
+#waiter-header-user-profile,
+html.light #waiter-header-user-profile,
+html.dark #waiter-header-user-profile {
+  background-color: #0b1120 !important;
+  color: #ffffff !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 8px !important;
+}
+
+#waiter-header-user-profile span,
+html.light #waiter-header-user-profile span,
+html.dark #waiter-header-user-profile span {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#waiter-logout-btn,
+html.light #waiter-logout-btn,
+html.dark #waiter-logout-btn {
+  background-color: rgba(11, 17, 32, 0.7) !important;
+  color: #f87171 !important;
+  -webkit-text-fill-color: #f87171 !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+}
+
+#waiter-logout-btn svg,
+html.light #waiter-logout-btn svg,
+html.dark #waiter-logout-btn svg {
+  color: #f87171 !important;
+  stroke: #f87171 !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
