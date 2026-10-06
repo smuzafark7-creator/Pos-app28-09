@@ -6,6 +6,8 @@ import { WaiterCategorySidebar } from './WaiterCategorySidebar';
 import { WaiterItemCard } from './WaiterItemCard';
 import { WaiterCart } from './WaiterCart';
 import { ItemVariationModal } from '../ItemVariationModal';
+import { POSOrderTypeWatermark } from '../cashier/POSOrderTypeWatermark';
+import { POSBilaalWatermark } from '../cashier/POSBilaalWatermark';
 import { Search, X } from 'lucide-react';
 
 export const WaiterPOSView: React.FC = () => {
@@ -105,7 +107,7 @@ export const WaiterPOSView: React.FC = () => {
   };
 
   const handleSaveVariations = (baseItem: MenuItem, portions: PortionSelection[], note?: string) => {
-    portions.forEach(({ variation, quantity }) => {
+    portions.forEach(({ variation, quantity, notes, orderType, serveType }) => {
       if (quantity <= 0) return;
       const variantItem: MenuItem = {
         ...baseItem,
@@ -113,7 +115,8 @@ export const WaiterPOSView: React.FC = () => {
         name: `${baseItem.name} (${variation.name})`,
         price: variation.price,
       };
-      addToCart(variantItem, quantity, note);
+      const effectiveServeType = serveType || (orderType === 'delivery' ? 'DELIVERY' : orderType === 'takeaway' || orderType === 'parcel' ? 'PARCEL' : 'DINE_IN');
+      addToCart(variantItem, quantity, notes?.trim() || note, effectiveServeType, orderType);
     });
   };
 
@@ -121,8 +124,8 @@ export const WaiterPOSView: React.FC = () => {
 
   return (
     <div 
-      className="h-full flex flex-col lg:flex-row overflow-hidden bg-[#0a0f1d] select-none font-sans"
-      style={{ backgroundColor: '#0a0f1d' }}
+      className="h-full flex flex-col lg:flex-row overflow-hidden bg-[#070b14] select-none font-sans"
+      style={{ backgroundColor: '#070b14', background: '#070b14' }}
     >
       {/* 1. Category Navigation (Left) */}
       <WaiterCategorySidebar
@@ -136,18 +139,21 @@ export const WaiterPOSView: React.FC = () => {
       {/* 2. Menu Items & Search (Middle) */}
       <div 
         id="waiter-middle-dish-panel"
-        className="flex-1 flex flex-col overflow-hidden pos-middle-panel border-r border-[#8b0000]/60 bg-[#0a0f1d]"
-        style={{ backgroundColor: '#0a0f1d' }}
+        className="flex-1 flex flex-col overflow-hidden pos-middle-panel border-r border-[#8b0000]/60 relative bg-transparent"
+        style={{ backgroundColor: 'transparent', background: 'transparent' }}
       >
         {/* Search & Dietary Filters Bar */}
         <div 
-          id="waiter-search-filter-bar"
-          className="px-3.5 py-3 shrink-0 bg-[#070b12] border-b border-[#8b0000]/30"
-          style={{ backgroundColor: '#070b12' }}
+          id="waiter-search-filter-bar" 
+          className="px-3.5 py-3 shrink-0 bg-transparent border-b border-[#8b0000]/30 z-20"
+          style={{ backgroundColor: 'transparent', background: 'transparent' }}
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
             {/* Search Input Wrapper */}
-            <div className="relative flex-1 rounded-xl shadow-inner bg-[#0f172a] border border-slate-700/80 focus-within:border-emerald-500/80 transition-colors">
+            <div 
+              className="relative flex-1 rounded-xl shadow-inner bg-[#070b14]/75 border border-slate-700/60 focus-within:border-emerald-500/80 transition-colors"
+              style={{ backgroundColor: 'rgba(7, 11, 20, 0.75)' }}
+            >
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
@@ -168,7 +174,10 @@ export const WaiterPOSView: React.FC = () => {
             </div>
 
             {/* Dietary filter pills */}
-            <div className="flex items-center gap-1 p-1 rounded-xl shrink-0 text-xs bg-[#0f172a] border border-slate-700/80">
+            <div 
+              className="flex items-center gap-1 p-1 rounded-xl shrink-0 text-xs bg-[#070b14]/75 border border-slate-700/60"
+              style={{ backgroundColor: 'rgba(7, 11, 20, 0.75)' }}
+            >
               <button
                 type="button"
                 onClick={() => setDietaryFilter('all')}
@@ -208,25 +217,21 @@ export const WaiterPOSView: React.FC = () => {
           </div>
         </div>
 
+        {/* Fixed Non-Scrolling Watermark Layer - Exact Bilaal Restaurant Emblem Matching Tables Screen */}
+        <POSBilaalWatermark orderType={cartOrderType} opacity={0.20} />
+
         {/* Menu Grid */}
         <div 
           id="waiter-dish-grid-container"
-          className="relative flex-1 overflow-y-auto p-3.5 pos-center-grid-scroll bg-[#0a0f1d]"
-          style={{ backgroundColor: '#0a0f1d' }}
+          className="relative flex-1 overflow-y-auto p-3.5 pos-center-grid-scroll z-10"
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            backgroundColor: 'transparent',
+            background: 'transparent',
+          }}
         >
-          {/* Subtle Low-Opacity Background Watermark - Centered Bilaal Restaurant fine dining crest */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden select-none">
-            <img
-              src="/assets/menu-watermark.svg"
-              alt="Bilaal Restaurant Fine Dining Crest"
-              aria-hidden="true"
-              referrerPolicy="no-referrer"
-              style={{ opacity: 0.10 }}
-              className="opacity-10 grayscale invert brightness-75 max-w-[500px] w-4/5 max-h-[75vh] object-contain select-none pointer-events-none"
-            />
-          </div>
-
-          <div className="relative z-10 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
+          <div className="relative z-10 grid grid-cols-4 gap-3 pos-cards-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
             {filteredItems.map((item, index) => {
               const matchingCartItems = (cart || []).filter(
                 c => c.item.id === item.id || c.item.id.startsWith(`${item.id}_`)

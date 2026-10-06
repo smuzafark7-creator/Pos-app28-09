@@ -25,19 +25,13 @@ export const WaiterHeader: React.FC = () => {
     filteredTables, 
     filteredKots,
     kots,
-    tableSearchTerm, 
-    setTableSearchTerm,
-    tableFloorFilter,
     selectTableForPOS,
     updateKOTStatus,
     showToast,
     restaurantSettings
   } = useApp();
 
-  const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const searchContainerRef = useRef<HTMLDivElement>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const notificationContainerRef = useRef<HTMLDivElement>(null);
 
   // Kitchen KOTs ready for pickup from kitchen (Strictly DINE-IN only for Waiter)
@@ -67,33 +61,9 @@ export const WaiterHeader: React.FC = () => {
     return filteredTables.filter(t => t.status === 'occupied' || t.status === 'billing').length;
   }, [filteredTables]);
 
-  // Floor calculation matching table matrix rules (1-4: Ground Floor, 5-8: First Floor, 9-10: Outdoor / Terrace)
-  const getTableFloor = (tableNumber: number): string => {
-    if (tableNumber <= 4) return 'Ground Floor';
-    if (tableNumber <= 8) return 'First Floor';
-    return 'Outdoor / Terrace';
-  };
-
-  // Dynamic floor tables count
-  const floorTablesCount = useMemo(() => {
-    if (tableFloorFilter === 'All') return filteredTables.length;
-    return filteredTables.filter(t => getTableFloor(t.number) === tableFloorFilter).length;
-  }, [filteredTables, tableFloorFilter]);
-
-  // Dynamic floor badge label (e.g., "All Floors • 10 Tables", "Ground Floor • 4 Tables")
-  const floorBadgeLabel = useMemo(() => {
-    if (tableFloorFilter === 'All') {
-      return `All Floors • ${floorTablesCount} Tables`;
-    }
-    return `${tableFloorFilter} • ${floorTablesCount} Tables`;
-  }, [tableFloorFilter, floorTablesCount]);
-
-  // Click outside listener for table search and notifications popover
+  // Click outside listener for notifications popover
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
-        setIsSearchDropdownOpen(false);
-      }
       if (notificationContainerRef.current && !notificationContainerRef.current.contains(event.target as Node)) {
         setIsNotificationOpen(false);
       }
@@ -102,28 +72,6 @@ export const WaiterHeader: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Filtered matching tables for quick jump popover
-  const matchingTables = useMemo(() => {
-    if (!tableSearchTerm || !tableSearchTerm.trim()) return [];
-    const term = tableSearchTerm.trim().toLowerCase();
-    const numOnly = term.replace(/^t\s*/, '');
-    return filteredTables.filter(tbl => {
-      const numStr = String(tbl.number);
-      const nameStr = tbl.name.toLowerCase();
-      return numStr === numOnly || 
-             nameStr.includes(term) || 
-             `t${tbl.number}`.includes(term) ||
-             nameStr.includes(numOnly);
-    }).slice(0, 6);
-  }, [filteredTables, tableSearchTerm]);
-
-  const handleSelectTable = (tbl: RestaurantTable) => {
-    selectTableForPOS(tbl.name);
-    setTableSearchTerm(tbl.name);
-    setIsSearchDropdownOpen(false);
-    showToast(`Table Selected`, `Switched to ${tbl.name} (${tbl.status.toUpperCase()})`, 'info');
-  };
-
   const waiterName = currentUser?.name?.replace(/\s*\(Waiter\)$/i, '').trim() || 'Ramesh Patel';
 
   return (
@@ -131,8 +79,10 @@ export const WaiterHeader: React.FC = () => {
       id="waiter-global-header"
       className="h-16 text-slate-200 flex justify-between items-center w-full px-4 z-30 select-none shrink-0 shadow-md font-sans"
       style={{
-        backgroundColor: '#6b0716',
-        borderBottom: '1px solid rgba(0, 0, 0, 0.4)'
+        background: 'linear-gradient(180deg, #5c0612 0%, #4a030c 100%)',
+        backgroundColor: '#580510',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
       }}
     >
       {/* 1. Left Section: Logo badge & Restaurant/Terminal Title & Subtitle */}
@@ -199,143 +149,7 @@ export const WaiterHeader: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Center Section: [Search Table Input] -> [Active Floor / Filter State] -> [Active Tables: 5] */}
-      <div className="flex items-center justify-center gap-2 md:gap-3 flex-1 max-w-2xl mx-2 sm:mx-4">
-        {/* Fast Table Search/Filter Input */}
-        <div className="relative flex-1 max-w-xs sm:max-w-sm" ref={searchContainerRef}>
-          <div 
-            id="waiter-table-search-wrapper"
-            className="waiter-header-search-wrapper relative flex items-center rounded-lg shadow-xs"
-            style={{
-              backgroundColor: 'rgba(11, 17, 32, 0.6)',
-              color: '#ffffff',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              borderRadius: '8px'
-            }}
-          >
-            <Search 
-              className="absolute left-2.5 w-3.5 h-3.5 pointer-events-none" 
-              style={{ color: '#94a3b8' }}
-            />
-            <input
-              id="waiter-table-search-input"
-              ref={searchInputRef}
-              type="text"
-              value={tableSearchTerm}
-              onChange={(e) => {
-                setTableSearchTerm(e.target.value);
-                setIsSearchDropdownOpen(true);
-              }}
-              onFocus={() => {
-                if (tableSearchTerm.trim().length > 0) {
-                  setIsSearchDropdownOpen(true);
-                }
-              }}
-              placeholder="Search Table No. (e.g. T1, T5)..."
-              style={{
-                backgroundColor: 'transparent',
-                color: '#ffffff',
-                fontWeight: 600,
-                border: 'none',
-              }}
-              className="waiter-header-search-input w-full pl-8 pr-7 py-1.5 rounded-lg text-xs sm:text-sm placeholder-slate-400 focus:outline-none transition-colors"
-            />
-            {tableSearchTerm && (
-              <button
-                type="button"
-                onClick={() => {
-                  setTableSearchTerm('');
-                  setIsSearchDropdownOpen(false);
-                  if (searchInputRef.current) searchInputRef.current.focus();
-                }}
-                className="absolute right-2 cursor-pointer"
-                title="Clear filter"
-              >
-                <X className="w-3.5 h-3.5" style={{ color: '#94a3b8' }} />
-              </button>
-            )}
-          </div>
-
-          {/* Quick Table Search Dropdown Results */}
-          {isSearchDropdownOpen && matchingTables.length > 0 && (
-            <div className="absolute left-0 right-0 mt-1.5 bg-[#0f172a] border border-slate-800 rounded-xl shadow-2xl p-1.5 z-50 text-xs animate-in fade-in zoom-in-95 font-sans">
-              <div className="px-2 py-1 flex items-center justify-between text-[10px] text-slate-400 uppercase font-semibold border-b border-slate-800 mb-1">
-                <span>Matching Tables ({matchingTables.length})</span>
-                <span className="text-[9px]">Click to jump</span>
-              </div>
-              <div className="space-y-1 max-h-56 overflow-y-auto">
-                {matchingTables.map(tbl => (
-                  <button
-                    key={tbl.id}
-                    type="button"
-                    onClick={() => handleSelectTable(tbl)}
-                    className="w-full text-left p-2 rounded-lg bg-[#080d1a] hover:bg-slate-800/80 border border-slate-800/80 flex items-center justify-between transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-white text-xs">{tbl.name} (T{tbl.number})</span>
-                      <span className="text-[10px] text-slate-400">• {tbl.capacity} Seats</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {tbl.status === 'occupied' ? (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-950/40 text-amber-400 border border-amber-800/40 font-medium">
-                          OCCUPIED {tbl.currentAmount ? `₹${tbl.currentAmount}` : ''}
-                        </span>
-                      ) : tbl.status === 'billing' ? (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-950/40 text-purple-400 border border-purple-800/40 font-medium">
-                          BILLING
-                        </span>
-                      ) : (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950/40 text-emerald-400 border border-emerald-800/40 font-medium">
-                          AVAILABLE
-                        </span>
-                      )}
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Dynamic Active Floor / Filter State (Dark Slate Container) */}
-        <div 
-          id="waiter-header-floor-badge"
-          style={{
-            backgroundColor: '#0b1120',
-            border: '1px solid #1e293b',
-            color: '#e2e8f0',
-            fontWeight: 700,
-          }}
-          className="waiter-header-floor-badge hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg shrink-0 shadow-2xs cursor-default"
-        >
-          <MapPin className="w-3.5 h-3.5 shrink-0" style={{ color: '#94a3b8' }} />
-          <span 
-            className="text-[11px] lg:text-xs font-bold whitespace-nowrap"
-            style={{ color: '#e2e8f0', fontWeight: 700 }}
-          >
-            {floorBadgeLabel}
-          </span>
-        </div>
-
-        {/* Active Tables Metric Badge (Dark Slate Container) */}
-        <div 
-          id="waiter-header-active-tables-badge"
-          style={{
-            backgroundColor: '#0b1120',
-            border: '1px solid #1e293b',
-            color: '#e2e8f0',
-            fontWeight: 700,
-          }}
-          className="waiter-header-active-tables-badge hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg shrink-0 text-[11px] lg:text-xs shadow-2xs cursor-default"
-        >
-          <Layers className="w-3.5 h-3.5 shrink-0" style={{ color: '#94a3b8' }} />
-          <span className="whitespace-nowrap font-bold" style={{ color: '#e2e8f0', fontWeight: 700 }}>Active Tables:</span>
-          <span className="font-extrabold" style={{ color: '#34d399', fontWeight: 800 }}>{occupiedCount}</span>
-        </div>
-      </div>
-
-      {/* 3. Right Section: Theme Toggle -> Ready Notifications Bell -> Waiter Profile ("Ramesh Patel") -> Shift Logout */}
+      {/* 2. Right Section: Theme Toggle -> Ready Notifications Bell -> Waiter Profile ("Ramesh Patel") -> Shift Logout */}
       <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
         {/* Global Light / Dark Theme Toggle (Dark Slate Container) */}
         <div className="waiter-header-theme-toggle-wrapper">
@@ -350,21 +164,21 @@ export const WaiterHeader: React.FC = () => {
           />
         </div>
 
-        {/* Kitchen Ready Notification Bell (Dark Slate Container) */}
+        {/* Kitchen Ready Notification Bell (Butter Cream Container) */}
         <div className="relative" ref={notificationContainerRef}>
           <button
             id="waiter-ready-notifications-bell"
             type="button"
             onClick={() => setIsNotificationOpen(prev => !prev)}
             style={{
-              backgroundColor: '#0b1120',
-              border: '1px solid #1e293b',
-              color: '#f1f5f9',
+              backgroundColor: '#F7EECA',
+              border: '1px solid #EADBBA',
+              color: '#0f172a',
             }}
-            className="waiter-header-bell-btn relative p-2 rounded-lg border transition-all cursor-pointer select-none flex items-center justify-center hover:bg-[#151f33] shadow-2xs"
+            className="waiter-header-bell-btn notification-bell-butter-cream relative p-2 rounded-lg border transition-all cursor-pointer select-none flex items-center justify-center hover:bg-[#efe5c0] shadow-2xs"
             title={readyCount > 0 ? `${readyCount} order(s) READY for pickup from kitchen` : 'Kitchen notifications'}
           >
-            <Bell className="w-4 h-4 shrink-0" style={{ color: '#f1f5f9' }} />
+            <Bell className="w-4 h-4 shrink-0" style={{ color: '#0f172a', stroke: '#0f172a' }} />
             
             {readyCount > 0 && (
               <span className="absolute -top-1 -right-1 flex h-4 w-4">

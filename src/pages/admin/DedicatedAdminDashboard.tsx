@@ -411,7 +411,15 @@ export const DedicatedAdminDashboard: React.FC = () => {
       {/* ========================================================================= */}
       {/* 1. TOP EXECUTIVE HEADER */}
       {/* ========================================================================= */}
-      <header className="sticky top-0 z-40 bg-[#0f172a]/95 backdrop-blur-md border-b border-slate-800 px-4 py-3 sm:px-6">
+      <header 
+        style={{
+          background: 'linear-gradient(180deg, #5c0612 0%, #4a030c 100%)',
+          backgroundColor: '#580510',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
+        }}
+        className="sticky top-0 z-40 px-4 py-3 sm:px-6"
+      >
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
           {/* Brand & Admin Badge */}
           <div className="flex items-center gap-3">

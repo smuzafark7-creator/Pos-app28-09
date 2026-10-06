@@ -515,11 +515,11 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
 export const generateInitialTables = (branchId: 'main' | 'city' | 'beach'): RestaurantTable[] => {
   return [
     { id: `${branchId}_t1`, number: 1, name: 'Table 1', capacity: 2, branchId, status: 'occupied', currentAmount: 640, seatedAt: '12:15 PM', guestCount: 2, assignedWaiterName: 'Ramesh Patel', assignedWaiterId: 'usr_5' },
-    { id: `${branchId}_t2`, number: 2, name: 'Table 2', capacity: 4, branchId, status: 'billing', currentAmount: 1130, seatedAt: '12:22 PM', guestCount: 3, assignedWaiterName: 'Ramesh Patel', assignedWaiterId: 'usr_5', billRequested: true, billRequestedAt: '12:48 PM', billRequestedBy: 'Ramesh Patel' },
-    { id: `${branchId}_t3`, number: 3, name: 'Table 3', capacity: 4, branchId, status: 'billing', currentAmount: 680, seatedAt: '11:45 AM', guestCount: 4, assignedWaiterName: 'Ramesh Patel', assignedWaiterId: 'usr_5', billRequested: true, billRequestedAt: '12:40 PM', billRequestedBy: 'Ramesh Patel' },
+    { id: `${branchId}_t2`, number: 2, name: 'Table 2', capacity: 4, branchId, status: 'billing', currentAmount: 1243, seatedAt: '12:22 PM', guestCount: 3, assignedWaiterName: 'Ramesh Patel', assignedWaiterId: 'usr_5', billRequested: true, billRequestedAt: '12:48 PM', billRequestedBy: 'Ramesh Patel' },
+    { id: `${branchId}_t3`, number: 3, name: 'Table 3', capacity: 4, branchId, status: 'billing', currentAmount: 748, seatedAt: '11:45 AM', guestCount: 4, assignedWaiterName: 'Ramesh Patel', assignedWaiterId: 'usr_5', billRequested: true, billRequestedAt: '12:40 PM', billRequestedBy: 'Ramesh Patel' },
     { id: `${branchId}_t4`, number: 4, name: 'Table 4', capacity: 6, branchId, status: 'occupied', currentAmount: 890, seatedAt: '12:35 PM', guestCount: 5, assignedWaiterName: 'Ramesh Patel', assignedWaiterId: 'usr_5' },
-    { id: `${branchId}_t5`, number: 5, name: 'Table 5', capacity: 4, branchId, status: 'occupied', currentAmount: 2709, seatedAt: '12:30 PM', guestCount: 3, guestName: 'Rahul Sharma', assignedWaiterName: 'Ramesh Patel', assignedWaiterId: 'usr_5' },
-    { id: `${branchId}_t6`, number: 6, name: 'Table 6', capacity: 2, branchId, status: 'billing', currentAmount: 300, seatedAt: '12:35 PM', guestCount: 2, guestName: 'Ananya Sen', assignedWaiterName: 'Priya Nair', assignedWaiterId: 'usr_6', billRequested: true, billRequestedAt: '12:52 PM', billRequestedBy: 'Priya Nair' },
+    { id: `${branchId}_t5`, number: 5, name: 'Table 5', capacity: 4, branchId, status: 'billing', currentAmount: 1133, seatedAt: '12:30 PM', guestCount: 3, guestName: 'Rahul Sharma', assignedWaiterName: 'Ramesh Patel', assignedWaiterId: 'usr_5', billRequested: true, billRequestedAt: '12:50 PM', billRequestedBy: 'Ramesh Patel' },
+    { id: `${branchId}_t6`, number: 6, name: 'Table 6', capacity: 2, branchId, status: 'billing', currentAmount: 330, seatedAt: '12:35 PM', guestCount: 2, guestName: 'Ananya Sen', assignedWaiterName: 'Priya Nair', assignedWaiterId: 'usr_6', billRequested: true, billRequestedAt: '12:52 PM', billRequestedBy: 'Priya Nair' },
     { id: `${branchId}_t7`, number: 7, name: 'Table 7', capacity: 4, branchId, status: 'occupied', currentAmount: 760, seatedAt: '12:40 PM', guestCount: 2, assignedWaiterName: 'Priya Nair', assignedWaiterId: 'usr_6' },
     { id: `${branchId}_t8`, number: 8, name: 'Table 8', capacity: 8, branchId, status: 'available', currentAmount: 0, assignedWaiterName: 'Priya Nair', assignedWaiterId: 'usr_6' },
     { id: `${branchId}_t9`, number: 9, name: 'Table 9', capacity: 4, branchId, status: 'available', currentAmount: 0, assignedWaiterName: 'Priya Nair', assignedWaiterId: 'usr_6' },
@@ -538,9 +538,24 @@ export const INITIAL_BILL_REQUESTS: BillRequest[] = [
     requestedBy: 'Ramesh Patel',
     requestedAt: '12:48 PM',
     status: 'pending',
-    kotNumbers: ['KOT-10021'],
-    totalAmount: 1130,
+    kotNumbers: ['KOT-101'],
+    totalAmount: 1243,
     notes: 'Guest requested bill. Payment via Card/Cash.'
+  },
+  {
+    id: 'req_demo_tbl5',
+    tableNumber: 'Table 5',
+    tableId: 'main_t5',
+    branchId: 'main',
+    branchName: 'Main Branch',
+    orderType: 'dine_in',
+    requestedBy: 'Ramesh Patel',
+    requestedAt: '12:50 PM',
+    status: 'pending',
+    kotNumbers: ['KOT-102', 'KOT-10025'],
+    totalAmount: 1133,
+    customerName: 'Rahul Sharma',
+    notes: 'Guest requested bill. Payment via UPI/Cash.'
   },
   {
     id: 'req_demo_tbl3',
@@ -553,7 +568,7 @@ export const INITIAL_BILL_REQUESTS: BillRequest[] = [
     requestedAt: '12:40 PM',
     status: 'pending',
     kotNumbers: ['KOT-10028'],
-    totalAmount: 680,
+    totalAmount: 748,
     notes: 'Guest requested bill. UPI payment.'
   },
   {
@@ -567,7 +582,7 @@ export const INITIAL_BILL_REQUESTS: BillRequest[] = [
     requestedAt: '12:52 PM',
     status: 'pending',
     kotNumbers: ['KOT-10029'],
-    totalAmount: 300,
+    totalAmount: 330,
     notes: 'Awaiting quick cashier settlement.'
   }
 ];
@@ -733,8 +748,8 @@ export const INITIAL_KOTS: KOT[] = [
   },
   // Active Cooking (5 KOTs - Food in Preparation)
   {
-    id: 'kot_10021',
-    kotNumber: 'KOT-10021',
+    id: 'kot_101',
+    kotNumber: 'KOT-101',
     branchId: 'main',
     branchName: 'Main Branch',
     tableNumber: 'Table 2',
@@ -752,11 +767,13 @@ export const INITIAL_KOTS: KOT[] = [
     ],
     totalAmount: 1130,
     specialInstructions: 'Make biryani medium spicy',
-    isBilled: false
+    isBilled: false,
+    isPaid: false,
+    paymentStatus: 'UNPAID'
   },
   {
-    id: 'kot_10026',
-    kotNumber: 'KOT-10026',
+    id: 'kot_102',
+    kotNumber: 'KOT-102',
     branchId: 'main',
     branchName: 'Main Branch',
     tableNumber: 'Table 5',
@@ -774,7 +791,9 @@ export const INITIAL_KOTS: KOT[] = [
     ],
     totalAmount: 390,
     specialInstructions: 'Additional order',
-    isBilled: false
+    isBilled: false,
+    isPaid: false,
+    paymentStatus: 'UNPAID'
   },
   {
     id: 'kot_10033',
@@ -864,8 +883,8 @@ export const INITIAL_KOTS: KOT[] = [
     kotNumber: 'KOT-10035',
     branchId: 'main',
     branchName: 'Main Branch',
-    tableNumber: 'Table 2',
-    tableId: 'main_t2',
+    tableNumber: 'Table 10',
+    tableId: 'main_t10',
     orderType: 'dine_in',
     status: 'ready',
     createdAt: '2026-09-07T12:22:00',
@@ -877,7 +896,9 @@ export const INITIAL_KOTS: KOT[] = [
       { menuItemId: 'item_22', name: 'Mango Lassi', quantity: 2, rate: 80, isVeg: true }
     ],
     totalAmount: 440,
-    isBilled: false
+    isBilled: false,
+    isPaid: false,
+    paymentStatus: 'UNPAID'
   },
   {
     id: 'kot_10036',
@@ -919,7 +940,9 @@ export const INITIAL_KOTS: KOT[] = [
     ],
     totalAmount: 640,
     specialInstructions: 'First order',
-    isBilled: false
+    isBilled: false,
+    isPaid: false,
+    paymentStatus: 'UNPAID'
   },
 
   // --- CITY BRANCH ---
@@ -1214,35 +1237,76 @@ export const INITIAL_KOTS: KOT[] = [
 
 export const INITIAL_BILLS: Bill[] = [
   {
-    id: 'inv_10046',
-    billNumber: 'INV-10046',
-    kotNumber: 'KOT-10046',
+    id: 'inv_10071',
+    billNumber: 'INV-10071',
+    kotNumber: 'KOT-102',
+    kotNumbers: ['KOT-102', 'KOT-10025'],
     kotSent: true,
     branchId: 'main',
     branchName: 'Main Branch',
-    date: '2026-09-15',
-    time: '01:24 PM',
+    date: '2026-09-30',
+    time: '12:50 PM',
     tableNumber: 'Table 5',
     orderType: 'dine_in',
     customerName: 'Rahul Sharma',
     customerMobile: '9820123456',
     stewardName: 'Ramesh Patel',
-    fssaiLicNo: '11518022000451',
     items: [
-      { id: 'item_amravathi_basket', name: 'AMRAVATHI ROTI BASKET', quantity: 2, rate: 180, amount: 360 },
-      { id: 'item_1', name: 'Chicken Biryani Special', quantity: 4, rate: 320, amount: 1280 },
-      { id: 'item_8', name: 'Butter Chicken Handi', quantity: 3, rate: 340, amount: 1020 },
-      { id: 'item_4', name: 'Chicken 65 Crunchy', quantity: 1, rate: 240, amount: 240 },
-      { id: 'item_14', name: 'Garlic Naan Butter', quantity: 3, rate: 76, amount: 228 }
+      { id: 'item_1', name: 'Chicken Biryani', quantity: 2, rate: 280, amount: 560 },
+      { id: 'item_19', name: 'Coke', quantity: 2, rate: 40, amount: 80 },
+      { id: 'item_13', name: 'Plain Naan', quantity: 2, rate: 35, amount: 70 },
+      { id: 'item_8', name: 'Butter Chicken', quantity: 1, rate: 320, amount: 320 }
     ],
-    subtotal: 3128,
-    gstPercent: 5,
-    gstAmount: 156.40,
+    subtotal: 1030,
+    gstPercent: 10,
+    gstAmount: 103,
+    cgstPercent: 5,
+    cgstAmount: 51.5,
+    sgstPercent: 5,
+    sgstAmount: 51.5,
     discountAmount: 0,
-    grandTotal: 3284,
-    paymentMethod: 'upi',
-    status: 'paid',
-    cashierName: 'Anita Deshmukh'
+    grandTotal: 1133,
+    paymentMethod: 'cash',
+    status: 'unpaid',
+    paymentStatus: 'UNPAID',
+    isPaid: false,
+    isEstimate: true,
+    cashierName: 'Cashier Desk'
+  },
+  {
+    id: 'inv_10089',
+    billNumber: 'INV-10089',
+    kotNumber: 'KOT-101',
+    kotNumbers: ['KOT-101'],
+    kotSent: true,
+    branchId: 'main',
+    branchName: 'Main Branch',
+    date: '2026-09-30',
+    time: '12:48 PM',
+    tableNumber: 'Table 2',
+    orderType: 'dine_in',
+    customerName: 'Guest at Table 2',
+    items: [
+      { id: 'item_1', name: 'Chicken Biryani', quantity: 2, rate: 280, amount: 560 },
+      { id: 'item_12', name: 'Butter Naan', quantity: 3, rate: 50, amount: 150 },
+      { id: 'item_8', name: 'Butter Chicken', quantity: 1, rate: 320, amount: 320 },
+      { id: 'item_21', name: 'Fresh Lime Soda', quantity: 2, rate: 50, amount: 100 }
+    ],
+    subtotal: 1130,
+    gstPercent: 10,
+    gstAmount: 113,
+    cgstPercent: 5,
+    cgstAmount: 56.5,
+    sgstPercent: 5,
+    sgstAmount: 56.5,
+    discountAmount: 0,
+    grandTotal: 1243,
+    paymentMethod: 'cash',
+    status: 'unpaid',
+    paymentStatus: 'UNPAID',
+    isPaid: false,
+    isEstimate: true,
+    cashierName: 'Cashier Desk'
   },
   {
     id: 'inv_10001',

@@ -76,10 +76,10 @@ export const CashierCategorySidebar: React.FC<CashierCategorySidebarProps> = ({
             onClick={() => handleToggleMode('alternating')}
             className={`flex-1 py-1 px-1.5 rounded-md text-center transition-all cursor-pointer flex items-center justify-center gap-1 ${
               badgeMode === 'alternating'
-                ? 'bg-[#8b0000] text-white font-bold shadow-xs'
+                ? 'bg-[#7a0c1a] text-white font-bold shadow-xs'
                 : 'text-slate-400 hover:text-white'
             }`}
-            title="Option A: Alternating Crimson Red & Navy Blue badges"
+            title="Option A: Alternating Maroon & Navy Blue badges"
           >
             <Layers className="w-2.5 h-2.5" />
             <span>Alternating</span>
@@ -92,21 +92,21 @@ export const CashierCategorySidebar: React.FC<CashierCategorySidebarProps> = ({
                 ? 'bg-[#0b1e3b] text-white font-bold shadow-xs border border-sky-500/30'
                 : 'text-slate-400 hover:text-white'
             }`}
-            title="Option B: Active Crimson Red, Inactive Navy Slate"
+            title="Option B: Active Maroon, Inactive Navy Slate"
           >
             <span>Navy / Red</span>
           </button>
         </div>
       </div>
 
-      {/* Category List with Crimson Red & Navy Blue Badge Combination */}
+      {/* Category List with Maroon & Navy Blue Badge Combination */}
       <div className="flex-1 overflow-y-auto p-2.5 space-y-2 sidebar-scrollbar min-h-0 transition-colors bg-[#090e18]">
         {safeCategories.map((cat, index) => {
           const isSelected = selectedCategory === cat;
           const count = cat === 'All' ? totalItems : (categoryCounts[cat] || 0);
           const icon = cat !== 'All' ? categoryIcons[cat] : null;
 
-          // Option A: Alternating colors (Even: Crimson, Odd: Navy)
+          // Option A: Alternating colors (Even: Maroon, Odd: Navy)
           const isEven = index % 2 === 0;
 
           let badgeClasses = 'category-badge-btn ';
@@ -114,11 +114,11 @@ export const CashierCategorySidebar: React.FC<CashierCategorySidebarProps> = ({
           if (badgeMode === 'alternating') {
             // Option A: Alternating
             if (isEven) {
-              // Crimson Red
+              // Maroon
               if (isSelected) {
-                badgeClasses += 'category-active-crimson bg-[#991b1b] text-white font-bold border-2 border-rose-300 ring-2 ring-rose-400/60 shadow-[0_4px_18px_rgba(153,27,27,0.55)] scale-[1.02] translate-x-1';
+                badgeClasses += 'category-active-crimson bg-[#7a0c1a] text-white font-bold border-2 border-rose-300 ring-2 ring-rose-900/60 shadow-[0_4px_18px_rgba(122,12,26,0.55)] scale-[1.02] translate-x-1';
               } else {
-                badgeClasses += 'category-crimson bg-[#8b0000] hover:bg-[#991b1b] text-white font-semibold border border-[#991b1b]/60 shadow-xs hover:translate-x-0.5';
+                badgeClasses += 'category-crimson bg-[#580510] hover:bg-[#7a0c1a] text-white font-semibold border border-[#7a0c1a]/60 shadow-xs hover:translate-x-0.5';
               }
             } else {
               // Navy Blue
@@ -131,7 +131,7 @@ export const CashierCategorySidebar: React.FC<CashierCategorySidebarProps> = ({
           } else {
             // Option B: Active vs Inactive State
             if (isSelected) {
-              badgeClasses += 'category-active-crimson bg-[#991b1b] text-white font-bold border-2 border-rose-400 ring-2 ring-rose-400/40 shadow-[0_4px_16px_rgba(153,27,27,0.5)] scale-[1.02] translate-x-1';
+              badgeClasses += 'category-active-crimson bg-[#7a0c1a] text-white font-bold border-2 border-rose-400 ring-2 ring-rose-900/40 shadow-[0_4px_16px_rgba(122,12,26,0.5)] scale-[1.02] translate-x-1';
             } else {
               badgeClasses += 'category-navy bg-[#0b1e3b] hover:bg-[#152a4e] text-white/95 font-semibold border border-[#1e3a8a]/40 shadow-xs hover:text-white hover:translate-x-0.5';
             }

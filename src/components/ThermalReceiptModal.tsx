@@ -216,8 +216,10 @@ export const ThermalReceiptModal: React.FC = () => {
         '=================================',
         `GRAND TOTAL:            ₹${calcGrandTotal.toFixed(2).padStart(8)}`,
         '---------------------------------',
-        `PAID VIA ${currentBill.paymentMethod.toUpperCase()}`,
-        currentBill.paymentMethod === 'split' && currentBill.splitDetails ? 
+        (currentBill.status !== 'paid' || currentBill.isEstimate || (currentBill as any).paymentStatus === 'UNPAID')
+          ? '*** UNPAID / ESTIMATE - NOT SETTLED ***'
+          : `PAID VIA ${currentBill.paymentMethod.toUpperCase()}`,
+        (currentBill.status === 'paid' && currentBill.paymentMethod === 'split' && currentBill.splitDetails) ? 
           `[Cash: ₹${currentBill.splitDetails.cash} | UPI: ₹${currentBill.splitDetails.upi} | Card: ₹${currentBill.splitDetails.card}]` : '',
         '---------------------------------',
         `  ${footerMsg}  `,
@@ -594,9 +596,9 @@ export const ThermalReceiptModal: React.FC = () => {
 
                 {/* Payment & Footer */}
                 <div className="text-center pt-0.5 space-y-0.5 text-black">
-                  {currentBill.status === 'provisional' || currentBill.isEstimate ? (
+                  {currentBill.status !== 'paid' || currentBill.isEstimate || (currentBill as any).paymentStatus === 'UNPAID' ? (
                     <div className="text-[9px] font-extrabold uppercase border border-black py-0.5 px-2 inline-block">
-                      *** ESTIMATE ONLY - NOT SETTLED ***
+                      *** UNPAID / ESTIMATE - NOT SETTLED ***
                     </div>
                   ) : (
                     <div className="text-[10px] font-extrabold uppercase">
@@ -604,7 +606,7 @@ export const ThermalReceiptModal: React.FC = () => {
                     </div>
                   )}
 
-                  {currentBill.paymentMethod === 'split' && currentBill.splitDetails && (
+                  {currentBill.status === 'paid' && currentBill.paymentMethod === 'split' && currentBill.splitDetails && (
                     <div className="text-[9px] flex justify-center gap-2 font-bold">
                       {currentBill.splitDetails.cash > 0 && <span>Cash: ₹{currentBill.splitDetails.cash}</span>}
                       {currentBill.splitDetails.upi > 0 && <span>UPI: ₹{currentBill.splitDetails.upi}</span>}
@@ -661,10 +663,10 @@ export const ThermalReceiptModal: React.FC = () => {
             <button
               type="button"
               onClick={handlePrint}
-              className="thermal-modal-btn-print flex items-center gap-2 px-5 py-2 rounded-lg text-white shadow-sm transition-opacity cursor-pointer hover:opacity-90"
+              className="thermal-modal-btn-print flex items-center gap-2 px-5 py-2 rounded-lg text-white shadow-sm transition-all cursor-pointer hover:bg-[#8f1020] active:bg-[#4a030c]"
               style={{ 
-                backgroundColor: '#8b0000', 
-                border: '1px solid #b91c1c',
+                backgroundColor: '#7a0c1a', 
+                border: '1px solid #8f1020',
                 color: '#ffffff',
                 fontWeight: 850,
                 fontSize: '13px'

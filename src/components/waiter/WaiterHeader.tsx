@@ -17,72 +17,16 @@ export const WaiterHeader: React.FC = () => {
     currentUser, 
     logout, 
     filteredTables, 
-    tableSearchTerm, 
-    setTableSearchTerm,
-    tableFloorFilter,
     selectTableForPOS,
     showToast,
     restaurantSettings
   } = useApp();
-
-  const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
-  const searchContainerRef = useRef<HTMLDivElement>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const safeFilteredTables = Array.isArray(filteredTables) ? filteredTables : [];
 
   const occupiedCount = useMemo(() => {
     return safeFilteredTables.filter(t => t.status === 'occupied' || t.status === 'billing').length;
   }, [safeFilteredTables]);
-
-  const getTableFloor = (tableNumber: number): string => {
-    if (tableNumber <= 4) return 'Ground Floor';
-    if (tableNumber <= 8) return 'First Floor';
-    return 'Outdoor / Terrace';
-  };
-
-  const floorTablesCount = useMemo(() => {
-    if (tableFloorFilter === 'All') return safeFilteredTables.length;
-    return safeFilteredTables.filter(t => getTableFloor(t.number) === tableFloorFilter).length;
-  }, [safeFilteredTables, tableFloorFilter]);
-
-  const floorBadgeLabel = useMemo(() => {
-    if (tableFloorFilter === 'All') {
-      return `All Floors • ${floorTablesCount} Tables`;
-    }
-    return `${tableFloorFilter} • ${floorTablesCount} Tables`;
-  }, [tableFloorFilter, floorTablesCount]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
-        setIsSearchDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const matchingTables = useMemo(() => {
-    if (!tableSearchTerm || !tableSearchTerm.trim()) return [];
-    const term = tableSearchTerm.trim().toLowerCase();
-    const numOnly = term.replace(/^t\s*/, '');
-    return safeFilteredTables.filter(tbl => {
-      const numStr = String(tbl.number);
-      const nameStr = tbl.name.toLowerCase();
-      return numStr === numOnly || 
-             nameStr.includes(term) || 
-             `t${tbl.number}`.includes(term) ||
-             nameStr.includes(numOnly);
-    }).slice(0, 6);
-  }, [safeFilteredTables, tableSearchTerm]);
-
-  const handleSelectTable = (tbl: RestaurantTable) => {
-    selectTableForPOS(tbl.name);
-    setTableSearchTerm(tbl.name);
-    setIsSearchDropdownOpen(false);
-    showToast(`Table Selected`, `Switched to ${tbl.name} (${tbl.status.toUpperCase()})`, 'info');
-  };
 
   const waiterName = currentUser?.name?.replace(/\s*\(Waiter\)$/i, '').trim() || 'Ramesh Patel';
 
@@ -91,8 +35,10 @@ export const WaiterHeader: React.FC = () => {
       id="waiter-global-header-secondary"
       className="h-16 text-slate-200 flex justify-between items-center w-full px-4 z-30 select-none shrink-0 shadow-md font-sans"
       style={{
-        backgroundColor: '#6b0716',
-        borderBottom: '1px solid rgba(0, 0, 0, 0.4)'
+        background: 'linear-gradient(180deg, #5c0612 0%, #4a030c 100%)',
+        backgroundColor: '#580510',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
       }}
     >
       {/* 1. Left Section: Logo badge */}
@@ -153,91 +99,7 @@ export const WaiterHeader: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Middle Section: Search & Floor Pill */}
-      <div className="hidden md:flex items-center gap-2 max-w-md w-full mx-4">
-        <div ref={searchContainerRef} className="relative flex-1">
-          <div 
-            className="relative flex items-center rounded-lg shadow-xs"
-            style={{
-              backgroundColor: 'rgba(11, 17, 32, 0.6)',
-              color: '#ffffff',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              borderRadius: '8px'
-            }}
-          >
-            <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#94a3b8' }} />
-            <input
-              ref={searchInputRef}
-              type="text"
-              value={tableSearchTerm}
-              onChange={e => {
-                setTableSearchTerm(e.target.value);
-                setIsSearchDropdownOpen(true);
-              }}
-              onFocus={() => setIsSearchDropdownOpen(true)}
-              placeholder="Search Table No. (e.g. 4, T2)..."
-              style={{
-                backgroundColor: 'transparent',
-                color: '#ffffff',
-                fontWeight: 600,
-                border: 'none',
-              }}
-              className="w-full pl-8 pr-7 py-1.5 rounded-lg text-xs placeholder-slate-400 focus:outline-none transition-colors"
-            />
-            {tableSearchTerm && (
-              <button
-                type="button"
-                onClick={() => {
-                  setTableSearchTerm('');
-                  searchInputRef.current?.focus();
-                }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer"
-              >
-                <X className="w-3 h-3" style={{ color: '#94a3b8' }} />
-              </button>
-            )}
-          </div>
-
-          {isSearchDropdownOpen && matchingTables.length > 0 && (
-            <div className="absolute left-0 right-0 top-full mt-1.5 bg-[#0f172a] border border-slate-800 rounded-xl shadow-2xl p-1.5 z-50 text-xs max-h-56 overflow-y-auto">
-              <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800 mb-1">
-                Select Table
-              </div>
-              {matchingTables.map(tbl => (
-                <button
-                  key={tbl.id}
-                  type="button"
-                  onClick={() => handleSelectTable(tbl)}
-                  className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left text-slate-200 bg-[#080d1a] hover:bg-slate-800/80 border border-slate-800/80 transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-white">T{tbl.number}</span>
-                    <span className="text-[11px] text-slate-400">{tbl.name}</span>
-                  </div>
-                  <span className="text-[10px] text-emerald-400 font-bold uppercase">
-                    {tbl.status}
-                  </span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div 
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg shrink-0 shadow-2xs"
-          style={{
-            backgroundColor: '#0b1120',
-            border: '1px solid #1e293b',
-            color: '#e2e8f0',
-            fontWeight: 700,
-          }}
-        >
-          <Layers className="w-3.5 h-3.5 text-emerald-400" />
-          <span style={{ color: '#e2e8f0' }}>{floorBadgeLabel}</span>
-        </div>
-      </div>
-
-      {/* 3. Right Section: Waiter profile and Sign out */}
+      {/* 2. Right Section: Waiter profile and Sign out */}
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         <div 
           className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg border shadow-2xs text-xs"

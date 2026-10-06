@@ -36,6 +36,7 @@ export const BillDetailsModal: React.FC = () => {
     openReceiptModal,
     voidBill,
     sendKotForBill,
+    requestBill,
     currentUser,
     showToast,
     restaurantSettings
@@ -97,6 +98,22 @@ export const BillDetailsModal: React.FC = () => {
     setPinError(false);
   };
 
+  const handlePrintEstimateAndRequestBill = () => {
+    if (activeDetailsBill.tableNumber) {
+      requestBill(activeDetailsBill.tableNumber, 'Customer requested bill at dining table');
+    }
+    openReceiptModal(activeDetailsBill);
+    showToast('Estimate Printed', `Table ${activeDetailsBill.tableNumber || ''} moved to BILLING stage. Estimate slip ready.`, 'success');
+  };
+
+  const isEstimateOrUnpaid = activeDetailsBill.status !== 'paid' || 
+    activeDetailsBill.status === 'unpaid' || 
+    activeDetailsBill.status === 'provisional' || 
+    activeDetailsBill.isEstimate === true || 
+    activeDetailsBill.billNumber.startsWith('EST-') ||
+    activeDetailsBill.paymentStatus === 'UNPAID' ||
+    activeDetailsBill.isPaid === false;
+
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-150">
       <div 
@@ -115,7 +132,7 @@ export const BillDetailsModal: React.FC = () => {
           style={{ backgroundColor: '#0b1120', borderColor: '#1e293b' }}
         >
           <div className="flex items-center gap-2.5">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold shadow-xs ${isVoided ? 'bg-rose-600' : 'bg-emerald-600'}`}>
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold shadow-xs ${isVoided ? 'bg-rose-600' : isEstimateOrUnpaid ? 'bg-amber-600' : 'bg-emerald-600'}`}>
               {isVoided ? <Ban className="w-4 h-4" /> : <Receipt className="w-4 h-4" />}
             </div>
             <div>
@@ -130,24 +147,32 @@ export const BillDetailsModal: React.FC = () => {
                   className={`tax-invoice-status-paid px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wide ${
                     isVoided 
                       ? 'bg-rose-950/80 text-rose-400 border border-rose-800' 
+                      : isEstimateOrUnpaid
+                      ? 'bg-amber-950/80 text-amber-300 border border-amber-500/50'
                       : ''
                   }`}
-                  style={!isVoided ? {
+                  style={!isVoided && !isEstimateOrUnpaid ? {
                     backgroundColor: 'rgba(6, 78, 59, 0.5)',
                     color: '#34d399',
                     border: '1px solid #059669',
                     fontWeight: 800,
                     fontSize: '10px'
+                  } : !isVoided ? {
+                    backgroundColor: 'rgba(69, 26, 3, 0.75)',
+                    color: '#fcd34d',
+                    border: '1px solid rgba(245, 158, 11, 0.6)',
+                    fontWeight: 800,
+                    fontSize: '10px'
                   } : undefined}
                 >
-                  {isVoided ? 'VOIDED / CANCELLED' : (activeDetailsBill.status === 'paid' ? 'SETTLED & PAID' : activeDetailsBill.status.toUpperCase())}
+                  {isVoided ? 'VOIDED / CANCELLED' : (isEstimateOrUnpaid ? 'UNPAID / ESTIMATE' : `PAID VIA ${(activeDetailsBill.paymentMethod || 'cash').toUpperCase()}`)}
                 </span>
               </div>
               <p 
                 className="tax-invoice-subtitle text-[11px] font-mono mt-0.5"
                 style={{ color: '#94a3b8', fontSize: '11px' }}
               >
-                Tax Invoice Details • Bilaal Restaurant
+                {isEstimateOrUnpaid ? 'Running Estimate Bill (Unpaid)' : 'Tax Invoice Details'} • Bilaal Restaurant
               </p>
             </div>
           </div>
@@ -536,11 +561,11 @@ export const BillDetailsModal: React.FC = () => {
                   className="font-extrabold text-xs uppercase"
                   style={{ color: '#cbd5e1' }}
                 >
-                  {activeDetailsBill.paymentMethod}
+                  {isEstimateOrUnpaid ? 'UNPAID / ESTIMATE' : activeDetailsBill.paymentMethod}
                 </span>
               </div>
 
-              {activeDetailsBill.paymentMethod === 'split' && activeDetailsBill.splitDetails && (
+              {!isEstimateOrUnpaid && activeDetailsBill.paymentMethod === 'split' && activeDetailsBill.splitDetails && (
                 <div className="text-[11px] mt-1 flex flex-wrap gap-2 font-mono" style={{ color: '#cbd5e1' }}>
                   {activeDetailsBill.splitDetails.cash > 0 && <span>Cash: ₹{activeDetailsBill.splitDetails.cash}</span>}
                   {activeDetailsBill.splitDetails.upi > 0 && <span>UPI: ₹{activeDetailsBill.splitDetails.upi}</span>}
@@ -553,21 +578,34 @@ export const BillDetailsModal: React.FC = () => {
               <span className="text-[11px]" style={{ color: '#cbd5e1' }}>
                 Cashier: <strong style={{ color: '#ffffff' }}>{activeDetailsBill.cashierName || 'Counter'}</strong>
               </span>
-              <div 
-                className="px-2.5 py-0.5 rounded font-black text-[10px] uppercase tracking-wider shadow-2xs"
-                style={{ 
-                  backgroundColor: 'rgba(6, 78, 59, 0.6)', 
-                  color: '#34d399', 
-                  border: '1px solid #059669' 
-                }}
-              >
-                PAID
-              </div>
+              {isEstimateOrUnpaid ? (
+                <div 
+                  className="px-2.5 py-0.5 rounded font-black text-[10px] uppercase tracking-wider shadow-2xs"
+                  style={{ 
+                    backgroundColor: 'rgba(69, 26, 3, 0.75)', 
+                    color: '#fcd34d', 
+                    border: '1px solid rgba(245, 158, 11, 0.5)' 
+                  }}
+                >
+                  UNPAID / ESTIMATE
+                </div>
+              ) : (
+                <div 
+                  className="px-2.5 py-0.5 rounded font-black text-[10px] uppercase tracking-wider shadow-2xs"
+                  style={{ 
+                    backgroundColor: 'rgba(6, 78, 59, 0.6)', 
+                    color: '#34d399', 
+                    border: '1px solid #059669' 
+                  }}
+                >
+                  PAID VIA {(activeDetailsBill.paymentMethod || 'cash').toUpperCase()}
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Modal Action Buttons: [ Close ] [ Void Bill ] [ Re-send KOT ] [ View Bill ] [ Reprint Receipt ] */}
+        {/* Modal Action Buttons: [ Close ] [ Void Bill ] [ Re-send KOT ] [ Print Estimate / Request Bill ] [ View Bill ] [ Reprint Receipt ] */}
         <div 
           className="p-4 border-t flex flex-wrap items-center justify-between gap-2 font-mono"
           style={{ backgroundColor: '#0b1120', borderColor: '#1e293b' }}
@@ -603,7 +641,24 @@ export const BillDetailsModal: React.FC = () => {
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            {isEstimateOrUnpaid && (
+              <button
+                type="button"
+                onClick={handlePrintEstimateAndRequestBill}
+                className="tax-invoice-btn-estimate flex items-center gap-1.5 px-4 py-2 rounded-lg font-extrabold text-xs transition-colors cursor-pointer text-white shadow-sm"
+                style={{ 
+                  backgroundColor: '#b45309', 
+                  border: '1px solid #f59e0b',
+                  color: '#ffffff'
+                }}
+                title="Print un-settled estimate slip and change table status to BILLING"
+              >
+                <Printer className="w-3.5 h-3.5 text-amber-200" />
+                <span>Print Estimate / Request Bill</span>
+              </button>
+            )}
+
             <button
               onClick={() => sendKotForBill(activeDetailsBill)}
               className="tax-invoice-btn-secondary flex items-center gap-1.5 px-4 py-2 rounded-lg font-bold text-xs transition-colors cursor-pointer"
@@ -643,10 +698,10 @@ export const BillDetailsModal: React.FC = () => {
 
             <button
               onClick={handleReprint}
-              className="tax-invoice-btn-reprint flex items-center gap-1.5 px-5 py-2 rounded-lg font-extrabold text-xs transition-colors cursor-pointer text-white shadow-sm"
+              className="tax-invoice-btn-reprint flex items-center gap-1.5 px-5 py-2 rounded-lg font-extrabold text-xs transition-colors cursor-pointer text-white shadow-sm bg-[#7a0c1a] hover:bg-[#8f1020] active:bg-[#4a030c]"
               style={{ 
-                backgroundColor: '#8b0000', 
-                border: '1px solid #dc2626',
+                backgroundColor: '#7a0c1a', 
+                border: '1px solid #8f1020',
                 color: '#ffffff'
               }}
               title="Reprint thermal receipt slip"

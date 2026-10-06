@@ -150,12 +150,12 @@ export const WaiterTableCard: React.FC<WaiterTableCardProps> = ({
             onSelect(table.name);
           }}
           style={{
-            backgroundColor: '#8b0000',
+            backgroundColor: '#7a0c1a',
             color: '#ffffff',
-            border: '1px solid #b91c1c',
+            border: '1px solid #8f1020',
             fontWeight: 700,
           }}
-          className="btn-table-pos flex-1 py-2 rounded-lg text-xs font-bold text-center transition-all bg-[#8b0000] hover:bg-[#a10000] text-white border border-[#b91c1c] cursor-pointer shadow-xs"
+          className="btn-table-pos flex-1 py-2 rounded-lg text-xs font-bold text-center transition-all bg-[#7a0c1a] hover:bg-[#8f1020] active:bg-[#4a030c] text-white border border-[#8f1020] cursor-pointer shadow-xs"
         >
           Punch POS
         </button>

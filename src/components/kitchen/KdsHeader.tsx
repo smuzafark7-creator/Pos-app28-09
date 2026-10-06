@@ -44,8 +44,10 @@ export const KdsHeader: React.FC<KdsHeaderProps> = ({
     <header 
       className="h-16 text-white px-3 sm:px-6 flex items-center justify-between z-30 select-none shrink-0 shadow-xs"
       style={{
-        backgroundColor: '#6b0716',
-        borderBottom: '1px solid rgba(0, 0, 0, 0.4)'
+        background: 'linear-gradient(180deg, #5c0612 0%, #4a030c 100%)',
+        backgroundColor: '#580510',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
       }}
     >
       {/* Left: KDS Brand */}

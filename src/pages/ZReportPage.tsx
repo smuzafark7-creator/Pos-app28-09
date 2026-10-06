@@ -298,11 +298,11 @@ export const ZReportPage: React.FC = () => {
               setCountedCash(cashDrawerTotal.toFixed(2));
               setIsSettleModalOpen(true);
             }}
-            className="hover:bg-red-800 active:scale-98 transition-all cursor-pointer flex items-center gap-2 shadow-sm zreport-btn-settle"
+            className="hover:bg-[#8f1020] active:bg-[#4a030c] active:scale-98 transition-all cursor-pointer flex items-center gap-2 shadow-sm zreport-btn-settle"
             style={{ 
-              backgroundColor: '#8b0000', 
+              backgroundColor: '#7a0c1a', 
               color: '#ffffff', 
-              border: '1px solid #b91c1c', 
+              border: '1px solid #8f1020', 
               fontWeight: 800, 
               padding: '8px 16px', 
               borderRadius: '8px', 
@@ -1055,8 +1055,8 @@ export const ZReportPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleConfirmSettle}
-                className="flex-1 py-2.5 rounded-xl hover:bg-red-800 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm"
-                style={{ backgroundColor: '#8b0000', border: '1px solid #b91c1c', fontWeight: 800 }}
+                className="flex-1 py-2.5 rounded-xl bg-[#7a0c1a] hover:bg-[#8f1020] active:bg-[#4a030c] text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm"
+                style={{ backgroundColor: '#7a0c1a', border: '1px solid #8f1020', fontWeight: 800 }}
               >
                 <Lock className="w-3.5 h-3.5" />
                 <span>Confirm Shift Close</span>

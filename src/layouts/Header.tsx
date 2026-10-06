@@ -458,23 +458,59 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, variant = 'c
           </div>
         ) : variant === 'waiter' ? (
           /* WAITER TABLET SHELL: Compact touch-friendly navigation for Tables, POS/Order, KOT, and Bill Requests */
-          <nav className="flex items-center gap-1 sm:gap-1.5 shrink-0 font-mono">
+          <nav className="flex items-center gap-1 sm:gap-1.5 shrink-0 font-sans">
             <button
               id="waiter-nav-tables"
               type="button"
               onClick={() => setActiveTab('tables')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+              style={activeTab === 'tables' ? {
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#0f172a',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              } : {
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                border: '1px solid transparent',
+                color: '#cbd5e1',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              }}
+              className={`text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
                 activeTab === 'tables'
-                  ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                  ? 'header-tab-tables-active header-tab-pill-active rounded-full bg-[#F7EECA] border border-[#EADBBA] text-[#0f172a] font-semibold shadow-xs'
+                  : 'header-tab-pill-inactive rounded-full bg-transparent border border-transparent hover:bg-black/20 text-[#cbd5e1] font-semibold'
               }`}
             >
-              <Grid3X3 className="w-3.5 h-3.5 shrink-0" />
-              <span>Tables</span>
+              <Grid3X3 className="w-3.5 h-3.5 shrink-0" style={activeTab === 'tables' ? { color: '#0f172a', stroke: '#0f172a' } : undefined} />
+              <span style={activeTab === 'tables' ? { color: '#0f172a', fontWeight: 600 } : { color: '#cbd5e1', fontWeight: 600 }}>Tables</span>
               {tablesBadge !== undefined && tablesBadge > 0 && (
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
-                  activeTab === 'tables' ? 'bg-emerald-950 text-emerald-200 border border-emerald-800' : 'bg-amber-500 text-slate-950'
-                }`}>
+                <span className={`text-[11px] px-1.5 py-0.5 rounded-full font-mono font-semibold ${
+                  activeTab === 'tables' ? 'bg-[#0f172a] text-[#ffffff]' : 'bg-amber-500 text-slate-950'
+                }`}
+                style={activeTab === 'tables' ? {
+                  backgroundColor: '#0f172a',
+                  color: '#ffffff',
+                  fontWeight: 600,
+                  fontSize: '11px',
+                  padding: '2px 7px',
+                  borderRadius: '9999px'
+                } : undefined}>
                   {tablesBadge}
                 </span>
               )}
@@ -484,32 +520,96 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, variant = 'c
               id="waiter-nav-pos"
               type="button"
               onClick={() => setActiveTab('pos')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+              style={activeTab === 'pos' ? {
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#0f172a',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              } : {
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                border: '1px solid transparent',
+                color: '#cbd5e1',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              }}
+              className={`text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
                 activeTab === 'pos'
-                  ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                  ? 'header-tab-pos-active header-tab-pill-active rounded-full bg-[#F7EECA] border border-[#EADBBA] text-[#0f172a] font-semibold shadow-xs'
+                  : 'header-tab-pill-inactive rounded-full bg-transparent border border-transparent hover:bg-black/20 text-[#cbd5e1] font-semibold'
               }`}
             >
-              <ReceiptText className="w-3.5 h-3.5 shrink-0" />
-              <span>POS / Order</span>
+              <ReceiptText className="w-3.5 h-3.5 shrink-0" style={activeTab === 'pos' ? { color: '#0f172a', stroke: '#0f172a' } : undefined} />
+              <span style={activeTab === 'pos' ? { color: '#0f172a', fontWeight: 600 } : { color: '#cbd5e1', fontWeight: 600 }}>POS / Order</span>
             </button>
 
             <button
               id="waiter-nav-kot"
               type="button"
               onClick={() => setActiveTab('kot')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+              style={activeTab === 'kot' ? {
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#0f172a',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              } : {
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                border: '1px solid transparent',
+                color: '#cbd5e1',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              }}
+              className={`text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
                 activeTab === 'kot'
-                  ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                  ? 'header-tab-kots-active header-tab-pill-active rounded-full bg-[#F7EECA] border border-[#EADBBA] text-[#0f172a] font-semibold shadow-xs'
+                  : 'header-tab-pill-inactive rounded-full bg-transparent border border-transparent hover:bg-black/20 text-[#cbd5e1] font-semibold'
               }`}
             >
-              <FileText className="w-3.5 h-3.5 shrink-0" />
-              <span>Live KOT</span>
+              <FileText className="w-3.5 h-3.5 shrink-0" style={activeTab === 'kot' ? { color: '#0f172a', stroke: '#0f172a' } : undefined} />
+              <span style={activeTab === 'kot' ? { color: '#0f172a', fontWeight: 600 } : { color: '#cbd5e1', fontWeight: 600 }}>Live KOT</span>
               {pendingKotsCount > 0 && (
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
-                  activeTab === 'kot' ? 'bg-emerald-950 text-emerald-200 border border-emerald-800' : 'bg-amber-500 text-slate-950'
-                }`}>
+                <span className={`min-w-4 h-4 px-1.5 rounded-full text-[11px] font-semibold flex items-center justify-center font-mono ml-0.5 ${
+                  activeTab === 'kot' ? 'bg-[#0f172a] text-[#ffffff]' : 'bg-amber-500 text-slate-950'
+                }`}
+                style={activeTab === 'kot' ? {
+                  backgroundColor: '#0f172a',
+                  color: '#ffffff',
+                  fontWeight: 600,
+                  fontSize: '11px',
+                  padding: '2px 7px',
+                  borderRadius: '9999px'
+                } : undefined}>
                   {pendingKotsCount}
                 </span>
               )}
@@ -656,11 +756,17 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, variant = 'c
         {/* Notifications */}
         <div className="relative">
           <button
+            id="global-header-notification-bell"
             onClick={() => setShowNotifications(prev => !prev)}
-            className="p-2 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900 transition-colors relative"
+            style={{
+              backgroundColor: '#F7EECA',
+              borderColor: '#EADBBA',
+              color: '#0f172a',
+            }}
+            className="notification-bell-butter-cream p-2 rounded-lg border transition-colors relative hover:bg-[#efe5c0] cursor-pointer"
             title="Kitchen Orders Notifications"
           >
-            <Bell className="w-4 h-4" />
+            <Bell className="w-4 h-4" style={{ color: '#0f172a', stroke: '#0f172a' }} />
             {pendingKotsCount > 0 && (
               <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-600 text-white text-[9px] font-bold flex items-center justify-center font-mono animate-pulse">
                 {pendingKotsCount}

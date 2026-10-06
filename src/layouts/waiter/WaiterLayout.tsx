@@ -38,7 +38,7 @@ export const WaiterLayout: React.FC<WaiterLayoutProps> = ({
         className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-[#0a0f1d] relative z-10 ml-[84px]"
         style={{ backgroundColor: '#0a0f1d', marginLeft: '84px' }}
       >
-        <BrandWatermark opacity={0.09} />
+        {activeTabOverride !== 'pos' && <BrandWatermark opacity={0.09} />}
         <div className="relative z-10 h-full w-full">
           {children}
         </div>

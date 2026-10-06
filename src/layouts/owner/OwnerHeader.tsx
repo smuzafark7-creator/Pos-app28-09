@@ -52,7 +52,15 @@ export const OwnerHeader: React.FC<OwnerHeaderProps> = ({ onToggleMobileSidebar,
     : (branches || []).find(b => b.id === currentBranch)?.name || 'Main Branch';
 
   return (
-    <header className={`h-16 bg-[#0f172a]/90 backdrop-blur-md text-slate-100 px-4 lg:px-6 flex items-center justify-between border-b border-slate-800/80 sticky top-0 z-50 flex-shrink-0 select-none shadow-xs font-sans ${className || ''}`}>
+    <header 
+      style={{
+        background: 'linear-gradient(180deg, #5c0612 0%, #4a030c 100%)',
+        backgroundColor: '#580510',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
+      }}
+      className={`h-16 text-slate-100 px-4 lg:px-6 flex items-center justify-between sticky top-0 z-50 flex-shrink-0 select-none shadow-xs font-sans ${className || ''}`}
+    >
       {/* Brand & Multi-Branch Selector */}
       <div className="flex items-center gap-3 md:gap-4">
         {onToggleMobileSidebar && (
@@ -148,11 +156,17 @@ export const OwnerHeader: React.FC<OwnerHeaderProps> = ({ onToggleMobileSidebar,
         {/* Notifications */}
         <div className="relative">
           <button
+            id="owner-notification-bell-btn"
             onClick={() => setShowNotifications(prev => !prev)}
-            className="p-2 rounded-lg bg-[#111c2e] hover:bg-slate-800 border border-slate-800/80 text-slate-300 hover:text-white transition-colors relative cursor-pointer"
+            style={{
+              backgroundColor: '#F7EECA',
+              borderColor: '#EADBBA',
+              color: '#0f172a',
+            }}
+            className="notification-bell-butter-cream p-2 rounded-lg border transition-colors relative cursor-pointer hover:bg-[#efe5c0]"
             title="Kitchen Orders Notifications"
           >
-            <Bell className="w-4 h-4" />
+            <Bell className="w-4 h-4" style={{ color: '#0f172a', stroke: '#0f172a' }} />
             {pendingKotsCount > 0 && (
               <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-600 text-white text-[9px] font-bold flex items-center justify-center animate-pulse">
                 {pendingKotsCount}

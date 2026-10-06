@@ -8,7 +8,7 @@ export const KDS_STATUS_OPTIONS = [
   { key: 'Preparing', label: 'Preparing' },
   { key: 'Ready', label: 'Ready' },
   { key: 'Picked Up', label: 'Picked Up' },
-  { key: 'Served / Completed', label: 'Served / Completed' },
+  { key: 'Served', label: 'Served' },
 ] as const;
 
 export type KdsOrderType = 'All Types' | 'Dine In' | 'Takeaway' | 'Delivery';
@@ -127,6 +127,7 @@ export function getKdsStatusCounts(
     Preparing: preparingCount,
     Ready: readyCount,
     'Picked Up': pickedUpCount,
+    Served: servedCount,
     'Served / Completed': servedCount,
   };
 }

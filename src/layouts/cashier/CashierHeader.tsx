@@ -121,7 +121,13 @@ export const CashierHeader: React.FC<CashierHeaderProps> = ({
     <>
       <header
         id="cashier-global-header"
-        className="w-full flex items-center justify-between h-16 min-w-0 bg-[#5c0b16] border-b border-[#3d060e] select-none flex-shrink-0 shadow-xs font-sans z-30"
+        style={{
+          background: 'linear-gradient(180deg, #5c0612 0%, #4a030c 100%)',
+          backgroundColor: '#580510',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
+        }}
+        className="w-full flex items-center justify-between h-16 min-w-0 select-none flex-shrink-0 font-sans z-30"
       >
         {/* Left: Cashier Terminal branding (anchored on the left matching sidebar width) */}
         <div className="w-48 sm:w-52 xl:w-56 shrink-0 flex items-center gap-2 px-3 sm:px-4">
@@ -144,20 +150,61 @@ export const CashierHeader: React.FC<CashierHeaderProps> = ({
 
         {/* Middle: Terminal Navigation Tabs (Horizontally centered to the middle menu panel) */}
         <div className="flex-1 flex items-center justify-center min-w-0 px-2">
-          <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto no-scrollbar max-w-full bg-black/25 p-1.5 rounded-2xl border border-[#e2d5be]/40 shadow-inner">
+          <div 
+            id="cashier-header-nav-pills"
+            className="cashier-nav-pills-container flex items-center gap-1.5 shrink-0 overflow-x-auto no-scrollbar max-w-full p-1.5 rounded-full shadow-inner"
+            style={{
+              background: 'rgba(0, 0, 0, 0.35)',
+              backgroundColor: 'rgba(0, 0, 0, 0.35)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+            }}
+          >
             {/* 1. Tables */}
             <button
               id="cashier-tab-tables"
               type="button"
               onClick={() => handleTabClick('tables')}
-              className={`rounded-xl px-4 py-2 flex items-center gap-2 text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
+              style={currentActive === 'tables' ? {
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#0f172a',
+                fontWeight: 700,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              } : {
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                border: '1px solid transparent',
+                color: '#e2e8f0',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              }}
+              className={`text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
                 currentActive === 'tables'
-                  ? 'bg-[#f8f3e6] border border-[#e2d5be] !text-[#6b0f1a] font-bold shadow-md'
-                  : 'bg-black/25 border border-transparent hover:border-[#e2d5be]/30 text-[#f8f3e6] hover:bg-[#f8f3e6]/10 font-medium'
+                  ? 'header-tab-tables-active header-tab-pill-active rounded-full bg-[#F7EECA] border border-[#EADBBA] text-[#0f172a] font-bold shadow-md'
+                  : 'header-tab-pill-inactive rounded-full bg-transparent border border-transparent hover:bg-black/20 text-[#e2e8f0] font-semibold'
               }`}
             >
-              <span className="text-base">🪑</span>
-              <span className={currentActive === 'tables' ? '!text-[#6b0f1a] font-bold' : 'text-[#f8f3e6]'}>Tables</span>
+              <span className="text-base" style={currentActive === 'tables' ? { color: '#0f172a' } : undefined}>🪑</span>
+              <span 
+                style={currentActive === 'tables' ? { color: '#0f172a', fontWeight: 700 } : { color: '#e2e8f0', fontWeight: 600 }}
+                className={currentActive === 'tables' ? 'text-[#0f172a] font-bold' : 'text-[#e2e8f0] font-semibold'}
+              >
+                Tables
+              </span>
             </button>
 
             {/* 2. POS */}
@@ -165,14 +212,47 @@ export const CashierHeader: React.FC<CashierHeaderProps> = ({
               id="cashier-tab-pos"
               type="button"
               onClick={() => handleTabClick('pos')}
-              className={`rounded-xl px-4 py-2 flex items-center gap-2 text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
+              style={currentActive === 'pos' ? {
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#0f172a',
+                fontWeight: 700,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              } : {
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                border: '1px solid transparent',
+                color: '#e2e8f0',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              }}
+              className={`text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
                 currentActive === 'pos'
-                  ? 'bg-[#f8f3e6] border border-[#e2d5be] !text-[#6b0f1a] font-bold shadow-md'
-                  : 'bg-black/25 border border-transparent hover:border-[#e2d5be]/30 text-[#f8f3e6] hover:bg-[#f8f3e6]/10 font-medium'
+                  ? 'header-tab-pos-active header-tab-pill-active rounded-full bg-[#F7EECA] border border-[#EADBBA] text-[#0f172a] font-bold shadow-md'
+                  : 'header-tab-pill-inactive rounded-full bg-transparent border border-transparent hover:bg-black/20 text-[#e2e8f0] font-semibold'
               }`}
             >
-              <span className="text-base">🖥️</span>
-              <span className={currentActive === 'pos' ? '!text-[#6b0f1a] font-bold' : 'text-[#f8f3e6]'}>POS</span>
+              <span className="text-base" style={currentActive === 'pos' ? { color: '#0f172a' } : undefined}>🖥️</span>
+              <span 
+                style={currentActive === 'pos' ? { color: '#0f172a', fontWeight: 700 } : { color: '#e2e8f0', fontWeight: 600 }} 
+                className={currentActive === 'pos' ? 'text-[#0f172a] font-bold' : 'text-[#e2e8f0] font-semibold'}
+              >
+                POS
+              </span>
             </button>
 
             {/* 3. Bills */}
@@ -180,14 +260,47 @@ export const CashierHeader: React.FC<CashierHeaderProps> = ({
               id="cashier-tab-bills"
               type="button"
               onClick={() => handleTabClick('bills')}
-              className={`rounded-xl px-4 py-2 flex items-center gap-2 text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
+              style={currentActive === 'bills' ? {
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#0f172a',
+                fontWeight: 700,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              } : {
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                border: '1px solid transparent',
+                color: '#e2e8f0',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              }}
+              className={`text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
                 currentActive === 'bills'
-                  ? 'bg-[#f8f3e6] border border-[#e2d5be] !text-[#6b0f1a] font-bold shadow-md'
-                  : 'bg-black/25 border border-transparent hover:border-[#e2d5be]/30 text-[#f8f3e6] hover:bg-[#f8f3e6]/10 font-medium'
+                  ? 'header-tab-bills-active header-tab-pill-active rounded-full bg-[#F7EECA] border border-[#EADBBA] text-[#0f172a] font-bold shadow-md'
+                  : 'header-tab-pill-inactive rounded-full bg-transparent border border-transparent hover:bg-black/20 text-[#e2e8f0] font-semibold'
               }`}
             >
-              <span className="text-base">🧾</span>
-              <span className={currentActive === 'bills' ? '!text-[#6b0f1a] font-bold' : 'text-[#f8f3e6]'}>Bills</span>
+              <span className="text-base" style={currentActive === 'bills' ? { color: '#0f172a' } : undefined}>🧾</span>
+              <span 
+                style={currentActive === 'bills' ? { color: '#0f172a', fontWeight: 700 } : { color: '#e2e8f0', fontWeight: 600 }}
+                className={currentActive === 'bills' ? 'text-[#0f172a] font-bold' : 'text-[#e2e8f0] font-semibold'}
+              >
+                Bills
+              </span>
             </button>
 
             {/* 4. KOTs (with dynamic badge counter) */}
@@ -195,20 +308,61 @@ export const CashierHeader: React.FC<CashierHeaderProps> = ({
               id="cashier-tab-kots"
               type="button"
               onClick={() => handleTabClick('kot')}
-              className={`rounded-xl px-4 py-2 flex items-center gap-2 text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
+              style={currentActive === 'kot' || currentActive === 'kots' ? {
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#0f172a',
+                fontWeight: 700,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              } : {
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                border: '1px solid transparent',
+                color: '#e2e8f0',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              }}
+              className={`text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
                 currentActive === 'kot' || currentActive === 'kots'
-                  ? 'bg-[#f8f3e6] border border-[#e2d5be] !text-[#6b0f1a] font-bold shadow-md'
-                  : 'bg-black/25 border border-transparent hover:border-[#e2d5be]/30 text-[#f8f3e6] hover:bg-[#f8f3e6]/10 font-medium'
+                  ? 'header-tab-kots-active header-tab-pill-active rounded-full bg-[#F7EECA] border border-[#EADBBA] text-[#0f172a] font-bold shadow-md'
+                  : 'header-tab-pill-inactive rounded-full bg-transparent border border-transparent hover:bg-black/20 text-[#e2e8f0] font-semibold'
               }`}
             >
-              <span className="text-base">📋</span>
-              <span className={currentActive === 'kot' || currentActive === 'kots' ? '!text-[#6b0f1a] font-bold' : 'text-[#f8f3e6]'}>KOTs</span>
+              <span className="text-base" style={currentActive === 'kot' || currentActive === 'kots' ? { color: '#0f172a' } : undefined}>📋</span>
+              <span 
+                style={currentActive === 'kot' || currentActive === 'kots' ? { color: '#0f172a', fontWeight: 700 } : { color: '#e2e8f0', fontWeight: 600 }}
+                className={currentActive === 'kot' || currentActive === 'kots' ? 'text-[#0f172a] font-bold' : 'text-[#e2e8f0] font-semibold'}
+              >
+                KOTs
+              </span>
               {activeKotsCount > 0 && (
-                <span className={`min-w-4 h-4 px-1 rounded-full text-[10px] font-bold flex items-center justify-center font-mono ml-0.5 ${
+                <span className={`min-w-4 h-4 px-1.5 rounded-full text-[11px] font-bold flex items-center justify-center font-mono ml-0.5 ${
                   currentActive === 'kot' || currentActive === 'kots'
-                    ? 'bg-[#6b0f1a] text-[#f8f3e6]'
+                    ? 'bg-[#0f172a] text-[#ffffff]'
                     : 'bg-amber-500 text-black'
-                }`}>
+                }`}
+                style={currentActive === 'kot' || currentActive === 'kots' ? {
+                  backgroundColor: '#0f172a',
+                  color: '#ffffff',
+                  fontWeight: 700,
+                  fontSize: '11px',
+                  padding: '2px 7px',
+                  borderRadius: '9999px'
+                } : undefined}>
                   {activeKotsCount}
                 </span>
               )}
@@ -219,14 +373,47 @@ export const CashierHeader: React.FC<CashierHeaderProps> = ({
               id="cashier-tab-zreport"
               type="button"
               onClick={() => handleTabClick('zreport')}
-              className={`rounded-xl px-4 py-2 flex items-center gap-2 text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
+              style={currentActive === 'zreport' ? {
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#0f172a',
+                fontWeight: 700,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              } : {
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                border: '1px solid transparent',
+                color: '#e2e8f0',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              }}
+              className={`text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
                 currentActive === 'zreport'
-                  ? 'bg-[#f8f3e6] border border-[#e2d5be] !text-[#6b0f1a] font-bold shadow-md'
-                  : 'bg-black/25 border border-transparent hover:border-[#e2d5be]/30 text-[#f8f3e6] hover:bg-[#f8f3e6]/10 font-medium'
+                  ? 'header-tab-zreport-active header-tab-pill-active rounded-full bg-[#F7EECA] border border-[#EADBBA] text-[#0f172a] font-bold shadow-md'
+                  : 'header-tab-pill-inactive rounded-full bg-transparent border border-transparent hover:bg-black/20 text-[#e2e8f0] font-semibold'
               }`}
             >
-              <span className="text-base">📊</span>
-              <span className={currentActive === 'zreport' ? '!text-[#6b0f1a] font-bold' : 'text-[#f8f3e6]'}>Z-Report</span>
+              <span className="text-base" style={currentActive === 'zreport' ? { color: '#0f172a' } : undefined}>📊</span>
+              <span 
+                style={currentActive === 'zreport' ? { color: '#0f172a', fontWeight: 700 } : { color: '#e2e8f0', fontWeight: 600 }}
+                className={currentActive === 'zreport' ? 'text-[#0f172a] font-bold' : 'text-[#e2e8f0] font-semibold'}
+              >
+                Z-Report
+              </span>
             </button>
           </div>
         </div>
@@ -249,7 +436,12 @@ export const CashierHeader: React.FC<CashierHeaderProps> = ({
               id="cashier-notification-bell-btn"
               type="button"
               onClick={() => setIsNotificationOpen(prev => !prev)}
-              className="relative p-2.5 rounded-xl bg-[#161B26] border border-white/10 text-gray-200 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+              style={{
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                color: '#0f172a',
+              }}
+              className="notification-bell-butter-cream relative p-2.5 rounded-xl border transition-all cursor-pointer hover:bg-[#efe5c0]"
               title={unreadCount > 0 ? `${unreadCount} kitchen ready order(s)` : 'Kitchen Ready Alerts'}
             >
               <span className="text-lg">🔔</span>

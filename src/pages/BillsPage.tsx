@@ -180,11 +180,11 @@ export const BillsPage: React.FC = () => {
 
   return (
     <div 
-      className="relative min-h-full w-full px-4 md:px-6 py-4 space-y-4 font-sans text-slate-200 bg-[#0a0f1d]"
-      style={{ backgroundColor: '#0a0f1d' }}
+      className="bills-main-wrapper relative z-2 min-h-full w-full px-4 md:px-6 py-4 space-y-4 font-sans text-slate-200 bg-transparent"
+      style={{ backgroundColor: 'transparent', position: 'relative', zIndex: 2 }}
     >
       {/* Bilaal Restaurant Crest Watermark */}
-      <BrandWatermark opacity={0.10} />
+      <BrandWatermark opacity={0.18} />
 
       <div className="relative z-10 space-y-4">
         {/* Top Banner (Dark Slate Surface) - Full Width Spread */}
@@ -214,106 +214,57 @@ export const BillsPage: React.FC = () => {
         {/* Center: Filter Pills Group centered with ample breathing room */}
         <div className="flex items-center justify-start xl:justify-center gap-2 sm:gap-3 overflow-x-auto py-1 scrollbar-none flex-1 min-w-0 mx-0 xl:mx-4">
           {orderTypePills.map(pill => {
-            const isAll = pill.key === 'All';
             const active = isPillActive(pill.key);
 
-            if (isAll) {
-              return (
-                <button
-                  key={pill.key}
-                  id={pill.id}
-                  type="button"
-                  onClick={() => handlePillSelect(pill.key)}
-                  className={`flex items-center justify-between gap-2.5 px-3.5 sm:px-4 py-2 min-w-[105px] sm:min-w-[115px] rounded-lg text-xs font-semibold transition-all whitespace-nowrap select-none cursor-pointer shrink-0 ${
-                    active
-                      ? 'bills-tab-active text-white font-bold border border-red-700 shadow-xs'
-                      : 'bills-tab-inactive bg-slate-800 text-slate-200 border border-slate-700 hover:bg-slate-700 hover:text-white'
-                  }`}
-                  style={active ? { 
-                    backgroundColor: '#8b0000', 
-                    color: '#ffffff',
-                    WebkitTextFillColor: '#ffffff',
-                    fontWeight: 700 
-                  } : { 
-                    backgroundColor: '#1e293b', 
-                    borderColor: '#334155', 
-                    color: '#f1f5f9',
-                    WebkitTextFillColor: '#f1f5f9',
-                    fontWeight: 600
-                  }}
-                >
-                  <span>{pill.label}</span>
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-xs font-mono transition-colors ${
-                      active
-                        ? 'bills-count-active'
-                        : 'bg-slate-700/80 text-slate-300 border border-slate-700/60'
-                    }`}
-                    style={active ? { 
-                      color: '#ffffff', 
-                      WebkitTextFillColor: '#ffffff', 
-                      fontWeight: 800, 
-                      backgroundColor: 'rgba(0, 0, 0, 0.3)' 
-                    } : { 
-                      color: '#cbd5e1', 
-                      WebkitTextFillColor: '#cbd5e1', 
-                      fontWeight: 600,
-                      backgroundColor: 'rgba(51, 65, 85, 0.8)' 
-                    }}
-                  >
-                    {pill.count}
-                  </span>
-                </button>
-              );
-            }
-
-            // The 3 filter buttons ([Dine In], [Takeaway], [Delivery]) with warm vanilla ice cream styling
             return (
               <button
                 key={pill.key}
                 id={pill.id}
                 type="button"
                 onClick={() => handlePillSelect(pill.key)}
-                className={`bills-tab-vanilla flex items-center justify-between gap-2.5 px-3.5 sm:px-4 py-2 min-w-[105px] sm:min-w-[115px] text-xs transition-all whitespace-nowrap select-none cursor-pointer shrink-0 ${
-                  active ? 'bills-tab-active' : ''
+                className={`flex items-center justify-between gap-2.5 px-3.5 sm:px-4 py-2 min-w-[105px] sm:min-w-[115px] rounded-full text-xs font-bold transition-all whitespace-nowrap select-none cursor-pointer shrink-0 ${
+                  active 
+                    ? 'bills-tab-active shadow-xs' 
+                    : 'bills-tab-inactive bills-tab-vanilla hover:bg-[#efe5c0]'
                 }`}
-                style={active ? {
-                  backgroundColor: '#8b0000',
+                style={active ? { 
+                  backgroundColor: '#7a0c1a', 
                   color: '#ffffff',
                   WebkitTextFillColor: '#ffffff',
-                  fontWeight: 700,
-                  border: '1px solid #b91c1c',
+                  fontWeight: 800,
+                  border: '1px solid #8f1020',
                   borderRadius: '9999px'
-                } : {
-                  backgroundColor: '#faf5ef',
+                } : { 
+                  backgroundColor: '#faf5ef', 
+                  borderColor: '#eadbba',
+                  border: '1px solid #eadbba', 
                   color: '#0f172a',
                   WebkitTextFillColor: '#0f172a',
-                  fontWeight: 700,
-                  border: '1px solid #f1e9db',
+                  fontWeight: 750,
                   borderRadius: '9999px'
                 }}
               >
                 <span style={{ 
                   color: active ? '#ffffff' : '#0f172a', 
                   WebkitTextFillColor: active ? '#ffffff' : '#0f172a', 
-                  fontWeight: 700 
+                  fontWeight: active ? 800 : 750 
                 }}>
                   {pill.label}
                 </span>
                 <span
-                  className="bills-count-vanilla text-xs font-mono transition-colors"
-                  style={active ? {
-                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                    color: '#ffffff',
-                    WebkitTextFillColor: '#ffffff',
-                    fontWeight: 800,
+                  className={`text-xs font-mono transition-colors ${active ? 'bills-count-active' : 'bills-count-vanilla'}`}
+                  style={active ? { 
+                    color: '#ffffff', 
+                    WebkitTextFillColor: '#ffffff', 
+                    fontWeight: 800, 
+                    backgroundColor: 'rgba(0, 0, 0, 0.35)',
                     padding: '2px 8px',
                     borderRadius: '9999px'
-                  } : {
-                    backgroundColor: '#eaddd0',
-                    color: '#0f172a',
-                    WebkitTextFillColor: '#0f172a',
+                  } : { 
+                    color: '#0f172a', 
+                    WebkitTextFillColor: '#0f172a', 
                     fontWeight: 800,
+                    backgroundColor: '#e5dac2',
                     padding: '2px 8px',
                     borderRadius: '9999px'
                   }}

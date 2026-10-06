@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { KOT, ItemServeType, ServeType, CartItem } from '../../types';
+import { KOT, ItemServeType, ServeType, CartItem, SavedActiveOrder } from '../../types';
 import { 
   Phone, 
   Send, 
@@ -68,13 +68,13 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
     cartTableNumber,
     setCartTableNumber,
     openKOTModal,
+    savedActiveOrders,
+    setSavedActiveOrders,
   } = useApp();
 
   const currentTable = propTableNumber || cartTableNumber || 'Table 1';
 
   const [isSendingKot, setIsSendingKot] = useState<boolean>(false);
-  const [editingNoteItemId, setEditingNoteItemId] = useState<string | null>(null);
-  const [tempNoteText, setTempNoteText] = useState<string>('');
 
   // KOT item modify/cancel modals
   const [cancelModalTarget, setCancelModalTarget] = useState<{ kot: KOT; itemIndex?: number } | null>(null);
@@ -89,14 +89,14 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
   const selectedTable = safeBranchTables.find(t => isTableMatch(t.name, currentTable));
 
   // Table draft carts storage to preserve un-sent items per table
-  const tableDraftsRef = useRef<Record<string, CartItem[]>>(() => {
+  const tableDraftsRef = useRef<Record<string, CartItem[]>>((() => {
     try {
       const saved = sessionStorage.getItem('zaffran_waiter_table_drafts');
       return saved ? JSON.parse(saved) : {};
     } catch {
       return {};
     }
-  });
+  })());
 
   const prevTableRef = useRef<string>(currentTable);
 
@@ -104,14 +104,37 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
   const handleTableChange = (newTable: string) => {
     if (newTable === currentTable) return;
 
-    // 1. Save previous table's current punch items
-    if (prevTableRef.current) {
+    // 1. Auto-save previous table's un-sent punch items
+    if (prevTableRef.current && cart.length > 0) {
       tableDraftsRef.current[prevTableRef.current] = [...cart];
       try {
         sessionStorage.setItem('zaffran_waiter_table_drafts', JSON.stringify(tableDraftsRef.current));
       } catch {
         // ignore
       }
+
+      // Also persist to AppContext savedActiveOrders
+      const prevNorm = prevTableRef.current.toLowerCase().trim();
+      const prevOrderKey = `dine_in:${prevNorm}`;
+      const subtotal = cart.reduce((sum, c) => sum + c.item.price * c.quantity, 0);
+      const updatedCart = cart.map(c => ({ ...c, isSaved: true, isNew: false }));
+      const now = new Date();
+      setSavedActiveOrders(prev => ({
+        ...prev,
+        [prevOrderKey]: {
+          id: prevTableRef.current,
+          key: prevOrderKey,
+          orderType: 'dine_in',
+          branchId: currentBranch === 'all' ? 'main' : currentBranch,
+          tableNumber: prevTableRef.current,
+          cart: updatedCart,
+          customerName: cartCustomerName || undefined,
+          customerMobile: cartCustomerMobile || undefined,
+          specialNotes: cartSpecialNotes || undefined,
+          savedAt: now.toISOString(),
+          subtotal,
+        }
+      }));
     }
 
     // 2. Notify parent and AppContext
@@ -121,7 +144,14 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
     setCartTableNumber(newTable);
 
     // 3. Restore newly selected table's draft cart
-    const targetDraft = tableDraftsRef.current[newTable] || [];
+    const norm = newTable.toLowerCase().trim();
+    const digits = newTable.replace(/[^0-9]/g, '');
+    const orderKey = `dine_in:${norm}`;
+    const altKey = digits ? `dine_in:table ${digits}` : orderKey;
+    const shortKey = digits ? `dine_in:t${digits}` : orderKey;
+    const contextDraft = savedActiveOrders[orderKey]?.cart || savedActiveOrders[altKey]?.cart || savedActiveOrders[shortKey]?.cart;
+    const targetDraft = tableDraftsRef.current[newTable] || tableDraftsRef.current[`Table ${digits}`] || contextDraft || [];
+
     if (setCartItems) {
       setCartItems(targetDraft);
     }
@@ -131,7 +161,7 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
   // Watch for external table changes (e.g. from header search or tables floor plan)
   useEffect(() => {
     if (currentTable && currentTable !== prevTableRef.current) {
-      if (prevTableRef.current) {
+      if (prevTableRef.current && cart.length > 0) {
         tableDraftsRef.current[prevTableRef.current] = [...cart];
         try {
           sessionStorage.setItem('zaffran_waiter_table_drafts', JSON.stringify(tableDraftsRef.current));
@@ -139,20 +169,100 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
           // ignore
         }
       }
-      const targetDraft = tableDraftsRef.current[currentTable] || [];
+      const norm = currentTable.toLowerCase().trim();
+      const digits = currentTable.replace(/[^0-9]/g, '');
+      const orderKey = `dine_in:${norm}`;
+      const altKey = digits ? `dine_in:table ${digits}` : orderKey;
+      const shortKey = digits ? `dine_in:t${digits}` : orderKey;
+      const contextDraft = savedActiveOrders[orderKey]?.cart || savedActiveOrders[altKey]?.cart || savedActiveOrders[shortKey]?.cart;
+      const targetDraft = tableDraftsRef.current[currentTable] || tableDraftsRef.current[`Table ${digits}`] || contextDraft || [];
+
       if (setCartItems) {
         setCartItems(targetDraft);
       }
       prevTableRef.current = currentTable;
     }
-  }, [currentTable, setCartItems]);
+  }, [currentTable, setCartItems, savedActiveOrders]);
 
   // Continuously persist current cart changes for current table
   useEffect(() => {
     if (currentTable) {
       tableDraftsRef.current[currentTable] = cart;
+      if (cart.length > 0) {
+        try {
+          sessionStorage.setItem('zaffran_waiter_table_drafts', JSON.stringify(tableDraftsRef.current));
+        } catch {
+          // ignore
+        }
+      }
     }
   }, [cart, currentTable]);
+
+  // Check if current table has an active draft held
+  const isDraftHeld = useMemo(() => {
+    if (!currentTable || cart.length === 0) return false;
+    const norm = currentTable.toLowerCase().trim();
+    const digits = currentTable.replace(/[^0-9]/g, '');
+    const orderKey = `dine_in:${norm}`;
+    const altKey = digits ? `dine_in:table ${digits}` : orderKey;
+    const shortKey = digits ? `dine_in:t${digits}` : orderKey;
+    return !!(savedActiveOrders[orderKey] || savedActiveOrders[altKey] || savedActiveOrders[shortKey] || tableDraftsRef.current[currentTable]?.length > 0);
+  }, [currentTable, cart.length, savedActiveOrders]);
+
+  // Explicit Save / Hold handler for waiter action button
+  const handleSaveHoldOrder = () => {
+    if (cart.length === 0) {
+      showToast('Cart Empty', 'Please add items before saving / holding draft.', 'warning');
+      return;
+    }
+    if (!currentTable) {
+      showToast('Select Table', 'Please assign a table before saving order.', 'warning');
+      return;
+    }
+
+    // 1. Save in tableDraftsRef and sessionStorage
+    tableDraftsRef.current[currentTable] = [...cart];
+    try {
+      sessionStorage.setItem('zaffran_waiter_table_drafts', JSON.stringify(tableDraftsRef.current));
+    } catch {
+      // ignore
+    }
+
+    // 2. Persist to AppContext savedActiveOrders
+    const norm = currentTable.toLowerCase().trim();
+    const digits = currentTable.replace(/[^0-9]/g, '');
+    const orderKey = `dine_in:${norm}`;
+    const altKey = digits ? `dine_in:table ${digits}` : orderKey;
+    const subtotal = cart.reduce((sum, c) => sum + c.item.price * c.quantity, 0);
+    const updatedCart = cart.map(c => ({ ...c, isSaved: true, isNew: false }));
+    const now = new Date();
+
+    const savedDraft: SavedActiveOrder = {
+      id: currentTable,
+      key: orderKey,
+      orderType: 'dine_in',
+      branchId: currentBranch === 'all' ? 'main' : currentBranch,
+      tableNumber: currentTable,
+      cart: updatedCart,
+      customerName: cartCustomerName || undefined,
+      customerMobile: cartCustomerMobile || undefined,
+      specialNotes: cartSpecialNotes || undefined,
+      savedAt: now.toISOString(),
+      subtotal,
+    };
+
+    setSavedActiveOrders(prev => ({
+      ...prev,
+      [orderKey]: savedDraft,
+      ...(digits ? { [altKey]: savedDraft } : {})
+    }));
+
+    showToast(
+      'Draft Saved / Held',
+      `Order for ${currentTable} held (${cart.length} item${cart.length > 1 ? 's' : ''}). You can safely switch tables.`,
+      'success'
+    );
+  };
 
   // Active unbilled KOTs strictly for the currently selected table
   const tableActiveKots = useMemo(() => {
@@ -222,6 +332,18 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
         } catch {
           // ignore
         }
+        const norm = currentTable.toLowerCase().trim();
+        const digits = currentTable.replace(/[^0-9]/g, '');
+        const orderKey = `dine_in:${norm}`;
+        const altKey = digits ? `dine_in:table ${digits}` : orderKey;
+        const shortKey = digits ? `dine_in:t${digits}` : orderKey;
+        setSavedActiveOrders(prev => {
+          const next = { ...prev };
+          delete next[orderKey];
+          delete next[altKey];
+          delete next[shortKey];
+          return next;
+        });
         showToast('KOT Dispatched', `${kot.kotNumber} sent to Kitchen for ${currentTable}.`, 'success');
       }
     }, 200);
@@ -235,6 +357,18 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
     } catch {
       // ignore
     }
+    const norm = currentTable.toLowerCase().trim();
+    const digits = currentTable.replace(/[^0-9]/g, '');
+    const orderKey = `dine_in:${norm}`;
+    const altKey = digits ? `dine_in:table ${digits}` : orderKey;
+    const shortKey = digits ? `dine_in:t${digits}` : orderKey;
+    setSavedActiveOrders(prev => {
+      const next = { ...prev };
+      delete next[orderKey];
+      delete next[altKey];
+      delete next[shortKey];
+      return next;
+    });
   };
 
   const handleRequestBill = () => {
@@ -393,20 +527,6 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
                     >
                       <Printer className="w-3 h-3 text-slate-200" style={{ color: '#e2e8f0' }} />
                     </button>
-                    <span 
-                      className={`waiter-cart-kot-status-badge px-1.5 py-0.5 rounded text-[10px] uppercase font-bold border border-[#334155] ${
-                        kot.status === 'ready' 
-                          ? 'bg-emerald-950/60 text-emerald-400' 
-                          : kot.status === 'picked_up'
-                          ? 'bg-cyan-950/60 text-cyan-300'
-                          : kot.status === 'preparing'
-                          ? 'bg-amber-950/60 text-amber-400'
-                          : 'bg-slate-800 text-slate-200'
-                      }`}
-                      style={{ border: '1px solid #334155' }}
-                    >
-                      {kot.status === 'picked_up' ? 'Picked Up' : (kot.status || 'NEW')}
-                    </span>
                   </div>
                   <span className="text-emerald-400 font-bold">₹{kot.totalAmount.toFixed(2)}</span>
                 </div>
@@ -460,11 +580,11 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
                             >
                               ₹{itRate.toFixed(2)}
                             </span>
-                            {it.serveType === 'PARCEL' && (
+                            {it.notes && (
                               <>
                                 <span className="text-slate-600">•</span>
-                                <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">
-                                  [PARCEL]
+                                <span className="text-[11px] text-amber-300/90 italic truncate max-w-[140px]" title={it.notes}>
+                                  Note: {it.notes}
                                 </span>
                               </>
                             )}
@@ -473,14 +593,6 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
                                 <span className="text-slate-600">•</span>
                                 <span className="text-[10px] text-rose-400 font-bold uppercase tracking-wider">
                                   [CANCELLED]
-                                </span>
-                              </>
-                            )}
-                            {it.notes && (
-                              <>
-                                <span className="text-slate-600">•</span>
-                                <span className="text-amber-400 font-medium">
-                                  Note: {it.notes}
                                 </span>
                               </>
                             )}
@@ -529,21 +641,41 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
           {(cart || []).length > 0 && (
             <div className="space-y-1">
               <div className="flex items-center justify-between px-1 pb-1 text-[11px] font-semibold text-amber-400 border-b border-slate-800/60">
-                <span 
-                  id="waiter-cart-new-punch-badge"
-                  className="waiter-new-punch-badge inline-flex items-center"
-                  style={{
-                    backgroundColor: 'rgba(245, 158, 11, 0.15)',
-                    color: '#fbbf24',
-                    fontWeight: 800,
-                    fontSize: '11px',
-                    border: '1px solid rgba(245, 158, 11, 0.4)',
-                    borderRadius: '6px',
-                    padding: '2px 8px'
-                  }}
-                >
-                  NEW PUNCH ITEMS ({cart.length})
-                </span>
+                <div className="flex items-center gap-2">
+                  <span 
+                    id="waiter-cart-new-punch-badge"
+                    className="waiter-new-punch-badge inline-flex items-center shadow-xs"
+                    style={{
+                      background: '#fef08a',
+                      color: '#854d0e',
+                      fontWeight: 800,
+                      fontSize: '11px',
+                      borderRadius: '4px',
+                      padding: '2px 8px',
+                      letterSpacing: '0.05em',
+                    }}
+                  >
+                    NEW
+                  </span>
+                  <span className="text-slate-300 font-semibold text-xs uppercase tracking-wider">
+                    PUNCH ITEMS ({cart.length})
+                  </span>
+                  {isDraftHeld && (
+                    <span 
+                      className="inline-flex items-center gap-1 font-bold text-[10px]"
+                      style={{
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        color: '#93c5fd',
+                        border: '1px solid rgba(59, 130, 246, 0.4)',
+                        borderRadius: '6px',
+                        padding: '2px 6px'
+                      }}
+                      title="This order is held as draft"
+                    >
+                      <span>💾</span> Held Draft
+                    </span>
+                  )}
+                </div>
                 <button
                   type="button"
                   onClick={handleClearCart}
@@ -600,22 +732,6 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
                             >
                               ₹{cartItem.item.price.toFixed(2)}
                             </span>
-                            {cartItem.serveType === 'PARCEL' && (
-                              <>
-                                <span className="text-slate-600">•</span>
-                                <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">
-                                  [PARCEL]
-                                </span>
-                              </>
-                            )}
-                            {cartItem.notes && (
-                              <>
-                                <span className="text-slate-600">•</span>
-                                <span className="text-amber-400 font-medium">
-                                  Note: {cartItem.notes}
-                                </span>
-                              </>
-                            )}
                           </div>
                         </div>
 
@@ -691,46 +807,10 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
                             <option value="PARCEL" style={{ backgroundColor: '#0f172a', color: '#ffffff' }} className="bg-[#0f172a] text-amber-400 font-semibold">Parcel</option>
                           </select>
                         </div>
-
-                        {editingNoteItemId === cartItem.item.id ? (
-                          <div className="flex items-center gap-1 flex-1 max-w-[180px]">
-                            <input
-                              type="text"
-                              value={tempNoteText}
-                              onChange={e => setTempNoteText(e.target.value)}
-                              placeholder="e.g. Less spicy"
-                              className="w-full text-[11px] bg-[#080d1a] border border-slate-700 rounded px-1.5 py-0.5 text-white placeholder-slate-500"
-                              autoFocus
-                              onKeyDown={e => {
-                                if (e.key === 'Enter') {
-                                  updateCartItemNotes(cartItem.item.id, tempNoteText);
-                                  setEditingNoteItemId(null);
-                                }
-                              }}
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                updateCartItemNotes(cartItem.item.id, tempNoteText);
-                                setEditingNoteItemId(null);
-                              }}
-                              className="text-[10px] px-1.5 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-medium cursor-pointer"
-                            >
-                              OK
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setEditingNoteItemId(cartItem.item.id);
-                              setTempNoteText(cartItem.notes || '');
-                            }}
-                            className="text-[11px] text-slate-400 hover:text-amber-400 flex items-center gap-1 truncate max-w-[160px] cursor-pointer"
-                          >
-                            <Edit3 className="w-2.5 h-2.5 shrink-0" />
-                            <span className="truncate">{cartItem.notes || '+ Note'}</span>
-                          </button>
+                        {cartItem.notes && (
+                          <span className="text-[10px] text-amber-300/90 italic truncate max-w-[160px]" title={cartItem.notes}>
+                            Note: {cartItem.notes}
+                          </span>
                         )}
                       </div>
                     </div>
@@ -778,30 +858,60 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
           className="waiter-cart-input w-full px-3 py-1.5 bg-[#080c16] border border-[#1e293b] rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-700 transition-colors"
         />
 
-        {/* Primary Action Buttons: Solid Emerald for KOT, Orange/Amber for Request Bill */}
-        <div className="grid grid-cols-2 gap-2">
-          {/* Send KOT Button */}
+        {/* Primary Action Buttons: [Save / Hold], [Request Bill], and [Send KOT] */}
+        <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            {/* Save Draft / Hold Button */}
+            <button
+              id="waiter-save-hold-btn"
+              type="button"
+              onClick={handleSaveHoldOrder}
+              disabled={cart.length === 0}
+              style={{
+                backgroundColor: '#1e293b',
+                color: '#f1f5f9',
+                fontWeight: 700,
+                fontSize: '13px',
+                border: '1px solid #3b82f6',
+                borderRadius: '8px',
+                padding: '10px 14px',
+                cursor: cart.length === 0 ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s',
+              }}
+              className="waiter-hold-btn hover:bg-blue-900/60 hover:text-white flex items-center justify-center gap-1.5 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed shadow-xs select-none"
+              title="Save / Hold this table's cart draft to attend to another table"
+            >
+              <span>💾</span>
+              <span>Save / Hold</span>
+            </button>
+
+            {/* Request Bill Button */}
+            <button
+              type="button"
+              onClick={handleRequestBill}
+              disabled={!currentTable || (cart.length === 0 && tableActiveKots.length === 0)}
+              className="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2.5 px-3 rounded-lg text-xs flex items-center justify-center gap-1.5 transition-colors active:scale-98 cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Receipt className="w-3.5 h-3.5" />
+              <span>
+                {pendingBillRequestForCurrentTable ? 'Bill Pending' : 'Request Bill'}
+              </span>
+            </button>
+          </div>
+
+          {/* Send KOT Button (Deep Maroon Accent) */}
           <button
             type="button"
             onClick={handleSendKOT}
             disabled={cart.length === 0 || isSendingKot}
-            className="bg-[#8b0000] hover:bg-[#730000] text-white font-bold py-2.5 rounded-xl shadow-xs text-xs flex items-center justify-center gap-1.5 transition-colors active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            style={{
+              backgroundColor: '#7a0c1a',
+              background: '#7a0c1a',
+            }}
+            className="w-full bg-[#7a0c1a] hover:bg-[#8f1020] active:bg-[#4a030c] text-white font-bold py-2.5 px-3 rounded-xl shadow-xs text-xs flex items-center justify-center gap-1.5 transition-colors active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             <Send className="w-3.5 h-3.5" />
             <span>{isSendingKot ? 'Sending...' : 'Send KOT'}</span>
-          </button>
-
-          {/* Request Bill Button */}
-          <button
-            type="button"
-            onClick={handleRequestBill}
-            disabled={!currentTable || (cart.length === 0 && tableActiveKots.length === 0)}
-            className="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors active:scale-98 cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Receipt className="w-3.5 h-3.5" />
-            <span>
-              {pendingBillRequestForCurrentTable ? 'Bill Pending' : 'Request Bill'}
-            </span>
           </button>
         </div>
       </div>

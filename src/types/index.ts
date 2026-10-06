@@ -92,6 +92,9 @@ export interface ItemVariation {
 export interface PortionSelection {
   variation: ItemVariation;
   quantity: number;
+  notes?: string;
+  orderType?: OrderType;
+  serveType?: ItemServeType;
 }
 
 export type ItemStockStatus = 'available' | 'few_left' | 'sold_out';
@@ -118,7 +121,7 @@ export interface DispatchedItemStats {
   takeaway: number;
 }
 
-export type ItemServeType = 'DINE_IN' | 'PARCEL';
+export type ItemServeType = 'DINE_IN' | 'PARCEL' | 'TAKEAWAY' | 'DELIVERY';
 export type ServeType = ItemServeType;
 
 export interface CartItem {
@@ -126,6 +129,7 @@ export interface CartItem {
   quantity: number;
   notes?: string;
   serveType?: ItemServeType;
+  orderType?: OrderType;
   isSaved?: boolean;
   isNew?: boolean;
 }
@@ -140,6 +144,7 @@ export interface KOTItem {
   notes?: string;
   isVeg: boolean;
   serveType?: ItemServeType;
+  orderType?: OrderType;
   status?: 'active' | 'voided';
   voidedAt?: string;
   voidedBy?: string;
@@ -182,6 +187,8 @@ export interface KOT {
   customerMobile?: string;
   totalAmount: number;
   isBilled?: boolean;
+  isPaid?: boolean;
+  paymentStatus?: 'PAID' | 'UNPAID';
   billId?: string;
   billedAt?: string;
   hasVoidedItems?: boolean;
@@ -244,6 +251,8 @@ export interface Bill {
   splitDetails?: SplitPaymentDetail;
   status: BillStatus;
   isEstimate?: boolean;
+  paymentStatus?: 'PAID' | 'UNPAID';
+  isPaid?: boolean;
   cashierName?: string;
   stewardName?: string;
   fssaiLicNo?: string;

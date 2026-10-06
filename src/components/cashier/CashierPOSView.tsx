@@ -6,6 +6,8 @@ import { CashierCategorySidebar } from './CashierCategorySidebar';
 import { CashierItemCard } from './CashierItemCard';
 import { CashierCart } from './CashierCart';
 import { ItemVariationModal } from '../ItemVariationModal';
+import { POSOrderTypeWatermark } from './POSOrderTypeWatermark';
+import { POSBilaalWatermark } from './POSBilaalWatermark';
 import { Search, X } from 'lucide-react';
 
 export const CashierPOSView: React.FC = () => {
@@ -111,7 +113,7 @@ export const CashierPOSView: React.FC = () => {
   };
 
   const handleSaveVariations = (baseItem: MenuItem, portions: PortionSelection[], note?: string) => {
-    portions.forEach(({ variation, quantity }) => {
+    portions.forEach(({ variation, quantity, notes, orderType, serveType }) => {
       if (quantity <= 0) return;
       const variantItem: MenuItem = {
         ...baseItem,
@@ -119,14 +121,18 @@ export const CashierPOSView: React.FC = () => {
         name: `${baseItem.name} (${variation.name})`,
         price: variation.price,
       };
-      addToCart(variantItem, quantity, note);
+      const effectiveServeType = serveType || (orderType === 'delivery' ? 'DELIVERY' : orderType === 'takeaway' || orderType === 'parcel' ? 'PARCEL' : 'DINE_IN');
+      addToCart(variantItem, quantity, notes?.trim() || note, effectiveServeType, orderType);
     });
   };
 
   const { isDark } = useTheme();
 
   return (
-    <div className="h-full w-full flex flex-row overflow-hidden select-none font-sans bg-[#0a111e]">
+    <div 
+      className="h-full w-full flex flex-row overflow-hidden select-none font-sans bg-[#070b14]"
+      style={{ backgroundColor: '#070b14', background: '#070b14' }}
+    >
       {/* 1. Category Sidebar (Left) - Column 2 */}
       <CashierCategorySidebar
         categories={safeCategories}
@@ -137,14 +143,23 @@ export const CashierPOSView: React.FC = () => {
       />
 
       {/* 2. Menu Items & Fast Search (Middle) - Touches top edge */}
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0 bg-[#070b12] border-r border-[#8b0000]/60 pos-middle-panel">
+      <div 
+        id="cashier-middle-dish-panel"
+        className="flex-1 flex flex-col overflow-hidden min-w-0 border-r border-[#8b0000]/60 pos-middle-panel relative bg-transparent"
+        style={{ backgroundColor: 'transparent', background: 'transparent' }}
+      >
         {/* Sticky Item Search & Filters - Touches top edge */}
-        <div id="cashier-search-filter-bar" className="px-3.5 py-3 shrink-0 bg-[#070b12] border-b border-[#8b0000]/30">
+        <div 
+          id="cashier-search-filter-bar" 
+          className="px-3.5 py-3 shrink-0 bg-transparent border-b border-[#8b0000]/30 z-20"
+          style={{ backgroundColor: 'transparent', background: 'transparent' }}
+        >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
             {/* Search Input Wrapper */}
             <div
               id="cashier-search-wrapper"
-              className="relative flex-1 rounded-xl shadow-inner bg-[#0f172a] border border-slate-700/80 focus-within:border-emerald-500/80 transition-colors"
+              className="relative flex-1 rounded-xl shadow-inner bg-[#070b14]/75 border border-slate-700/60 focus-within:border-emerald-500/80 transition-colors"
+              style={{ backgroundColor: 'rgba(7, 11, 20, 0.75)' }}
             >
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
@@ -169,7 +184,8 @@ export const CashierPOSView: React.FC = () => {
             {/* Veg / Non-Veg Filter Pills Container */}
             <div
               id="cashier-dietary-pills"
-              className="flex items-center gap-1 p-1 rounded-xl shrink-0 text-xs bg-[#0f172a] border border-slate-700/80"
+              className="flex items-center gap-1 p-1 rounded-xl shrink-0 text-xs bg-[#070b14]/75 border border-slate-700/60"
+              style={{ backgroundColor: 'rgba(7, 11, 20, 0.75)' }}
             >
               <button
                 type="button"
@@ -210,20 +226,21 @@ export const CashierPOSView: React.FC = () => {
           </div>
         </div>
 
-        {/* Cards Grid Container - The ONLY scrolling area in the middle */}
-        <div className="relative flex-1 overflow-y-auto p-3.5 bg-[#070b12] pos-center-grid-scroll">
-          {/* Subtle Low-Opacity Background Watermark */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden">
-            <img
-              src="/assets/menu-watermark.svg"
-              alt="Restaurant Watermark"
-              aria-hidden="true"
-              referrerPolicy="no-referrer"
-              className="opacity-10 grayscale invert brightness-75 max-w-[500px] object-contain select-none pointer-events-none"
-            />
-          </div>
+        {/* Fixed Non-Scrolling Watermark Layer - Exact Bilaal Restaurant Emblem Matching Tables Screen */}
+        <POSBilaalWatermark orderType={cartOrderType} opacity={0.20} />
 
-          <div className="relative z-10 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-3">
+        {/* Cards Grid Container - The ONLY scrolling area in the middle */}
+        <div 
+          id="cashier-dish-grid-container"
+          className="relative flex-1 overflow-y-auto p-3.5 pos-center-grid-scroll z-10"
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            backgroundColor: 'transparent',
+            background: 'transparent',
+          }}
+        >
+          <div className="relative z-10 grid grid-cols-4 gap-3 pos-cards-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
             {filteredItems.map((item, index) => {
               const matchingCartItems = (cart || []).filter(
                 c => c.item.id === item.id || c.item.id.startsWith(`${item.id}_`)

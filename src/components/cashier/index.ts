@@ -4,3 +4,5 @@ export * from './CashierCart';
 export * from './CashierHeader';
 export * from './CashierSidebar';
 export * from './CashierPOSView';
+export * from './POSOrderTypeWatermark';
+export * from './POSBilaalWatermark';

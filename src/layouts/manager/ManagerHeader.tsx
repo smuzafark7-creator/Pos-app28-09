@@ -152,19 +152,28 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
 
   return (
     <>
-      <header className="w-full flex items-center justify-between px-4 h-16 min-w-0 bg-[#0D111A] border-b border-white/10 select-none flex-shrink-0 shadow-xs font-sans z-30">
+      <header 
+        id="manager-global-header"
+        style={{
+          background: 'linear-gradient(180deg, #5c0612 0%, #4a030c 100%)',
+          backgroundColor: '#580510',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
+        }}
+        className="w-full flex items-center justify-between px-4 h-16 min-w-0 select-none flex-shrink-0 font-sans z-30"
+      >
         {/* Left: Manager Console Branding + Horizontal Navigation Tabs */}
         <div className="flex items-center min-w-0 gap-2 sm:gap-3">
           {/* Manager Console Branding */}
           <div className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold shadow-xs shrink-0">
-              <ShieldCheck className="w-4 h-4 text-indigo-400" />
+            <div className="w-8 h-8 rounded-lg bg-black/30 border border-white/10 flex items-center justify-center text-slate-200 font-bold shadow-xs shrink-0">
+              <ShieldCheck className="w-4 h-4 text-rose-300" />
             </div>
             <div className="hidden xl:block">
               <div className="text-xs font-bold tracking-wider text-white whitespace-nowrap">
                 MANAGER CONSOLE
               </div>
-              <div className="text-[10px] text-indigo-300 font-medium whitespace-nowrap">
+              <div className="text-[10px] text-rose-200/80 font-medium whitespace-nowrap">
                 Branch 1 (Main)
               </div>
             </div>
@@ -176,20 +185,61 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
           </div>
 
           {/* Integrated Horizontal Navigation Tabs */}
-          <div className="flex items-center gap-1.5 shrink overflow-x-auto no-scrollbar max-w-[60vw] bg-black/25 p-1.5 rounded-2xl border border-[#e2d5be]/40 shadow-inner">
+          <div 
+            id="manager-header-nav-pills"
+            className="flex items-center gap-1.5 shrink overflow-x-auto no-scrollbar max-w-[60vw] p-1.5 rounded-full shadow-inner"
+            style={{
+              background: 'rgba(0, 0, 0, 0.35)',
+              backgroundColor: 'rgba(0, 0, 0, 0.35)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+            }}
+          >
             {/* 1. Tables / Floor */}
             <button
               id="manager-tab-tables"
               type="button"
               onClick={() => handleTabClick('tables')}
-              className={`rounded-xl px-4 py-2 flex items-center gap-2 text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
+              style={currentActive === 'tables' ? {
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#0f172a',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              } : {
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                border: '1px solid transparent',
+                color: '#cbd5e1',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              }}
+              className={`text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
                 currentActive === 'tables'
-                  ? 'bg-[#f8f3e6] border border-[#e2d5be] !text-[#6b0f1a] font-bold shadow-md'
-                  : 'bg-black/25 border border-transparent hover:border-[#e2d5be]/30 text-[#f8f3e6] hover:bg-[#f8f3e6]/10 font-medium'
+                  ? 'header-tab-tables-active header-tab-pill-active rounded-full bg-[#F7EECA] border border-[#EADBBA] text-[#0f172a] font-semibold shadow-md'
+                  : 'header-tab-pill-inactive rounded-full bg-transparent border border-transparent hover:bg-black/20 text-[#cbd5e1] font-semibold'
               }`}
             >
-              <span className="text-base">🪑</span>
-              <span className={currentActive === 'tables' ? '!text-[#6b0f1a] font-bold' : 'text-[#f8f3e6]'}>Tables / Floor</span>
+              <span className="text-base" style={currentActive === 'tables' ? { color: '#0f172a' } : undefined}>🪑</span>
+              <span 
+                style={currentActive === 'tables' ? { color: '#0f172a', fontWeight: 600 } : { color: '#cbd5e1', fontWeight: 600 }}
+                className={currentActive === 'tables' ? 'text-[#0f172a] font-semibold' : 'text-[#cbd5e1] font-semibold'}
+              >
+                Tables / Floor
+              </span>
             </button>
 
             {/* 2. POS / Billing */}
@@ -197,14 +247,47 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
               id="manager-tab-pos"
               type="button"
               onClick={() => handleTabClick('pos')}
-              className={`rounded-xl px-4 py-2 flex items-center gap-2 text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
+              style={currentActive === 'pos' ? {
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#0f172a',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              } : {
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                border: '1px solid transparent',
+                color: '#cbd5e1',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              }}
+              className={`text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
                 currentActive === 'pos'
-                  ? 'bg-[#f8f3e6] border border-[#e2d5be] !text-[#6b0f1a] font-bold shadow-md'
-                  : 'bg-black/25 border border-transparent hover:border-[#e2d5be]/30 text-[#f8f3e6] hover:bg-[#f8f3e6]/10 font-medium'
+                  ? 'header-tab-pos-active header-tab-pill-active rounded-full bg-[#F7EECA] border border-[#EADBBA] text-[#0f172a] font-semibold shadow-md'
+                  : 'header-tab-pill-inactive rounded-full bg-transparent border border-transparent hover:bg-black/20 text-[#cbd5e1] font-semibold'
               }`}
             >
-              <span className="text-base">🖥️</span>
-              <span className={currentActive === 'pos' ? '!text-[#6b0f1a] font-bold' : 'text-[#f8f3e6]'}>POS / Billing</span>
+              <span className="text-base" style={currentActive === 'pos' ? { color: '#0f172a' } : undefined}>🖥️</span>
+              <span 
+                style={currentActive === 'pos' ? { color: '#0f172a', fontWeight: 600 } : { color: '#cbd5e1', fontWeight: 600 }} 
+                className={currentActive === 'pos' ? 'text-[#0f172a] font-semibold' : 'text-[#cbd5e1] font-semibold'}
+              >
+                POS / Billing
+              </span>
             </button>
 
             {/* 3. Bills & Ledger */}
@@ -212,14 +295,47 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
               id="manager-tab-bills"
               type="button"
               onClick={() => handleTabClick('bills')}
-              className={`rounded-xl px-4 py-2 flex items-center gap-2 text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
+              style={currentActive === 'bills' ? {
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#0f172a',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              } : {
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                border: '1px solid transparent',
+                color: '#cbd5e1',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              }}
+              className={`text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
                 currentActive === 'bills'
-                  ? 'bg-[#f8f3e6] border border-[#e2d5be] !text-[#6b0f1a] font-bold shadow-md'
-                  : 'bg-black/25 border border-transparent hover:border-[#e2d5be]/30 text-[#f8f3e6] hover:bg-[#f8f3e6]/10 font-medium'
+                  ? 'header-tab-bills-active header-tab-pill-active rounded-full bg-[#F7EECA] border border-[#EADBBA] text-[#0f172a] font-semibold shadow-md'
+                  : 'header-tab-pill-inactive rounded-full bg-transparent border border-transparent hover:bg-black/20 text-[#cbd5e1] font-semibold'
               }`}
             >
-              <span className="text-base">🧾</span>
-              <span className={currentActive === 'bills' ? '!text-[#6b0f1a] font-bold' : 'text-[#f8f3e6]'}>Bills & Ledger</span>
+              <span className="text-base" style={currentActive === 'bills' ? { color: '#0f172a' } : undefined}>🧾</span>
+              <span 
+                style={currentActive === 'bills' ? { color: '#0f172a', fontWeight: 600 } : { color: '#cbd5e1', fontWeight: 600 }}
+                className={currentActive === 'bills' ? 'text-[#0f172a] font-semibold' : 'text-[#cbd5e1] font-semibold'}
+              >
+                Bills & Ledger
+              </span>
             </button>
 
             {/* 4. KOTs */}
@@ -227,20 +343,61 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
               id="manager-tab-kots"
               type="button"
               onClick={() => handleTabClick('kot')}
-              className={`rounded-xl px-4 py-2 flex items-center gap-2 text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
+              style={currentActive === 'kot' || currentActive === 'kots' ? {
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#0f172a',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              } : {
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                border: '1px solid transparent',
+                color: '#cbd5e1',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              }}
+              className={`text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
                 currentActive === 'kot' || currentActive === 'kots'
-                  ? 'bg-[#f8f3e6] border border-[#e2d5be] !text-[#6b0f1a] font-bold shadow-md'
-                  : 'bg-black/25 border border-transparent hover:border-[#e2d5be]/30 text-[#f8f3e6] hover:bg-[#f8f3e6]/10 font-medium'
+                  ? 'header-tab-kots-active header-tab-pill-active rounded-full bg-[#F7EECA] border border-[#EADBBA] text-[#0f172a] font-semibold shadow-md'
+                  : 'header-tab-pill-inactive rounded-full bg-transparent border border-transparent hover:bg-black/20 text-[#cbd5e1] font-semibold'
               }`}
             >
-              <span className="text-base">📋</span>
-              <span className={currentActive === 'kot' || currentActive === 'kots' ? '!text-[#6b0f1a] font-bold' : 'text-[#f8f3e6]'}>KOTs</span>
+              <span className="text-base" style={currentActive === 'kot' || currentActive === 'kots' ? { color: '#0f172a' } : undefined}>📋</span>
+              <span 
+                style={currentActive === 'kot' || currentActive === 'kots' ? { color: '#0f172a', fontWeight: 600 } : { color: '#cbd5e1', fontWeight: 600 }}
+                className={currentActive === 'kot' || currentActive === 'kots' ? 'text-[#0f172a] font-semibold' : 'text-[#cbd5e1] font-semibold'}
+              >
+                KOTs
+              </span>
               {activeKotsCount > 0 && (
-                <span className={`min-w-4 h-4 px-1 rounded-full text-[10px] font-bold flex items-center justify-center font-mono ml-0.5 ${
+                <span className={`min-w-4 h-4 px-1.5 rounded-full text-[11px] font-semibold flex items-center justify-center font-mono ml-0.5 ${
                   currentActive === 'kot' || currentActive === 'kots'
-                    ? 'bg-[#6b0f1a] text-[#f8f3e6]'
+                    ? 'bg-[#0f172a] text-[#ffffff]'
                     : 'bg-amber-500 text-black'
-                }`}>
+                }`}
+                style={currentActive === 'kot' || currentActive === 'kots' ? {
+                  backgroundColor: '#0f172a',
+                  color: '#ffffff',
+                  fontWeight: 600,
+                  fontSize: '11px',
+                  padding: '2px 7px',
+                  borderRadius: '9999px'
+                } : undefined}>
                   {activeKotsCount}
                 </span>
               )}
@@ -251,14 +408,47 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
               id="manager-tab-zreport"
               type="button"
               onClick={() => handleTabClick('zreport')}
-              className={`rounded-xl px-4 py-2 flex items-center gap-2 text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
+              style={currentActive === 'zreport' ? {
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#0f172a',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              } : {
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                border: '1px solid transparent',
+                color: '#cbd5e1',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              }}
+              className={`text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
                 currentActive === 'zreport'
-                  ? 'bg-[#f8f3e6] border border-[#e2d5be] !text-[#6b0f1a] font-bold shadow-md'
-                  : 'bg-black/25 border border-transparent hover:border-[#e2d5be]/30 text-[#f8f3e6] hover:bg-[#f8f3e6]/10 font-medium'
+                  ? 'header-tab-zreport-active header-tab-pill-active rounded-full bg-[#F7EECA] border border-[#EADBBA] text-[#0f172a] font-semibold shadow-md'
+                  : 'header-tab-pill-inactive rounded-full bg-transparent border border-transparent hover:bg-black/20 text-[#cbd5e1] font-semibold'
               }`}
             >
-              <span className="text-base">📊</span>
-              <span className={currentActive === 'zreport' ? '!text-[#6b0f1a] font-bold' : 'text-[#f8f3e6]'}>Z-Report</span>
+              <span className="text-base" style={currentActive === 'zreport' ? { color: '#0f172a' } : undefined}>📊</span>
+              <span 
+                style={currentActive === 'zreport' ? { color: '#0f172a', fontWeight: 600 } : { color: '#cbd5e1', fontWeight: 600 }}
+                className={currentActive === 'zreport' ? 'text-[#0f172a] font-semibold' : 'text-[#cbd5e1] font-semibold'}
+              >
+                Z-Report
+              </span>
             </button>
 
             {/* 6. Manager Reports / Sales Analytics (Manager-exclusive) */}
@@ -266,14 +456,47 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
               id="manager-tab-reports"
               type="button"
               onClick={() => handleTabClick('reports')}
-              className={`rounded-xl px-4 py-2 flex items-center gap-2 text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
+              style={currentActive === 'reports' ? {
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#0f172a',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              } : {
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                border: '1px solid transparent',
+                color: '#cbd5e1',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              }}
+              className={`text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
                 currentActive === 'reports'
-                  ? 'bg-[#f8f3e6] border border-[#e2d5be] !text-[#6b0f1a] font-bold shadow-md'
-                  : 'bg-black/25 border border-transparent hover:border-[#e2d5be]/30 text-[#f8f3e6] hover:bg-[#f8f3e6]/10 font-medium'
+                  ? 'header-tab-reports-active header-tab-pill-active rounded-full bg-[#F7EECA] border border-[#EADBBA] text-[#0f172a] font-semibold shadow-md'
+                  : 'header-tab-pill-inactive rounded-full bg-transparent border border-transparent hover:bg-black/20 text-[#cbd5e1] font-semibold'
               }`}
             >
-              <span className="text-base">📈</span>
-              <span className={currentActive === 'reports' ? '!text-[#6b0f1a] font-bold' : 'text-[#f8f3e6]'}>Manager Reports</span>
+              <span className="text-base" style={currentActive === 'reports' ? { color: '#0f172a' } : undefined}>📈</span>
+              <span 
+                style={currentActive === 'reports' ? { color: '#0f172a', fontWeight: 600 } : { color: '#cbd5e1', fontWeight: 600 }}
+                className={currentActive === 'reports' ? 'text-[#0f172a] font-semibold' : 'text-[#cbd5e1] font-semibold'}
+              >
+                Manager Reports
+              </span>
             </button>
 
             {/* 7. Store Settings (Manager-exclusive) */}
@@ -281,14 +504,47 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
               id="manager-tab-settings"
               type="button"
               onClick={() => handleTabClick('settings')}
-              className={`rounded-xl px-4 py-2 flex items-center gap-2 text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
+              style={currentActive === 'settings' ? {
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#0f172a',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              } : {
+                borderRadius: '9999px',
+                height: '38px',
+                padding: '6px 18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                border: '1px solid transparent',
+                color: '#cbd5e1',
+                fontWeight: 600,
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+              }}
+              className={`text-xs md:text-sm whitespace-nowrap cursor-pointer transition-all ${
                 currentActive === 'settings'
-                  ? 'bg-[#f8f3e6] border border-[#e2d5be] !text-[#6b0f1a] font-bold shadow-md'
-                  : 'bg-black/25 border border-transparent hover:border-[#e2d5be]/30 text-[#f8f3e6] hover:bg-[#f8f3e6]/10 font-medium'
+                  ? 'header-tab-settings-active header-tab-pill-active rounded-full bg-[#F7EECA] border border-[#EADBBA] text-[#0f172a] font-semibold shadow-md'
+                  : 'header-tab-pill-inactive rounded-full bg-transparent border border-transparent hover:bg-black/20 text-[#cbd5e1] font-semibold'
               }`}
             >
-              <span className="text-base">⚙️</span>
-              <span className={currentActive === 'settings' ? '!text-[#6b0f1a] font-bold' : 'text-[#f8f3e6]'}>Store Settings</span>
+              <span className="text-base" style={currentActive === 'settings' ? { color: '#0f172a' } : undefined}>⚙️</span>
+              <span 
+                style={currentActive === 'settings' ? { color: '#0f172a', fontWeight: 600 } : { color: '#cbd5e1', fontWeight: 600 }}
+                className={currentActive === 'settings' ? 'text-[#0f172a] font-semibold' : 'text-[#cbd5e1] font-semibold'}
+              >
+                Store Settings
+              </span>
             </button>
           </div>
         </div>
@@ -311,7 +567,12 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
               id="manager-notification-bell-btn"
               type="button"
               onClick={() => setIsNotificationOpen(prev => !prev)}
-              className="relative p-2.5 rounded-xl bg-[#161B26] border border-white/10 text-gray-200 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+              style={{
+                backgroundColor: '#F7EECA',
+                borderColor: '#EADBBA',
+                color: '#0f172a',
+              }}
+              className="notification-bell-butter-cream relative p-2.5 rounded-xl border transition-all cursor-pointer hover:bg-[#efe5c0]"
               title={unreadCount > 0 ? `${unreadCount} operational alerts (Dine-in, Takeaway & Voids)` : 'Operational Alerts'}
             >
               <span className="text-lg">🔔</span>

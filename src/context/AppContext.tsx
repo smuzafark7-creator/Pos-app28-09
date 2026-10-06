@@ -96,7 +96,7 @@ interface AppContextType {
   setActiveTab: (tab: string) => void;
   
   // Cart actions
-  addToCart: (item: MenuItem, qty?: number, notes?: string) => void;
+  addToCart: (item: MenuItem, qty?: number, notes?: string, serveType?: ItemServeType, orderType?: OrderType) => void;
   updateCartQuantity: (itemId: string, delta: number) => void;
   updateCartItemNotes: (itemId: string, notes: string) => void;
   updateCartItemServeType: (itemId: string, serveType: ItemServeType) => void;
@@ -125,7 +125,7 @@ interface AppContextType {
   setIsBillPrinted: (val: boolean) => void;
   
   // Flow actions
-  sendKOT: (overrideTableNumber?: string) => KOT | null;
+  sendKOT: (overrideTableNumber?: string, overrideOrderType?: OrderType, overrideInstructions?: string) => KOT | null;
   updateKOTStatus: (kotId: string, status: KOTStatus) => void;
   voidKOTItem: (kotId: string, itemIndex: number, voidQty?: number, reason?: string) => boolean;
   kdsAlerts: KDSAlert[];
@@ -419,19 +419,48 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (status === 'ready' || status === 'waiting') {
         status = 'occupied';
       }
-      // Guarantee Tables 2, 3, and 6 in main branch have 'billing' status & amounts
-      if (t.branchId === 'main' && (t.number === 2 || t.number === 3 || t.number === 6)) {
-        status = 'billing';
-        return { 
-          ...t, 
-          status, 
-          billRequested: true,
-          currentAmount: t.number === 2 ? 1130 : t.number === 3 ? 680 : 300,
-          billRequestedAt: t.number === 2 ? '12:48 PM' : t.number === 3 ? '12:40 PM' : '12:52 PM'
-        };
-      }
-      if (t.branchId === 'main' && t.number === 5 && status === 'billing') {
-        status = 'occupied';
+      // Guarantee Tables 2, 3, 5, and 6 in main branch have 'billing' status & synchronized amounts inclusive of GST
+      if (t.branchId === 'main') {
+        if (t.number === 2) {
+          return { 
+            ...t, 
+            status: 'billing', 
+            billRequested: true,
+            currentAmount: 1243, // Real items total (1130) + 5% CGST (56.5) + 5% SGST (56.5)
+            billRequestedAt: (t as any).billRequestedAt || '12:48 PM',
+            billRequestedBy: t.assignedWaiterName || 'Ramesh Patel'
+          };
+        }
+        if (t.number === 5) {
+          return { 
+            ...t, 
+            status: 'billing', 
+            billRequested: true,
+            currentAmount: 1133, // Real items total (1030) + 5% CGST (51.5) + 5% SGST (51.5)
+            billRequestedAt: (t as any).billRequestedAt || '12:50 PM',
+            billRequestedBy: t.assignedWaiterName || 'Ramesh Patel'
+          };
+        }
+        if (t.number === 3) {
+          return { 
+            ...t, 
+            status: 'billing', 
+            billRequested: true,
+            currentAmount: 748, // 680 + 10% GST
+            billRequestedAt: (t as any).billRequestedAt || '12:40 PM',
+            billRequestedBy: t.assignedWaiterName || 'Ramesh Patel'
+          };
+        }
+        if (t.number === 6) {
+          return { 
+            ...t, 
+            status: 'billing', 
+            billRequested: true,
+            currentAmount: 330, // 300 + 10% GST
+            billRequestedAt: (t as any).billRequestedAt || '12:52 PM',
+            billRequestedBy: t.assignedWaiterName || 'Priya Nair'
+          };
+        }
       }
       return { ...t, status };
     });
@@ -442,11 +471,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (list.length < 15) {
       return INITIAL_KOTS;
     }
-    const hasKot10025 = list.some(k => k.kotNumber === 'KOT-10025');
-    const hasKot10026 = list.some(k => k.kotNumber === 'KOT-10026');
-    if (!hasKot10025 || !hasKot10026) {
-      const demoKots = INITIAL_KOTS.filter(k => k.kotNumber === 'KOT-10025' || k.kotNumber === 'KOT-10026');
+    const hasKot102 = list.some(k => k.kotNumber === 'KOT-102');
+    const hasKot101 = list.some(k => k.kotNumber === 'KOT-101');
+    if (!hasKot102 || !hasKot101) {
+      const demoKots = INITIAL_KOTS.filter(k => k.kotNumber === 'KOT-102' || k.kotNumber === 'KOT-101');
       list = [...demoKots, ...list];
+    }
+    const hasKot10025 = list.some(k => k.kotNumber === 'KOT-10025');
+    if (!hasKot10025) {
+      const demoKot = INITIAL_KOTS.find(k => k.kotNumber === 'KOT-10025');
+      if (demoKot) list = [demoKot, ...list];
     }
     const hasKot10111 = list.some(k => k.kotNumber === 'KOT-10111');
     if (!hasKot10111) {
@@ -458,12 +492,51 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const demoKot = INITIAL_KOTS.find(k => k.kotNumber === 'KOT-10034');
       if (demoKot) list = [demoKot, ...list];
     }
+    // Normalize Dine-In orders in active stages so payment state is UNPAID
+    list = list.map(k => {
+      const isDineIn = !k.orderType || k.orderType === 'dine_in';
+      const isActive = k.status === 'new' || k.status === 'preparing' || k.status === 'ready';
+      if (isDineIn && isActive && !k.billId) {
+        return {
+          ...k,
+          isBilled: false,
+          isPaid: false,
+          paymentStatus: 'UNPAID'
+        };
+      }
+      return k;
+    });
     return list;
   });
 
-  const [bills, setBills] = useState<Bill[]>(
-    storedData?.bills ?? INITIAL_BILLS
-  );
+  const [bills, setBills] = useState<Bill[]>(() => {
+    let list: Bill[] = storedData?.bills ?? INITIAL_BILLS;
+    const hasInv10071 = list.some(b => b.billNumber === 'INV-10071');
+    if (!hasInv10071) {
+      const demoBill = INITIAL_BILLS.find(b => b.billNumber === 'INV-10071');
+      if (demoBill) list = [demoBill, ...list];
+    }
+    const hasInv10089 = list.some(b => b.billNumber === 'INV-10089');
+    if (!hasInv10089) {
+      const demoBill = INITIAL_BILLS.find(b => b.billNumber === 'INV-10089');
+      if (demoBill) list = [demoBill, ...list];
+    }
+    // Normalize active tables (Table 5 and Table 2) to UNPAID until settled by cashier
+    return list.map(b => {
+      const tbl = (b.tableNumber || '').toLowerCase();
+      if ((tbl === 'table 5' || tbl === 'table 2' || b.billNumber === 'INV-10071' || b.billNumber === 'INV-10089') && b.status !== 'cancelled') {
+        return {
+          ...b,
+          status: 'unpaid' as const,
+          paymentStatus: 'UNPAID' as const,
+          isPaid: false,
+          isEstimate: true,
+          grandTotal: tbl === 'table 5' || b.billNumber === 'INV-10071' ? 1133 : tbl === 'table 2' || b.billNumber === 'INV-10089' ? 1243 : b.grandTotal
+        };
+      }
+      return b;
+    });
+  });
 
   const [customers, setCustomers] = useState<Customer[]>(
     storedData?.customers ?? INITIAL_CUSTOMERS
@@ -528,21 +601,40 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Bill Requests state (for Waiter Request Bill -> Cashier Collect Payment)
   const [billRequests, setBillRequests] = useState<BillRequest[]>(() => {
-    if (storedData?.billRequests && storedData.billRequests.length > 0) {
-      return storedData.billRequests;
+    let list: BillRequest[] = (storedData?.billRequests && storedData.billRequests.length > 0)
+      ? storedData.billRequests
+      : INITIAL_BILL_REQUESTS;
+    const hasTbl5 = list.some(r => r.tableNumber.toLowerCase() === 'table 5' && r.status === 'pending');
+    if (!hasTbl5) {
+      const demoReq = INITIAL_BILL_REQUESTS.find(r => r.tableNumber.toLowerCase() === 'table 5');
+      if (demoReq) list = [{ ...demoReq, status: 'pending', totalAmount: 1133 }, ...list.filter(r => r.tableNumber.toLowerCase() !== 'table 5')];
     }
-    return INITIAL_BILL_REQUESTS;
+    const hasTbl2 = list.some(r => r.tableNumber.toLowerCase() === 'table 2' && r.status === 'pending');
+    if (!hasTbl2) {
+      const demoReq = INITIAL_BILL_REQUESTS.find(r => r.tableNumber.toLowerCase() === 'table 2');
+      if (demoReq) list = [{ ...demoReq, status: 'pending', totalAmount: 1243 }, ...list.filter(r => r.tableNumber.toLowerCase() !== 'table 2')];
+    }
+    // Ensure all totals reflect real items total + 5% CGST + 5% SGST
+    return list.map(r => {
+      if (r.tableNumber.toLowerCase() === 'table 2') {
+        return { ...r, totalAmount: 1243, kotNumbers: ['KOT-101'] };
+      }
+      if (r.tableNumber.toLowerCase() === 'table 5') {
+        return { ...r, totalAmount: 1133, kotNumbers: ['KOT-102', 'KOT-10025'] };
+      }
+      return r;
+    });
   });
 
   // KDS real-time cancellation alerts state
   const [kdsAlerts, setKdsAlerts] = useState<KDSAlert[]>([]);
 
-  // Sequential counter tracker for next demo KOT and Bill (prompt asks for KOT #10025, Bill #INV-10025)
+  // Sequential counter tracker for next demo KOT (101, 102...) and Bill (INV-10025, INV-10071, INV-10089)
   const [kotSequence, setKotSequence] = useState<number>(() => {
     const stored = storedData?.kotSequence;
-    return typeof stored === 'number' && stored >= 10027 ? stored : 10027;
+    return typeof stored === 'number' && stored >= 103 ? stored : 103;
   });
-  const [billSequence, setBillSequence] = useState<number>(storedData?.billSequence ?? 10025);
+  const [billSequence, setBillSequence] = useState<number>(storedData?.billSequence ?? 10091);
 
   // Save to localStorage
   useEffect(() => {
@@ -859,7 +951,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   // Cart Operations
-  const addToCart = (item: MenuItem, qty = 1, notes?: string) => {
+  const addToCart = (item: MenuItem, qty = 1, notes?: string, serveType?: ItemServeType, orderType?: OrderType) => {
     setIsOrderSettled(false);
     if (cartPaidBill) {
       showToast('Order Already Paid', `Invoice #${cartPaidBill.billNumber} is finalized. Send KOT or Start New Order.`, 'info');
@@ -894,6 +986,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     }
 
+    const effectiveOrderType: OrderType = orderType || (serveType === 'DELIVERY' ? 'delivery' : serveType === 'TAKEAWAY' || serveType === 'PARCEL' ? 'takeaway' : cartOrderType);
+    const effectiveServeType: ItemServeType = serveType || (effectiveOrderType === 'takeaway' || effectiveOrderType === 'parcel' ? 'PARCEL' : effectiveOrderType === 'delivery' ? 'DELIVERY' : 'DINE_IN');
+
     setIsBillPrinted(false);
     setCart(prev => {
       const existingIndex = prev.findIndex(c => c.item.id === item.id);
@@ -904,11 +999,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           quantity: copy[existingIndex].quantity + qty,
           isSaved: false,
           isNew: true,
-          ...(notes ? { notes } : {})
+          ...(notes ? { notes } : {}),
+          serveType: effectiveServeType,
+          orderType: effectiveOrderType,
         };
         return copy;
       } else {
-        return [...prev, { item, quantity: qty, serveType: 'DINE_IN', isSaved: false, isNew: true, ...(notes ? { notes } : {}) }];
+        return [...prev, { item, quantity: qty, serveType: effectiveServeType, orderType: effectiveOrderType, isSaved: false, isNew: true, ...(notes ? { notes } : {}) }];
       }
     });
   };
@@ -1414,7 +1511,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [saveActiveOrder]);
 
   // KOT Flow
-  const sendKOT = (overrideTableNumber?: string): KOT | null => {
+  const sendKOT = (overrideTableNumber?: string, overrideOrderType?: OrderType, overrideInstructions?: string): KOT | null => {
     if (cart.length === 0) {
       showToast('No items', 'Please add items before sending KOT.', 'warning');
       return null;
@@ -1424,6 +1521,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (cartPaidBill && cartSentKotId) {
       showToast('KOT Already Sent', `KOT was already sent to kitchen for invoice #${cartPaidBill.billNumber}.`, 'info');
       return null;
+    }
+
+    if (overrideOrderType) {
+      setCartOrderType(overrideOrderType);
+    }
+    if (overrideInstructions !== undefined) {
+      setCartSpecialNotes(overrideInstructions);
     }
 
     const effectiveBranch = currentBranch === 'all' ? 'main' : currentBranch;
@@ -1437,15 +1541,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     const totalAmount = cart.reduce((sum, c) => sum + c.item.price * c.quantity, 0);
     const isPrepaid = !!cartPaidBill;
-    const isTakeawayOrder = cartOrderType !== 'dine_in' && !overrideTableNumber;
-    const effectiveTableNumber = overrideTableNumber || (cartOrderType === 'dine_in' ? cartTableNumber : undefined);
+    const currentOrderType = overrideOrderType || (overrideTableNumber ? 'dine_in' : cartOrderType);
+    const isTakeawayOrder = currentOrderType !== 'dine_in' && !overrideTableNumber;
+    const effectiveTableNumber = overrideTableNumber || (currentOrderType === 'dine_in' ? cartTableNumber : undefined);
     const effectiveTakeawayId = isTakeawayOrder ? (cartTakeawayId || `TK-${takeawaySequence}`) : undefined;
     if (isTakeawayOrder && !cartTakeawayId && effectiveTakeawayId) {
       setCartTakeawayId(effectiveTakeawayId);
     }
 
     // Clear from savedActiveOrders if this order had a saved draft
-    const orderKey = (overrideTableNumber || cartOrderType === 'dine_in')
+    const orderKey = (overrideTableNumber || currentOrderType === 'dine_in')
       ? `dine_in:${(overrideTableNumber || cartTableNumber).toLowerCase()}`
       : `takeaway:${cartTakeawayId || 'TK-101'}`;
     setSavedActiveOrders(prev => {
@@ -1462,7 +1567,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       branchName: branchObj.name,
       tableNumber: effectiveTableNumber,
       takeawayId: effectiveTakeawayId,
-      orderType: overrideTableNumber ? 'dine_in' : cartOrderType,
+      orderType: currentOrderType,
       items: cart.map(c => ({
         menuItemId: c.item.id,
         name: c.item.name,
@@ -1470,16 +1575,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         rate: c.item.price,
         isVeg: c.item.isVeg,
         notes: c.notes,
-        serveType: c.serveType || (cartOrderType === 'dine_in' ? 'DINE_IN' : 'PARCEL')
+        serveType: c.serveType || (c.orderType === 'delivery' ? 'DELIVERY' : c.orderType === 'takeaway' || currentOrderType !== 'dine_in' ? 'PARCEL' : 'DINE_IN'),
+        orderType: c.orderType || currentOrderType
       })),
       status: 'new',
       createdAt: now.toISOString(),
       timeFormatted,
-      specialInstructions: cartSpecialNotes,
+      specialInstructions: overrideInstructions !== undefined ? overrideInstructions : cartSpecialNotes,
       customerName: cartCustomerName || cartPaidBill?.customerName || undefined,
       customerMobile: cartCustomerMobile || cartPaidBill?.customerMobile || undefined,
       totalAmount,
       isBilled: isPrepaid,
+      isPaid: isPrepaid,
+      paymentStatus: isPrepaid ? 'PAID' : 'UNPAID',
       billId: cartPaidBill?.id,
       billedAt: isPrepaid ? now.toISOString() : undefined,
       serverName: currentUser?.name || 'Staff'
@@ -2025,13 +2133,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       paymentMethod,
       splitDetails: paymentMethod === 'split' ? splitDetails : undefined,
       status: paymentMethod === 'due' ? 'unpaid' : 'paid',
+      paymentStatus: paymentMethod === 'due' ? 'UNPAID' : 'PAID',
+      isPaid: paymentMethod !== 'due',
       cashierName: currentUser?.name || 'Anita',
       stewardName: effectiveStewardName,
       fssaiLicNo: branchObj.fssai || '11223334000128'
     };
 
-    // Prepend to bills history
-    setBills(prev => [newBill, ...prev]);
+    // Prepend to bills history and mark matching un-settled estimate bills for this table as settled
+    setBills(prev => [
+      newBill,
+      ...prev.map(b => {
+        if (
+          cartOrderType === 'dine_in' &&
+          cartTableNumber &&
+          b.tableNumber?.toLowerCase() === cartTableNumber.toLowerCase() &&
+          b.status !== 'paid'
+        ) {
+          return {
+            ...b,
+            status: (paymentMethod === 'due' ? 'unpaid' : 'paid') as BillStatus,
+            paymentStatus: (paymentMethod === 'due' ? 'UNPAID' : 'PAID') as 'PAID' | 'UNPAID',
+            isPaid: paymentMethod !== 'due',
+            isEstimate: false,
+            paymentMethod
+          };
+        }
+        return b;
+      })
+    ]);
 
     // Mark all previously included KOTs as billed/settled
     const includedKotIds = activeKots.map(k => k.id);
@@ -2042,6 +2172,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             return {
               ...k,
               isBilled: true,
+              isPaid: newBill.status === 'paid',
+              paymentStatus: newBill.status === 'paid' ? 'PAID' : 'UNPAID',
               billId: newBill.id,
               billedAt: now.toISOString()
             };
@@ -2126,8 +2258,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       });
     }
 
-    // Retain order draft in savedActiveOrders and keep items in cart!
-    // Per strict lifecycle: Order badge remains in the top "Active:" list until KOT is sent.
+    // Remove order draft from savedActiveOrders if this order had a saved draft
+    const targetOrderKey = cartOrderType === 'dine_in'
+      ? (cartTableNumber ? `dine_in:${cartTableNumber.toLowerCase()}` : undefined)
+      : `takeaway:${cartTakeawayId || 'TK-101'}`;
+
+    if (targetOrderKey) {
+      setSavedActiveOrders(prev => {
+        if (!prev[targetOrderKey]) return prev;
+        const next = { ...prev };
+        delete next[targetOrderKey];
+        return next;
+      });
+    }
+
     setCartPaidBill(newBill);
     setCartSentKotId(null);
     setIsOrderSettled(true);
@@ -2138,7 +2282,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     showToast(
       'Payment Settled (PAID)',
-      `Bill #${billNumberStr} marked as PAID via ${paymentMethod.toUpperCase()}. Final step: Click "Send KOT" to dispatch to kitchen.`,
+      `Bill #${billNumberStr} marked as PAID via ${paymentMethod.toUpperCase()}.`,
       'success'
     );
     return newBill;
@@ -2364,7 +2508,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       baseAmount = cart.reduce((sum, item) => sum + item.item.price * item.quantity, 0);
     }
 
-    const grandTotalWithTax = Math.round(baseAmount * 1.05);
+    const cgstAmt = Number((baseAmount * 0.05).toFixed(2));
+    const sgstAmt = Number((baseAmount * 0.05).toFixed(2));
+    const grandTotalWithTax = Math.round(baseAmount + cgstAmt + sgstAmt);
 
     const existingPending = billRequests.find(
       r => r.branchId === effectiveBranch &&
@@ -2497,10 +2643,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       grandTotal: target.totalAmount,
       paymentMethod,
       status: 'paid',
+      paymentStatus: 'PAID',
+      isPaid: true,
       cashierName: currentUser?.name || 'Cashier'
     };
 
-    setBills(prev => [newBill, ...prev]);
+    setBills(prev => [
+      newBill,
+      ...prev.map(b => {
+        if (b.tableNumber?.toLowerCase() === target.tableNumber.toLowerCase() && b.status !== 'paid') {
+          return {
+            ...b,
+            status: 'paid' as const,
+            paymentStatus: 'PAID' as const,
+            isPaid: true,
+            isEstimate: false,
+            paymentMethod
+          };
+        }
+        return b;
+      })
+    ]);
 
     // Mark KOTs as billed/settled
     if (tableKots.length > 0) {
@@ -2511,6 +2674,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             return {
               ...k,
               isBilled: true,
+              isPaid: true,
+              paymentStatus: 'PAID',
               billId: newBill.id,
               billedAt: now.toISOString(),
               status: 'served'
@@ -2582,9 +2747,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                !k.isBilled &&
                k.status !== 'cancelled'
         );
-        const total = tableKots.length > 0
+        const rawItemsSubtotal = tableKots.length > 0
           ? tableKots.reduce((sum, k) => sum + k.totalAmount, 0)
-          : (t.currentAmount || (t.number === 2 ? 1130 : t.number === 3 ? 680 : t.number === 6 ? 300 : 500));
+          : (t.number === 2 ? 1130 : t.number === 5 ? 1030 : t.number === 3 ? 680 : t.number === 6 ? 300 : (t.currentAmount ? Math.round(t.currentAmount / 1.1) : 500));
+        const cgstAmt = Number((rawItemsSubtotal * 0.05).toFixed(2));
+        const sgstAmt = Number((rawItemsSubtotal * 0.05).toFixed(2));
+        const total = Math.round(rawItemsSubtotal + cgstAmt + sgstAmt);
 
         list.push({
           id: `req_tbl_${t.id}`,

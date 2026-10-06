@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { KOT, PaymentMethod, OrderType, ServeType, ItemServeType, SavedActiveOrder } from '../../types';
 import { 
@@ -21,7 +21,11 @@ import {
   Save,
   Smartphone,
   MessageSquare,
-  CheckCircle2
+  CheckCircle2,
+  ChevronDown,
+  Utensils,
+  ShoppingBag,
+  Bike
 } from 'lucide-react';
 import { KOTCancelModal } from '../KOTCancelModal';
 import { KOTModifyModal } from '../KOTModifyModal';
@@ -180,6 +184,24 @@ export const CashierCart: React.FC<CashierCartProps> = ({
   const [eBillChannel, setEBillChannel] = useState<'whatsapp' | 'sms'>('whatsapp');
   const [isSendingEBill, setIsSendingEBill] = useState<boolean>(false);
 
+  // Table Selector Dropdown State
+  const [isTableDropdownOpen, setIsTableDropdownOpen] = useState(false);
+  const tableDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (tableDropdownRef.current && !tableDropdownRef.current.contains(e.target as Node)) {
+        setIsTableDropdownOpen(false);
+      }
+    };
+    if (isTableDropdownOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [isTableDropdownOpen]);
+
   // Modals
   const [cancelModalTarget, setCancelModalTarget] = useState<{ kot: KOT; itemIndex?: number } | null>(null);
   const [modifyModalTarget, setModifyModalTarget] = useState<{ kot: KOT; itemIndex: number } | null>(null);
@@ -252,28 +274,42 @@ export const CashierCart: React.FC<CashierCartProps> = ({
 
   const handleSendKOT = () => {
     if (isSendingKot) return;
-    if (hasUnsavedItems || !isOrderSettled) return; // Strictly blocked until order is settled and no unsaved items
+    if (cart.length === 0 && rawSubtotal <= 0) {
+      showToast('No Items', 'Please add items before sending KOT.', 'warning');
+      return;
+    }
     if (orderType === 'dine_in' && !tableNumber) {
       showToast('Select Table', 'Please assign a table before sending KOT.', 'warning');
       return;
     }
-    if (cart.length === 0 && !isOrderSettled) {
-      return;
-    }
 
+    // Direct Instant KOT Dispatch
     setIsSendingKot(true);
     setTimeout(() => {
-      const kot = sendKOT(orderType === 'dine_in' ? tableNumber : undefined);
+      const kot = sendKOT(
+        orderType === 'dine_in' ? tableNumber : undefined,
+        orderType,
+        cartSpecialNotes
+      );
       setIsSendingKot(false);
+
       if (kot) {
-        showToast('KOT Dispatched', `${kot.kotNumber.startsWith('KOT-') ? kot.kotNumber : `KOT #${kot.kotNumber}`} sent to kitchen.`, 'success');
+        // Open thermal print slip preview for cashier
+        openKOTModal(kot);
+        showToast(
+          'KOT Dispatched',
+          `${kot.kotNumber.startsWith('KOT-') ? kot.kotNumber : `KOT #${kot.kotNumber}`} dispatched directly to kitchen.`,
+          'success'
+        );
       }
-    }, 250);
+    }, 150);
   };
 
   const handleSaveRunningOrder = () => {
-    if (!hasUnsavedItems || isOrderSettled) return; // Clicking does nothing if no unsaved items or already settled
-    if (cart.length === 0 && rawSubtotal <= 0) return;
+    if (cart.length === 0 && rawSubtotal <= 0) {
+      showToast('No Items', 'Please add items before saving order.', 'warning');
+      return;
+    }
 
     if (orderType === 'dine_in' && !tableNumber) {
       showToast('Select Table', 'Please assign a table before saving order.', 'warning');
@@ -281,30 +317,54 @@ export const CashierCart: React.FC<CashierCartProps> = ({
     }
 
     // Saves current order state to "Active Orders" (Draft/Held state).
-    // DO NOT create or send KOT to Kitchen/KDS.
-    // Retains active cart and ticket in view.
+    // Allows holding/saving an active order to switch to another customer.
     saveActiveOrder(false);
+    showToast('Order Held', 'Current order saved to active drafts.', 'success');
   };
 
   const handleSettle = () => {
-    if (hasUnsavedItems || !allItemsSaved || isOrderSettled || isSettling) return; // Strictly blocked if unsaved items exist
-    if (rawSubtotal <= 0 && cart.length === 0) return;
+    if (isSettling) return;
+    if (cart.length === 0 && rawSubtotal <= 0) {
+      showToast('No Items', 'Please add items before settling order.', 'warning');
+      return;
+    }
+    if (orderType === 'dine_in' && !tableNumber) {
+      showToast('Select Table', 'Please assign a table before settling order.', 'warning');
+      return;
+    }
 
     setIsSettling(true);
     setTimeout(() => {
-      // Marks order as Paid & Settled, keeps cart and ticket in view, opens Paid Tax Invoice
+      // 1. Save/Record order in state/database and 2. Mark selected payment mode as settled/paid
       const bill = settleBill();
       setIsSettling(false);
+
       if (bill) {
+        // 3. Trigger invoice/receipt popup or print preview dialog automatically
         openReceiptModal(bill);
+
+        // 4. Clear current cart or open fresh order tab
+        if (orderType === 'dine_in') {
+          clearCart();
+        } else {
+          startNewTakeawayOrder();
+        }
+
+        showToast(
+          'Payment Settled',
+          `Order #${bill.billNumber} settled via ${cartPaymentMethod.toUpperCase()} (₹${(bill.grandTotal || bill.total || 0).toFixed(2)}).`,
+          'success'
+        );
       }
-    }, 250);
+    }, 200);
   };
 
   const handleSaveAndPrint = () => {
-    if (isOrderSettled || isSettling) return; // Locked once settled or currently processing
-    if (cart.length === 0 && rawSubtotal <= 0) return;
-    if (isBillPrinted && !hasUnsavedItems) return; // One-time print only: locked after clicking until cart modified
+    if (isSettling) return;
+    if (cart.length === 0 && rawSubtotal <= 0) {
+      showToast('No Items', 'Please add items before printing.', 'warning');
+      return;
+    }
 
     if (orderType === 'dine_in' && !tableNumber) {
       showToast('Select Table', 'Please assign a table before saving order.', 'warning');
@@ -313,9 +373,7 @@ export const CashierCart: React.FC<CashierCartProps> = ({
 
     setIsSettling(true);
     setTimeout(() => {
-      // Saves order to "Active Orders" (or triggers print for already saved order) and opens thermal estimate/bill print preview.
-      // DO NOT create or send KOT to Kitchen/KDS.
-      // Keep order active on screen ready for payment.
+      // Saves order to "Active Orders" and opens thermal estimate/bill print preview.
       const estimateBill = saveActiveOrder(true);
       setIsBillPrinted(true);
       setIsSettling(false);
@@ -326,7 +384,7 @@ export const CashierCart: React.FC<CashierCartProps> = ({
   };
 
   const handleOpenEBillModal = () => {
-    if (rawSubtotal <= 0) {
+    if (cart.length === 0 && rawSubtotal <= 0) {
       showToast('No Order', 'There are no items to settle.', 'warning');
       return;
     }
@@ -353,9 +411,16 @@ export const CashierCart: React.FC<CashierCartProps> = ({
         const channelName = eBillChannel === 'whatsapp' ? 'WhatsApp' : 'SMS';
         showToast(
           'E-Bill Dispatched',
-          `Bill #${bill.billNumber} (₹${bill.total.toFixed(2)}) sent to +91 ${cleanPhone} via ${channelName}.`,
+          `Bill #${bill.billNumber} (₹${(bill.grandTotal || bill.total || 0).toFixed(2)}) sent to +91 ${cleanPhone} via ${channelName}.`,
           'success'
         );
+        openReceiptModal(bill);
+
+        if (orderType === 'dine_in') {
+          clearCart();
+        } else {
+          startNewTakeawayOrder();
+        }
       }
     }, 250);
   };
@@ -372,12 +437,25 @@ export const CashierCart: React.FC<CashierCartProps> = ({
             id="order-type-dine-in"
             type="button"
             onClick={() => setOrderType('dine_in')}
-            className={`flex-1 py-2 text-center rounded-lg text-sm transition-all duration-150 flex items-center justify-center gap-1 cursor-pointer ${
+            style={
               orderType === 'dine_in'
-                ? 'bg-[#8b0000] text-white font-bold ring-2 ring-white shadow-lg scale-[1.02] border border-red-400 z-10'
-                : 'bg-[#700000] text-white/90 font-semibold hover:bg-[#800000] hover:text-white border border-red-900/50'
+                ? {
+                    border: '2px solid #ffffff !important',
+                    borderColor: '#ffffff',
+                    borderWidth: '2px',
+                    borderStyle: 'solid',
+                  }
+                : {
+                    border: '1px solid transparent',
+                  }
+            }
+            className={`flex-1 py-2 text-center rounded-lg text-sm transition-all duration-150 inline-flex items-center justify-center gap-1.5 cursor-pointer ${
+              orderType === 'dine_in'
+                ? 'bg-[#7a0c1a] text-white font-bold ring-2 ring-white shadow-lg scale-[1.02] border-2 border-white z-10'
+                : 'bg-[#580510] text-white/90 font-semibold hover:bg-[#6b0816] hover:text-white border border-transparent'
             }`}
           >
+            <Utensils className="w-3.5 h-3.5 shrink-0 stroke-[2.5]" size={14} />
             <span>Dine In</span>
           </button>
 
@@ -386,12 +464,25 @@ export const CashierCart: React.FC<CashierCartProps> = ({
             id="order-type-takeaway"
             type="button"
             onClick={() => setOrderType('takeaway')}
-            className={`flex-1 py-2 text-center rounded-lg text-sm transition-all duration-150 flex items-center justify-center gap-1 cursor-pointer ${
+            style={
               orderType === 'takeaway'
-                ? 'bg-[#1e3a8a] text-white font-bold ring-2 ring-white shadow-lg scale-[1.02] border border-blue-400 z-10'
-                : 'bg-[#0b1e3b] text-white/90 font-semibold hover:bg-[#12284e] hover:text-white border border-blue-900/50'
+                ? {
+                    border: '2px solid #ffffff !important',
+                    borderColor: '#ffffff',
+                    borderWidth: '2px',
+                    borderStyle: 'solid',
+                  }
+                : {
+                    border: '1px solid transparent',
+                  }
+            }
+            className={`flex-1 py-2 text-center rounded-lg text-sm transition-all duration-150 inline-flex items-center justify-center gap-1.5 cursor-pointer ${
+              orderType === 'takeaway'
+                ? 'bg-[#1e3a8a] text-white font-bold ring-2 ring-white shadow-lg scale-[1.02] border-2 border-white z-10'
+                : 'bg-[#0b1e3b] text-white/90 font-semibold hover:bg-[#12284e] hover:text-white border border-transparent'
             }`}
           >
+            <ShoppingBag className="w-3.5 h-3.5 shrink-0 stroke-[2.5]" size={14} />
             <span>Takeaway</span>
           </button>
 
@@ -400,54 +491,221 @@ export const CashierCart: React.FC<CashierCartProps> = ({
             id="order-type-delivery"
             type="button"
             onClick={() => setOrderType('delivery')}
-            className={`flex-1 py-2 text-center rounded-lg text-sm transition-all duration-150 flex items-center justify-center gap-1 cursor-pointer ${
+            style={
               orderType === 'delivery'
-                ? 'bg-[#b45309] text-white font-bold ring-2 ring-white shadow-lg scale-[1.02] border border-amber-400 z-10'
-                : 'bg-[#92400e] text-white/90 font-semibold hover:bg-[#a34810] hover:text-white border border-amber-900/50'
+                ? {
+                    border: '2px solid #ffffff !important',
+                    borderColor: '#ffffff',
+                    borderWidth: '2px',
+                    borderStyle: 'solid',
+                  }
+                : {
+                    border: '1px solid transparent',
+                  }
+            }
+            className={`flex-1 py-2 text-center rounded-lg text-sm transition-all duration-150 inline-flex items-center justify-center gap-1.5 cursor-pointer ${
+              orderType === 'delivery'
+                ? 'bg-[#b45309] text-white font-bold ring-2 ring-white shadow-lg scale-[1.02] border-2 border-white z-10'
+                : 'bg-[#92400e] text-white/90 font-semibold hover:bg-[#a34810] hover:text-white border border-transparent'
             }`}
           >
+            <Bike className="w-3.5 h-3.5 shrink-0 stroke-[2.5]" size={14} />
             <span>Delivery</span>
           </button>
         </div>
 
         {/* Table Selector (for Dine In) */}
         {orderType === 'dine_in' ? (
-          <div className="space-y-1">
-            <div className="relative">
-              <select
-                value={tableNumber}
-                onChange={e => setTableNumber(e.target.value)}
-                className="w-full pl-2.5 pr-7 py-1.5 bg-[#0e1624] border border-slate-800/60 rounded-lg text-xs font-semibold text-white focus:outline-none focus:border-slate-700 shadow-xs cursor-pointer"
+          <div className="relative w-full mb-1" ref={tableDropdownRef}>
+            {/* Table Select Trigger Input/Bar */}
+            <div
+              id="cashier-table-info-summary"
+              onClick={() => setIsTableDropdownOpen(prev => !prev)}
+              className="pos-table-selector-trigger flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer select-none transition-all shadow-xs"
+              style={{
+                backgroundColor: '#0b1120',
+                border: '1px solid rgba(234, 219, 186, 0.4)',
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setIsTableDropdownOpen(prev => !prev);
+                }
+              }}
+              aria-haspopup="listbox"
+              aria-expanded={isTableDropdownOpen}
+              title="Click to select table"
+            >
+              <div className="flex items-center gap-2 truncate min-w-0">
+                <span 
+                  className="table-name text-sm font-bold truncate"
+                  style={{ color: '#ffffff', fontWeight: 700 }}
+                >
+                  {selectedTable ? selectedTable.name : (tableNumber || 'Select Table')}
+                </span>
+                {selectedTable && (
+                  <div className="flex items-center gap-1.5 truncate">
+                    <span 
+                      className="table-status-tag table-seats text-xs font-semibold"
+                      style={{ color: '#10b981' }}
+                    >
+                      • {selectedTable.capacity} Seats
+                    </span>
+                    {selectedTable.assignedWaiterName && (
+                      <span 
+                        className="table-status-tag table-waiter text-xs font-semibold truncate"
+                        style={{ color: '#10b981' }}
+                      >
+                        • {selectedTable.assignedWaiterName}
+                      </span>
+                    )}
+                    {selectedTable.guestName && (
+                      <span 
+                        className="table-status-tag text-xs font-semibold truncate"
+                        style={{ color: '#10b981' }}
+                      >
+                        • {selectedTable.guestName}
+                      </span>
+                    )}
+                  </div>
+                )}
+                <ChevronDown 
+                  className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ${isTableDropdownOpen ? 'rotate-180' : ''}`} 
+                  style={{ stroke: 'rgba(234, 219, 186, 0.9)' }}
+                />
+              </div>
+
+              {/* Total Price: Bright Emerald */}
+              <span 
+                className="table-total-price font-extrabold text-sm shrink-0 ml-2"
+                style={{ color: '#34d399', fontWeight: 800 }}
               >
-                {(branchTables || []).map(tbl => {
-                  const normStatus = (tbl.status === 'ready' || tbl.status === 'waiting') ? 'occupied' : tbl.status;
-                  return (
-                    <option key={tbl.id} value={tbl.name} className="bg-[#0f172a] text-white">
-                      {tbl.name} • ({tbl.capacity} Seats) • {normStatus.toUpperCase()}
-                    </option>
-                  );
-                })}
-              </select>
+                ₹{rawSubtotal.toFixed(2)}
+              </span>
             </div>
 
-            {selectedTable && (
-              <div id="cashier-table-info-summary" className="flex items-center justify-between px-2.5 py-1.5 bg-[#0e1624] border border-slate-800/60 rounded-lg text-sm">
-                <div className="flex items-center gap-1.5 truncate">
-                  <span className="table-name text-white font-bold text-sm" style={{ color: '#ffffff' }}>
-                    {selectedTable.name}
-                  </span>
-                  <span className="table-seats text-slate-400 text-sm" style={{ color: '#94a3b8' }}>
-                    • {selectedTable.capacity} Seats
-                  </span>
-                  {selectedTable.assignedWaiterName && (
-                    <span className="table-waiter text-emerald-400 font-semibold text-sm" style={{ color: '#34d399' }}>
-                      • {selectedTable.assignedWaiterName}
-                    </span>
-                  )}
-                </div>
-                <span className="font-bold text-emerald-400 shrink-0 text-sm" style={{ color: '#34d399' }}>
-                  ₹{rawSubtotal.toFixed(2)}
-                </span>
+            {/* Floating Table Options Menu (When open) */}
+            {isTableDropdownOpen && (
+              <div
+                id="pos-table-selector-menu"
+                className="pos-table-selector-menu absolute left-0 right-0 top-[calc(100%+6px)] z-50 max-h-64 overflow-y-auto p-1.5 flex flex-col gap-1 shadow-2xl"
+                style={{
+                  backgroundColor: '#0b1120',
+                  border: '1px solid #EADBBA',
+                  borderRadius: '10px',
+                }}
+                role="listbox"
+              >
+                {(branchTables || []).map(tbl => {
+                  const isSelected = tbl.name.toLowerCase() === tableNumber.toLowerCase();
+                  const normStatus = (tbl.status === 'ready' || tbl.status === 'waiting') ? 'occupied' : tbl.status;
+                  const upperStatus = normStatus.toUpperCase();
+                  
+                  // Status badge styling:
+                  // CLEANING / AVAILABLE: Mint Green (color: #34d399; font-weight: 700;)
+                  // BILLING / OCCUPIED: Amber Gold (color: #fbbf24; font-weight: 700;)
+                  const isMint = upperStatus === 'CLEANING' || upperStatus === 'AVAILABLE';
+
+                  return (
+                    <button
+                      key={tbl.id}
+                      type="button"
+                      onClick={() => {
+                        setTableNumber(tbl.name);
+                        setIsTableDropdownOpen(false);
+                      }}
+                      className={`pos-table-item group w-full flex items-center justify-between px-3 py-2 rounded-lg text-left cursor-pointer transition-colors ${
+                        isSelected ? 'pos-table-item-selected' : ''
+                      }`}
+                      style={
+                        isSelected
+                          ? {
+                              backgroundColor: '#F7EECA',
+                              color: '#0f172a',
+                              fontWeight: 800,
+                            }
+                          : {
+                              backgroundColor: 'transparent',
+                              color: '#f8fafc',
+                              fontWeight: 600,
+                              fontSize: '13px',
+                            }
+                      }
+                      role="option"
+                      aria-selected={isSelected}
+                    >
+                      <div className="flex items-center gap-2 truncate">
+                        <span 
+                          style={{
+                            color: isSelected ? '#0f172a' : '#f8fafc',
+                            fontWeight: isSelected ? 800 : 600,
+                            fontSize: '13px',
+                          }}
+                        >
+                          {tbl.name}
+                        </span>
+                        <span 
+                          style={{
+                            color: isSelected ? '#334155' : '#94a3b8',
+                            fontSize: '12px',
+                            fontWeight: isSelected ? 700 : 500,
+                          }}
+                        >
+                          • ({tbl.capacity} Seats)
+                        </span>
+                        {tbl.assignedWaiterName && (
+                          <span 
+                            style={{
+                              color: isSelected ? '#047857' : '#10b981',
+                              fontSize: '11px',
+                              fontWeight: 600,
+                            }}
+                          >
+                            • {tbl.assignedWaiterName}
+                          </span>
+                        )}
+                        {tbl.guestName && (
+                          <span 
+                            style={{
+                              color: isSelected ? '#0369a1' : '#38bdf8',
+                              fontSize: '11px',
+                              fontWeight: 600,
+                            }}
+                          >
+                            • {tbl.guestName}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Status badge */}
+                      <span
+                        className="pos-table-status-badge px-2 py-0.5 rounded-md text-[11px] uppercase tracking-wide shrink-0 ml-2"
+                        style={{
+                          color: isSelected
+                            ? '#0f172a'
+                            : isMint
+                            ? '#34d399'
+                            : '#fbbf24',
+                          backgroundColor: isSelected
+                            ? 'rgba(15, 23, 42, 0.12)'
+                            : isMint
+                            ? 'rgba(52, 211, 153, 0.12)'
+                            : 'rgba(251, 191, 36, 0.12)',
+                          border: isSelected
+                            ? '1px solid rgba(15, 23, 42, 0.25)'
+                            : isMint
+                            ? '1px solid rgba(52, 211, 153, 0.3)'
+                            : '1px solid rgba(251, 191, 36, 0.3)',
+                          fontWeight: 700,
+                        }}
+                      >
+                        {upperStatus}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -607,180 +865,88 @@ export const CashierCart: React.FC<CashierCartProps> = ({
       </div>
 
       {/* Middle Scrollable: Order Items & KOTs */}
-      <div className="flex-1 overflow-y-auto flex flex-col bg-[#070b12] min-h-0">
-        
+      <div className="relative flex-1 overflow-y-auto flex flex-col bg-[#070b12] min-h-0">
+        {/* Dynamic Order Type Watermark */}
+        <div
+          id="pos-cart-order-type-watermark"
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            pointerEvents: 'none',
+            zIndex: 0,
+            fontSize: '54px',
+            fontWeight: 900,
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: 'rgba(255, 255, 255, 0.04)',
+            userSelect: 'none',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {orderType === 'dine_in'
+            ? 'DINE IN'
+            : orderType === 'delivery'
+            ? 'DELIVERY'
+            : 'TAKEAWAY'}
+        </div>
+
         {/* Order Items List */}
-        <div className="py-1 space-y-1.5 flex-1">
-          {(activeSessionKots || []).map(kot => {
-            return (
-              <div key={kot.id} className="space-y-0.5">
-                {/* Thin KOT Ribbon Header */}
-                <div className="py-1 px-3 bg-[#0a0f18] border-y border-slate-800/60 flex items-center justify-between font-semibold uppercase tracking-wider rounded-xs">
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <span
-                      className="kot-badge-ribbon waiter-cart-kot-header-badge px-2 py-0.5 rounded font-mono font-extrabold"
-                      style={{
-                        color: '#f8fafc',
-                        fontWeight: 850,
-                        fontSize: '13px'
-                      }}
-                    >
-                      {kot.kotNumber.startsWith('KOT') ? kot.kotNumber : `KOT #${kot.kotNumber}`}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => openKOTModal(kot)}
-                      className="waiter-cart-kot-print-btn text-white bg-slate-800 hover:bg-slate-700 border border-[#334155] px-1.5 py-0.5 rounded text-[11px] font-bold transition-colors cursor-pointer flex items-center justify-center gap-1"
-                      style={{ border: '1px solid #334155', backgroundColor: '#1e293b' }}
-                      title="Print KOT Slip"
-                      aria-label={`Print KOT ${kot.kotNumber}`}
-                    >
-                      <Printer className="w-3 h-3 text-white" />
-                    </button>
-                    <span 
-                      className="waiter-cart-kot-status-badge text-slate-200 bg-slate-800 border border-[#334155] px-1.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider"
-                      style={{ border: '1px solid #334155' }}
-                    >
-                      {kot.status === 'picked_up' ? 'Picked Up' : (kot.status || 'NEW')}
-                    </span>
-                  </div>
-                  <span className="w-20 text-left text-emerald-400 font-bold shrink-0 text-sm" style={{ color: '#34d399' }}>
-                    ₹{kot.totalAmount.toFixed(2)}
-                  </span>
-                </div>
-
-                <div className="divide-y divide-slate-800/40">
-                  {(kot.items || []).map((it, idx) => {
-                    const itName = it.name || (it as any)?.menuItem?.name || 'Item';
-                    const match = itName.match(/^(.*?)\s*\((.*?)\)$/);
-                    const baseName = match ? match[1].trim() : itName;
-                    const variationName = match ? match[2].trim() : undefined;
-                    const itRate = (it.rate ?? (it as any)?.menuItem?.price) || 0;
-                    const isVoided = it.status === 'voided';
-
-                    return (
-                      <div
-                        key={idx}
-                        className={`px-3 py-1 hover:bg-white/[0.03] transition-colors rounded-xs text-xs ${
-                          isVoided ? 'opacity-60 bg-rose-950/10' : ''
-                        }`}
-                      >
-                        <div className="min-h-[28px] flex items-center justify-between gap-1.5">
-                          {/* Left side: Delete/Void icon + Dish Name (variant inline) + Unit Price */}
-                          <div className="flex items-center gap-1 min-w-0 flex-1 overflow-hidden pr-1 pl-1">
-                            {!isVoided ? (
-                              <button
-                                type="button"
-                                onClick={() => setCancelModalTarget({ kot, itemIndex: idx })}
-                                className="w-5 h-5 rounded flex items-center justify-center text-slate-500 hover:text-rose-400 hover:bg-rose-950/40 transition-colors cursor-pointer shrink-0"
-                                title="Void / Cancel Item"
-                                aria-label={`Void ${itName}`}
-                              >
-                                <Trash2 className="w-3.5 h-3.5 text-rose-400/70 hover:text-rose-400" />
-                              </button>
-                            ) : (
-                              <div className="w-5 h-5 flex items-center justify-center shrink-0">
-                                <span className="text-[10px] text-rose-500 font-bold">✕</span>
-                              </div>
-                            )}
-                            <div className="flex items-center gap-1 min-w-0 flex-1 truncate">
-                              <span 
-                                className={`waiter-cart-item-title font-medium truncate leading-tight ${isVoided ? 'line-through text-slate-500' : 'text-slate-100'}`}
-                                style={{ color: isVoided ? '#94a3b8' : '#ffffff' }}
-                              >
-                                {baseName}
-                              </span>
-                              {variationName && (
-                                <span className="text-amber-400 text-[11px] font-normal shrink-0">
-                                  ({variationName})
-                                </span>
-                              )}
-                              <span className={`text-xs font-medium ml-2 shrink-0 ${isVoided ? 'line-through text-slate-600' : 'text-slate-400'}`}>
-                                • ₹{itRate.toFixed(2)}
-                              </span>
-                            </div>
-                            {it.serveType === 'PARCEL' && (
-                              <span className="text-[9px] font-bold text-amber-400 px-1 py-0.2 rounded bg-amber-950/60 border border-amber-800/40 shrink-0 uppercase">
-                                P
-                              </span>
-                            )}
-                            {isVoided && (
-                              <span className="text-[9px] font-bold text-rose-400 px-1 py-0.2 rounded bg-rose-950/60 border border-rose-800/40 shrink-0">
-                                VOID
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Center: Slim quantity badge aligned with center QTY header */}
-                          <div className="flex items-center justify-center shrink-0 w-16">
-                            <span
-                              className={`cart-saved-qty-badge font-extrabold text-[13px] text-center shrink-0 shadow-xs ${
-                                isVoided ? 'line-through opacity-60' : ''
-                              }`}
-                              style={{
-                                backgroundColor: isVoided ? '#334155' : '#ffffff',
-                                background: isVoided ? '#334155' : '#ffffff',
-                                color: isVoided ? '#94a3b8' : '#0f172a',
-                                fontWeight: 800,
-                                fontSize: '13px',
-                                padding: '2px 8px',
-                                borderRadius: '6px',
-                                minWidth: '28px',
-                                textAlign: 'center',
-                                display: 'inline-block',
-                              }}
-                            >
-                              ×{it.quantity}
-                            </span>
-                          </div>
-
-                          {/* Right side: Item total price left-aligned with fixed anchor expanding right */}
-                          <div className={`w-20 text-left font-bold text-xs whitespace-nowrap shrink-0 ${isVoided ? 'line-through text-slate-500' : 'text-emerald-400'}`}>
-                            ₹{(itRate * it.quantity).toFixed(2)}
-                          </div>
-                        </div>
-
-                        {/* Attached note directly underneath item */}
-                        {it.notes && (
-                          <div className="pl-6 pr-2 pt-0.5 pb-0.5 flex items-center">
-                            <span className="inline-flex items-center gap-1 text-[10px] text-amber-300/90 bg-amber-950/40 border border-amber-800/30 px-1.5 py-0.5 rounded font-normal">
-                              <span className="text-amber-400/90 font-medium">Note:</span> {it.notes}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-
-          {/* Cart Items */}
+        <div className="relative z-10 py-1 space-y-1.5 flex-1">
+          {/* 1. Unsent / New KOT Items (Rendered at Top of List) */}
           {(cart || []).length > 0 && (
             <div className="space-y-0.5">
-              {/* Thin Items Ribbon Header */}
+              {/* "NEW KOT (UNSENT)" Header Banner matching other KOT headers */}
               <div
-                className={`py-1 px-3 flex items-center justify-between uppercase tracking-wider rounded-xs border-b border-slate-800/80 ${
-                  hasUnsavedItems
-                    ? 'bg-[#0a0f18] text-amber-400 font-semibold text-[10px]'
-                    : 'cart-saved-items-ribbon bg-transparent text-slate-200 font-bold text-xs'
-                }`}
-                style={!hasUnsavedItems ? { backgroundColor: 'transparent' } : undefined}
+                className="py-1 px-3 flex items-center justify-between font-semibold uppercase tracking-wider rounded-xs transition-colors"
+                style={{
+                  background: 'rgba(30, 41, 59, 0.7)',
+                  backgroundColor: 'rgba(30, 41, 59, 0.7)',
+                  borderLeft: '3px solid #f59e0b',
+                  borderTop: '1px solid rgba(51, 65, 85, 0.5)',
+                  borderBottom: '1px solid rgba(51, 65, 85, 0.5)',
+                }}
               >
-                <span className={!hasUnsavedItems ? 'saved-items-title text-slate-200 font-bold text-xs uppercase tracking-wider' : ''}>
-                  {hasUnsavedItems
-                    ? `NEW PUNCH ITEMS (${(cart || []).filter(c => c.isNew || !c.isSaved).length})`
-                    : `SAVED ITEMS (${(cart || []).length})`}
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <span
+                    className="kot-badge-ribbon font-mono font-extrabold"
+                    style={{
+                      color: '#f8fafc',
+                      fontWeight: 850,
+                      fontSize: '13px',
+                    }}
+                  >
+                    KOT: NEW (UNSENT)
+                  </span>
+                  <span
+                    style={{
+                      background: '#fef08a',
+                      color: '#854d0e',
+                      fontSize: '11px',
+                      fontWeight: 800,
+                      padding: '2px 8px',
+                      borderRadius: '4px',
+                      letterSpacing: '0.05em',
+                    }}
+                    className="inline-flex items-center shadow-xs"
+                  >
+                    NEW
+                  </span>
+                  <button
+                    type="button"
+                    onClick={clearCart}
+                    className="clear-cart-btn text-red-400/80 hover:text-red-300 text-xs font-semibold flex items-center gap-1 cursor-pointer uppercase ml-auto mr-2 transition-colors"
+                    title="Clear unsent items"
+                  >
+                    <Trash2 className="w-3 h-3 text-red-400" />
+                    <span className="text-[11px]">Clear</span>
+                  </button>
+                </div>
+                <span className="w-20 text-left text-emerald-400 font-bold shrink-0 text-sm" style={{ color: '#34d399', fontWeight: 800 }}>
+                  ₹{newCartTotal.toFixed(2)}
                 </span>
-                <button
-                  type="button"
-                  onClick={clearCart}
-                  className="clear-cart-btn text-red-400 hover:text-red-300 text-xs font-semibold flex items-center gap-1 cursor-pointer uppercase pr-1 transition-colors"
-                >
-                  <Trash2 className="w-3 h-3 text-red-400" />
-                  Clear
-                </button>
               </div>
 
               <div className="divide-y divide-slate-800/40">
@@ -788,7 +954,6 @@ export const CashierCart: React.FC<CashierCartProps> = ({
                   const match = cartItem.item.name.match(/^(.*?)\s*\((.*?)\)$/);
                   const baseName = match ? match[1].trim() : cartItem.item.name;
                   const variationName = match ? match[2].trim() : undefined;
-                  const isItemUnsaved = cartItem.isNew || !cartItem.isSaved;
 
                   return (
                     <div
@@ -807,27 +972,29 @@ export const CashierCart: React.FC<CashierCartProps> = ({
                           >
                             <Trash2 className="w-3.5 h-3.5 text-rose-400/70 hover:text-rose-400" />
                           </button>
-                          <div className="flex items-center gap-1 min-w-0 flex-1 truncate">
-                            <span 
-                              className="waiter-cart-item-title font-medium text-slate-100 truncate leading-tight"
-                              style={{ color: '#ffffff' }}
-                            >
-                              {baseName}
-                            </span>
-                            {variationName && (
-                              <span className="text-amber-400 text-[11px] font-normal shrink-0">
-                                ({variationName})
+                          <div className="flex flex-col min-w-0 flex-1 truncate">
+                            <div className="flex items-center gap-1 min-w-0 flex-1 truncate">
+                              <span 
+                                className="waiter-cart-item-title font-medium text-slate-100 truncate leading-tight"
+                                style={{ color: '#ffffff' }}
+                              >
+                                {baseName}
+                              </span>
+                              {variationName && (
+                                <span className="text-amber-400 text-[11px] font-normal shrink-0">
+                                  ({variationName})
+                                </span>
+                              )}
+                              <span className="text-xs text-slate-400 font-medium ml-2 shrink-0">
+                                • ₹{cartItem.item.price.toFixed(2)}
+                              </span>
+                            </div>
+                            {cartItem.notes && (
+                              <span className="text-[10px] text-amber-300/90 italic truncate">
+                                Note: {cartItem.notes}
                               </span>
                             )}
-                            <span className="text-xs text-slate-400 font-medium ml-2 shrink-0">
-                              • ₹{cartItem.item.price.toFixed(2)}
-                            </span>
                           </div>
-                          {cartItem.serveType === 'PARCEL' && (
-                            <span className="text-[9px] font-bold text-amber-400 px-1.5 py-0.5 rounded bg-amber-950/60 border border-amber-800/40 shrink-0 uppercase">
-                              PARCEL
-                            </span>
-                          )}
                         </div>
 
                         {/* Center: Interactive high-contrast quantity stepper [-] [ Qty ] [+] */}
@@ -877,21 +1044,145 @@ export const CashierCart: React.FC<CashierCartProps> = ({
                           ₹{(cartItem.item.price * cartItem.quantity).toFixed(2)}
                         </div>
                       </div>
-
-                      {/* Attached note directly underneath item */}
-                      {cartItem.notes && (
-                        <div className="pl-6 pr-2 pt-0.5 pb-0.5 flex items-center">
-                          <span className="inline-flex items-center gap-1 text-[10px] text-amber-300/90 bg-amber-950/40 border border-amber-800/30 px-1.5 py-0.5 rounded font-normal">
-                            <span className="text-amber-400/90 font-medium">Note:</span> {cartItem.notes}
-                          </span>
-                        </div>
-                      )}
                     </div>
                   );
                 })}
               </div>
             </div>
           )}
+
+          {/* 2. Sent KOT Groups (Below) */}
+          {(activeSessionKots || []).map(kot => {
+            return (
+              <div key={kot.id} className="space-y-0.5">
+                {/* Thin KOT Ribbon Header */}
+                <div className="py-1 px-3 bg-[#0a0f18] border-y border-slate-800/60 flex items-center justify-between font-semibold uppercase tracking-wider rounded-xs">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <span
+                      className="kot-badge-ribbon waiter-cart-kot-header-badge px-2 py-0.5 rounded font-mono font-extrabold"
+                      style={{
+                        color: '#f8fafc',
+                        fontWeight: 850,
+                        fontSize: '13px'
+                      }}
+                    >
+                      {kot.kotNumber.startsWith('KOT') ? kot.kotNumber : `KOT #${kot.kotNumber}`}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => openKOTModal(kot)}
+                      className="waiter-cart-kot-print-btn text-white bg-slate-800 hover:bg-slate-700 border border-[#334155] px-1.5 py-0.5 rounded text-[11px] font-bold transition-colors cursor-pointer flex items-center justify-center gap-1"
+                      style={{ border: '1px solid #334155', backgroundColor: '#1e293b' }}
+                      title="Print KOT Slip"
+                      aria-label={`Print KOT ${kot.kotNumber}`}
+                    >
+                      <Printer className="w-3 h-3 text-white" />
+                    </button>
+                  </div>
+                  <span className="w-20 text-left text-emerald-400 font-bold shrink-0 text-sm" style={{ color: '#34d399' }}>
+                    ₹{kot.totalAmount.toFixed(2)}
+                  </span>
+                </div>
+
+                <div className="divide-y divide-slate-800/40">
+                  {(kot.items || []).map((it, idx) => {
+                    const itName = it.name || (it as any)?.menuItem?.name || 'Item';
+                    const match = itName.match(/^(.*?)\s*\((.*?)\)$/);
+                    const baseName = match ? match[1].trim() : itName;
+                    const variationName = match ? match[2].trim() : undefined;
+                    const itRate = (it.rate ?? (it as any)?.menuItem?.price) || 0;
+                    const isVoided = it.status === 'voided';
+
+                    return (
+                      <div
+                        key={idx}
+                        className={`px-3 py-1 hover:bg-white/[0.03] transition-colors rounded-xs text-xs ${
+                          isVoided ? 'opacity-60 bg-rose-950/10' : ''
+                        }`}
+                      >
+                        <div className="min-h-[28px] flex items-center justify-between gap-1.5">
+                          {/* Left side: Delete/Void icon + Dish Name (variant inline) + Unit Price */}
+                          <div className="flex items-center gap-1 min-w-0 flex-1 overflow-hidden pr-1 pl-1">
+                            {!isVoided ? (
+                              <button
+                                type="button"
+                                onClick={() => setCancelModalTarget({ kot, itemIndex: idx })}
+                                className="w-5 h-5 rounded flex items-center justify-center text-slate-500 hover:text-rose-400 hover:bg-rose-950/40 transition-colors cursor-pointer shrink-0"
+                                title="Void / Cancel Item"
+                                aria-label={`Void ${itName}`}
+                              >
+                                <Trash2 className="w-3.5 h-3.5 text-rose-400/70 hover:text-rose-400" />
+                              </button>
+                            ) : (
+                              <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                                <span className="text-[10px] text-rose-500 font-bold">✕</span>
+                              </div>
+                            )}
+                            <div className="flex flex-col min-w-0 flex-1 truncate">
+                              <div className="flex items-center gap-1 min-w-0 flex-1 truncate">
+                                <span 
+                                  className={`waiter-cart-item-title font-medium truncate leading-tight ${isVoided ? 'line-through text-slate-500' : 'text-slate-100'}`}
+                                  style={{ color: isVoided ? '#94a3b8' : '#ffffff' }}
+                                >
+                                  {baseName}
+                                </span>
+                                {variationName && (
+                                  <span className="text-amber-400 text-[11px] font-normal shrink-0">
+                                    ({variationName})
+                                  </span>
+                                )}
+                                <span className={`text-xs font-medium ml-2 shrink-0 ${isVoided ? 'line-through text-slate-600' : 'text-slate-400'}`}>
+                                  • ₹{itRate.toFixed(2)}
+                                </span>
+                              </div>
+                              {it.notes && (
+                                <span className="text-[10px] text-amber-300/90 italic truncate">
+                                  Note: {it.notes}
+                                </span>
+                              )}
+                            </div>
+                            {isVoided && (
+                              <span className="text-[9px] font-bold text-rose-400 px-1 py-0.2 rounded bg-rose-950/60 border border-rose-800/40 shrink-0">
+                                VOID
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Center: Slim quantity badge aligned with center QTY header */}
+                          <div className="flex items-center justify-center shrink-0 w-16">
+                            <span
+                              className={`cart-saved-qty-badge font-extrabold text-[13px] text-center shrink-0 shadow-xs ${
+                                isVoided ? 'line-through opacity-60' : ''
+                              }`}
+                              style={{
+                                backgroundColor: isVoided ? '#334155' : '#ffffff',
+                                background: isVoided ? '#334155' : '#ffffff',
+                                color: isVoided ? '#94a3b8' : '#0f172a',
+                                fontWeight: 800,
+                                fontSize: '13px',
+                                padding: '2px 8px',
+                                borderRadius: '6px',
+                                minWidth: '28px',
+                                textAlign: 'center',
+                                display: 'inline-block',
+                              }}
+                            >
+                              ×{it.quantity}
+                            </span>
+                          </div>
+
+                          {/* Right side: Item total price left-aligned with fixed anchor expanding right */}
+                          <div className={`w-20 text-left font-bold text-xs whitespace-nowrap shrink-0 ${isVoided ? 'line-through text-slate-500' : 'text-emerald-400'}`}>
+                            ₹{(itRate * it.quantity).toFixed(2)}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
 
           {activeSessionKots.length === 0 && cart.length === 0 && (
             <div className="p-8 text-center text-slate-400 border border-dashed border-slate-800/60 rounded-xl bg-[#0a0f18]/60">
@@ -908,18 +1199,6 @@ export const CashierCart: React.FC<CashierCartProps> = ({
 
       {/* Bottom Billing Computations & Checkout Controls */}
       <div className="px-2 py-1.5 bg-[#070b12] border-t border-slate-800/60 space-y-1 flex-shrink-0">
-        {/* Quick Kitchen Instruction */}
-        <div className="w-full">
-          <input
-            id="cashier-cart-kitchen-note"
-            type="text"
-            value={cartSpecialNotes}
-            onChange={e => setCartSpecialNotes(e.target.value)}
-            placeholder="Kitchen note (e.g. Less spicy)"
-            className="w-full px-2.5 py-1 bg-[#0e1624] border border-slate-700/60 rounded-md text-xs text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500"
-          />
-        </div>
-
         {/* 1. Combined Offers & Total Row */}
         <div className="w-full flex items-center justify-between gap-1.5 px-3 py-1">
           {/* Left: Compact Offer Buttons */}
@@ -929,15 +1208,28 @@ export const CashierCart: React.FC<CashierCartProps> = ({
               id="cashier-cart-btn-bogo"
               type="button"
               onClick={() => setCartBogoActive(!cartBogoActive)}
-              className={`px-2 py-1 rounded-md text-xs font-medium border transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap ${
+              style={cartBogoActive ? {
+                backgroundColor: '#059669',
+                background: '#059669',
+                borderColor: '#34d399',
+                color: '#ffffff',
+                fontWeight: 800,
+              } : {
+                backgroundColor: '#F7EECA',
+                background: '#F7EECA',
+                borderColor: 'rgba(0, 0, 0, 0.15)',
+                color: '#0f172a',
+                fontWeight: 700,
+              }}
+              className={`px-2 py-1 rounded-md text-xs border transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap shadow-xs active:scale-95 ${
                 cartBogoActive
-                  ? 'bg-amber-600 text-white border-amber-500 shadow-xs font-semibold'
-                  : 'bg-[#0e1624] text-slate-300 border-slate-700/60 hover:bg-slate-800'
+                  ? 'offer-btn-active bg-[#059669] text-white border-[#34d399] font-extrabold shadow-sm'
+                  : 'offer-btn-inactive bg-[#F7EECA] text-[#0f172a] border-black/15 font-bold hover:bg-[#faedd0]'
               }`}
               title="Buy One Get One Free"
             >
-              <Percent className="w-3 h-3 shrink-0" />
-              <span>BOGO</span>
+              <Percent className="w-3 h-3 shrink-0" style={{ color: cartBogoActive ? '#ffffff' : '#0f172a' }} />
+              <span style={{ color: cartBogoActive ? '#ffffff' : '#0f172a', fontWeight: cartBogoActive ? 800 : 700 }}>BOGO</span>
             </button>
 
             {/* Complimentary */}
@@ -945,15 +1237,28 @@ export const CashierCart: React.FC<CashierCartProps> = ({
               id="cashier-cart-btn-comp"
               type="button"
               onClick={() => setCartIsComplimentary(!cartIsComplimentary)}
-              className={`px-2 py-1 rounded-md text-xs font-medium border transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap ${
+              style={cartIsComplimentary ? {
+                backgroundColor: '#059669',
+                background: '#059669',
+                borderColor: '#34d399',
+                color: '#ffffff',
+                fontWeight: 800,
+              } : {
+                backgroundColor: '#F7EECA',
+                background: '#F7EECA',
+                borderColor: 'rgba(0, 0, 0, 0.15)',
+                color: '#0f172a',
+                fontWeight: 700,
+              }}
+              className={`px-2 py-1 rounded-md text-xs border transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap shadow-xs active:scale-95 ${
                 cartIsComplimentary
-                  ? 'bg-purple-600 text-white border-purple-500 shadow-xs font-semibold'
-                  : 'bg-[#0e1624] text-slate-300 border-slate-700/60 hover:bg-slate-800'
+                  ? 'offer-btn-active bg-[#059669] text-white border-[#34d399] font-extrabold shadow-sm'
+                  : 'offer-btn-inactive bg-[#F7EECA] text-[#0f172a] border-black/15 font-bold hover:bg-[#faedd0]'
               }`}
               title="Complimentary Order (100% off)"
             >
-              <Gift className="w-3 h-3 shrink-0" />
-              <span>Comp</span>
+              <Gift className="w-3 h-3 shrink-0" style={{ color: cartIsComplimentary ? '#ffffff' : '#0f172a' }} />
+              <span style={{ color: cartIsComplimentary ? '#ffffff' : '#0f172a', fontWeight: cartIsComplimentary ? 800 : 700 }}>Comp</span>
             </button>
 
             {/* Supervisor Discount / Custom Waiver */}
@@ -967,15 +1272,28 @@ export const CashierCart: React.FC<CashierCartProps> = ({
                 setPinError(false);
                 setIsDiscountModalOpen(true);
               }}
-              className={`px-2 py-1 rounded-md text-xs font-medium border transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap ${
+              style={(cartDiscountPercent > 0 || cartCustomDiscount > 0) ? {
+                backgroundColor: '#059669',
+                background: '#059669',
+                borderColor: '#34d399',
+                color: '#ffffff',
+                fontWeight: 800,
+              } : {
+                backgroundColor: '#F7EECA',
+                background: '#F7EECA',
+                borderColor: 'rgba(0, 0, 0, 0.15)',
+                color: '#0f172a',
+                fontWeight: 700,
+              }}
+              className={`px-2 py-1 rounded-md text-xs border transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap shadow-xs active:scale-95 ${
                 (cartDiscountPercent > 0 || cartCustomDiscount > 0)
-                  ? 'bg-rose-950/80 text-rose-300 border-rose-700 shadow-xs font-semibold'
-                  : 'bg-[#0e1624] text-slate-300 border-slate-700/60 hover:bg-slate-800'
+                  ? 'offer-btn-active bg-[#059669] text-white border-[#34d399] font-extrabold shadow-sm'
+                  : 'offer-btn-inactive bg-[#F7EECA] text-[#0f172a] border-black/15 font-bold hover:bg-[#faedd0]'
               }`}
               title="Supervisor Discount & Waiver"
             >
-              <BadgePercent className="w-3 h-3 text-rose-400 shrink-0" />
-              <span>
+              <BadgePercent className="w-3 h-3 shrink-0" style={{ color: (cartDiscountPercent > 0 || cartCustomDiscount > 0) ? '#ffffff' : '#0f172a' }} />
+              <span style={{ color: (cartDiscountPercent > 0 || cartCustomDiscount > 0) ? '#ffffff' : '#0f172a', fontWeight: (cartDiscountPercent > 0 || cartCustomDiscount > 0) ? 800 : 700 }}>
                 {cartDiscountPercent > 0 
                   ? `${cartDiscountPercent}%` 
                   : cartCustomDiscount > 0 
@@ -1026,32 +1344,15 @@ export const CashierCart: React.FC<CashierCartProps> = ({
                  * Once [Send KOT] is clicked, clear ticket from top "Active:" row and reset the cart.
         */}
         {(() => {
-          // Workflow functional permissions:
-          // 1. Unsaved items present in cart:
-          //    Force stage to UNSAVED. [Save] and [Save & Print] are ENABLED & HIGHLIGHTED (ring-2 ring-white/80 animate-pulse).
-          //    [Settle] and [Send KOT] are LOCKED (pointer-events-none cursor-not-allowed).
-          // 2. All items saved (SAVED state):
-          //    - If NOT printed yet (!effectiveIsBillPrinted):
-          //      * [Save] shows 'Saved' and is LOCKED (pointer-events-none cursor-not-allowed).
-          //      * [Save & Print] is CLICKABLE to allow one-time receipt print.
-          //      * [Settle] is UNLOCKED & HIGHLIGHTED (ring-2 ring-amber-400 animate-pulse) for payment collection.
-          //    - Once printed (effectiveIsBillPrinted === true):
-          //      * [Save & Print] is LOCKED (one-time print only, pointer-events-none cursor-not-allowed).
-          //      * [Save] / [Saved] is LOCKED.
-          //      * [Save & E-Bill] is LOCKED.
-          //      * [Send KOT] is strictly LOCKED.
-          //      * ONLY [Settle ₹...] is CLICKABLE (pointer-events-auto) & pulsating with amber highlight ring.
-          // 3. Settled / Paid:
-          //    [Settle] shows 'PAID (Settled)' and is LOCKED.
-          //    [Save & Print] and [Save] are LOCKED.
-          //    [Send KOT] is UNLOCKED & HIGHLIGHTED (ring-2 ring-emerald-400 animate-pulse).
-          const effectiveIsBillPrinted = isBillPrinted && !hasUnsavedItems;
-          const hasItems = cartItems.length > 0 || rawSubtotal > 0;
-          const canClickSave = hasUnsavedItems && !isOrderSettled;
-          const canClickSavePrint = hasItems && !isOrderSettled && !isSettling && !effectiveIsBillPrinted;
-          const canClickSettle = allItemsSaved && !isOrderSettled && !isSettling;
-          const canClickSendKot = isOrderSettled && !isSendingKot && !hasUnsavedItems;
-          const canClickSaveEBill = false; // Only Settle performs payment action
+          // Independent button behavior:
+          // As long as cart has at least 1 item (cart.length > 0 || rawSubtotal > 0),
+          // all action buttons remain active/clickable independently without strict sequential locks.
+          const hasItems = cart.length > 0 || rawSubtotal > 0;
+          const canClickSendKot = hasItems && !isSendingKot;
+          const canClickSave = hasItems;
+          const canClickSettle = hasItems && !isSettling;
+          const canClickSavePrint = hasItems && !isSettling;
+          const canClickSaveEBill = hasItems && !isSettling;
 
           return (
             <>
@@ -1064,16 +1365,29 @@ export const CashierCart: React.FC<CashierCartProps> = ({
                     if (isOrderSettled) return;
                     setCartPaymentMethod('cash');
                   }}
+                  style={cartPaymentMethod === 'cash' ? {
+                    backgroundColor: '#059669',
+                    background: '#059669',
+                    borderColor: '#34d399',
+                    color: '#ffffff',
+                    fontWeight: 800,
+                  } : {
+                    backgroundColor: '#F7EECA',
+                    background: '#F7EECA',
+                    borderColor: 'rgba(0, 0, 0, 0.15)',
+                    color: '#0f172a',
+                    fontWeight: 700,
+                  }}
                   className={`py-1.5 px-1 rounded-md text-xs font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-1 shadow-xs ${
                     isOrderSettled ? 'cursor-not-allowed' : 'cursor-pointer active:scale-95'
                   } ${
                     cartPaymentMethod === 'cash'
-                      ? 'payment-method-active bg-white text-slate-900 border border-white shadow-sm'
-                      : 'payment-method-inactive bg-[#131f33] text-white border border-slate-700/80 hover:bg-slate-700 hover:text-white'
+                      ? 'payment-method-active bg-[#059669] text-white border border-[#34d399] shadow-sm font-extrabold'
+                      : 'payment-method-inactive bg-[#F7EECA] text-[#0f172a] border border-black/15 hover:bg-[#faedd0]'
                   }`}
                 >
-                  <Banknote className="w-3.5 h-3.5 shrink-0" />
-                  <span>CASH</span>
+                  <Banknote className="w-3.5 h-3.5 shrink-0" style={{ color: cartPaymentMethod === 'cash' ? '#ffffff' : '#0f172a' }} />
+                  <span style={{ color: cartPaymentMethod === 'cash' ? '#ffffff' : '#0f172a', fontWeight: cartPaymentMethod === 'cash' ? 800 : 700 }}>CASH</span>
                 </button>
 
                 {/* UPI */}
@@ -1083,16 +1397,29 @@ export const CashierCart: React.FC<CashierCartProps> = ({
                     if (isOrderSettled) return;
                     setCartPaymentMethod('upi');
                   }}
+                  style={cartPaymentMethod === 'upi' ? {
+                    backgroundColor: '#059669',
+                    background: '#059669',
+                    borderColor: '#34d399',
+                    color: '#ffffff',
+                    fontWeight: 800,
+                  } : {
+                    backgroundColor: '#F7EECA',
+                    background: '#F7EECA',
+                    borderColor: 'rgba(0, 0, 0, 0.15)',
+                    color: '#0f172a',
+                    fontWeight: 700,
+                  }}
                   className={`py-1.5 px-1 rounded-md text-xs font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-1 shadow-xs ${
                     isOrderSettled ? 'cursor-not-allowed' : 'cursor-pointer active:scale-95'
                   } ${
                     cartPaymentMethod === 'upi'
-                      ? 'payment-method-active bg-white text-slate-900 border border-white shadow-sm'
-                      : 'payment-method-inactive bg-[#131f33] text-white border border-slate-700/80 hover:bg-slate-700 hover:text-white'
+                      ? 'payment-method-active bg-[#059669] text-white border border-[#34d399] shadow-sm font-extrabold'
+                      : 'payment-method-inactive bg-[#F7EECA] text-[#0f172a] border border-black/15 hover:bg-[#faedd0]'
                   }`}
                 >
-                  <QrCode className="w-3.5 h-3.5 shrink-0" />
-                  <span>UPI</span>
+                  <QrCode className="w-3.5 h-3.5 shrink-0" style={{ color: cartPaymentMethod === 'upi' ? '#ffffff' : '#0f172a' }} />
+                  <span style={{ color: cartPaymentMethod === 'upi' ? '#ffffff' : '#0f172a', fontWeight: cartPaymentMethod === 'upi' ? 800 : 700 }}>UPI</span>
                 </button>
 
                 {/* CARD */}
@@ -1102,16 +1429,29 @@ export const CashierCart: React.FC<CashierCartProps> = ({
                     if (isOrderSettled) return;
                     setCartPaymentMethod('card');
                   }}
+                  style={cartPaymentMethod === 'card' ? {
+                    backgroundColor: '#059669',
+                    background: '#059669',
+                    borderColor: '#34d399',
+                    color: '#ffffff',
+                    fontWeight: 800,
+                  } : {
+                    backgroundColor: '#F7EECA',
+                    background: '#F7EECA',
+                    borderColor: 'rgba(0, 0, 0, 0.15)',
+                    color: '#0f172a',
+                    fontWeight: 700,
+                  }}
                   className={`py-1.5 px-1 rounded-md text-xs font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-1 shadow-xs ${
                     isOrderSettled ? 'cursor-not-allowed' : 'cursor-pointer active:scale-95'
                   } ${
                     cartPaymentMethod === 'card'
-                      ? 'payment-method-active bg-white text-slate-900 border border-white shadow-sm'
-                      : 'payment-method-inactive bg-[#131f33] text-white border border-slate-700/80 hover:bg-slate-700 hover:text-white'
+                      ? 'payment-method-active bg-[#059669] text-white border border-[#34d399] shadow-sm font-extrabold'
+                      : 'payment-method-inactive bg-[#F7EECA] text-[#0f172a] border border-black/15 hover:bg-[#faedd0]'
                   }`}
                 >
-                  <CreditCard className="w-3.5 h-3.5 shrink-0" />
-                  <span>CARD</span>
+                  <CreditCard className="w-3.5 h-3.5 shrink-0" style={{ color: cartPaymentMethod === 'card' ? '#ffffff' : '#0f172a' }} />
+                  <span style={{ color: cartPaymentMethod === 'card' ? '#ffffff' : '#0f172a', fontWeight: cartPaymentMethod === 'card' ? 800 : 700 }}>CARD</span>
                 </button>
 
                 {/* SPLIT */}
@@ -1122,17 +1462,30 @@ export const CashierCart: React.FC<CashierCartProps> = ({
                     if (isOrderSettled) return;
                     setIsSplitModalOpen(true);
                   }}
+                  style={cartPaymentMethod === 'split' ? {
+                    backgroundColor: '#059669',
+                    background: '#059669',
+                    borderColor: '#34d399',
+                    color: '#ffffff',
+                    fontWeight: 800,
+                  } : {
+                    backgroundColor: '#F7EECA',
+                    background: '#F7EECA',
+                    borderColor: 'rgba(0, 0, 0, 0.15)',
+                    color: '#0f172a',
+                    fontWeight: 700,
+                  }}
                   className={`py-1.5 px-1 rounded-md text-xs font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-1 shadow-xs ${
                     isOrderSettled ? 'cursor-not-allowed' : 'cursor-pointer active:scale-95'
                   } ${
                     cartPaymentMethod === 'split'
-                      ? 'payment-method-active bg-white text-slate-900 border border-white shadow-sm'
-                      : 'payment-method-inactive bg-[#131f33] text-white border border-slate-700/80 hover:bg-slate-700 hover:text-white'
+                      ? 'payment-method-active bg-[#059669] text-white border border-[#34d399] shadow-sm font-extrabold'
+                      : 'payment-method-inactive bg-[#F7EECA] text-[#0f172a] border border-black/15 hover:bg-[#faedd0]'
                   }`}
                   title="Split Bill / Payment Modes"
                 >
-                  <Split className="w-3.5 h-3.5 shrink-0" />
-                  <span>SPLIT</span>
+                  <Split className="w-3.5 h-3.5 shrink-0" style={{ color: cartPaymentMethod === 'split' ? '#ffffff' : '#0f172a' }} />
+                  <span style={{ color: cartPaymentMethod === 'split' ? '#ffffff' : '#0f172a', fontWeight: cartPaymentMethod === 'split' ? 800 : 700 }}>SPLIT</span>
                 </button>
 
                 {/* DUE */}
@@ -1142,22 +1495,35 @@ export const CashierCart: React.FC<CashierCartProps> = ({
                     if (isOrderSettled) return;
                     setCartPaymentMethod('due');
                   }}
+                  style={cartPaymentMethod === 'due' ? {
+                    backgroundColor: '#059669',
+                    background: '#059669',
+                    borderColor: '#34d399',
+                    color: '#ffffff',
+                    fontWeight: 800,
+                  } : {
+                    backgroundColor: '#F7EECA',
+                    background: '#F7EECA',
+                    borderColor: 'rgba(0, 0, 0, 0.15)',
+                    color: '#0f172a',
+                    fontWeight: 700,
+                  }}
                   className={`py-1.5 px-1 rounded-md text-xs font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-1 shadow-xs ${
                     isOrderSettled ? 'cursor-not-allowed' : 'cursor-pointer active:scale-95'
                   } ${
                     cartPaymentMethod === 'due'
-                      ? 'payment-method-active bg-white text-slate-900 border border-white shadow-sm'
-                      : 'payment-method-inactive bg-[#131f33] text-white border border-slate-700/80 hover:bg-slate-700 hover:text-white'
+                      ? 'payment-method-active bg-[#059669] text-white border border-[#34d399] shadow-sm font-extrabold'
+                      : 'payment-method-inactive bg-[#F7EECA] text-[#0f172a] border border-black/15 hover:bg-[#faedd0]'
                   }`}
                 >
-                  <Clock className="w-3.5 h-3.5 shrink-0" />
-                  <span>DUE</span>
+                  <Clock className="w-3.5 h-3.5 shrink-0" style={{ color: cartPaymentMethod === 'due' ? '#ffffff' : '#0f172a' }} />
+                  <span style={{ color: cartPaymentMethod === 'due' ? '#ffffff' : '#0f172a', fontWeight: cartPaymentMethod === 'due' ? 800 : 700 }}>DUE</span>
                 </button>
               </div>
 
               {/* 4. Action Row 1 (Operations): Send KOT, Save, Settle */}
               <div className="grid grid-cols-3 gap-1 pt-0.5">
-                {/* Send KOT: Deep Crimson Red matching [ALL] badge - NEVER reduced opacity, visually crisp and full color */}
+                {/* Send KOT: Deep Maroon Accent #7a0c1a */}
                 <button
                   id="cashier-cart-btn-send-kot"
                   type="button"
@@ -1165,16 +1531,16 @@ export const CashierCart: React.FC<CashierCartProps> = ({
                     if (!canClickSendKot) return;
                     handleSendKOT();
                   }}
-                  className={`bg-[#8b0000] text-white font-bold py-2 px-1.5 rounded-lg shadow-xs text-xs flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap ${
+                  style={{
+                    backgroundColor: '#7a0c1a',
+                    background: '#7a0c1a',
+                  }}
+                  className={`bg-[#7a0c1a] text-white font-bold py-2 px-1.5 rounded-lg shadow-xs text-xs flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap ${
                     canClickSendKot
-                      ? 'pointer-events-auto cursor-pointer ring-2 ring-red-400 animate-pulse hover:bg-[#730000] active:scale-98 shadow-[0_0_16px_rgba(139,0,0,0.5)]'
-                      : 'pointer-events-none cursor-not-allowed hover:bg-[#730000]'
+                      ? 'pointer-events-auto cursor-pointer hover:bg-[#8f1020] active:bg-[#4a030c] active:scale-98 shadow-[0_0_14px_rgba(122,12,26,0.45)]'
+                      : 'pointer-events-none cursor-not-allowed hover:bg-[#8f1020]'
                   }`}
-                  title={
-                    isOrderSettled
-                      ? 'Order is settled (PAID). Click to dispatch KOT to kitchen KDS and complete ticket.'
-                      : 'Send KOT: Save order and settle bill first before sending KOT.'
-                  }
+                  title="Dispatch KOT to kitchen KDS"
                 >
                   <Send className="w-3.5 h-3.5 shrink-0" />
                   <span>
@@ -1184,7 +1550,7 @@ export const CashierCart: React.FC<CashierCartProps> = ({
                   </span>
                 </button>
 
-                {/* Save: Dark Slate/Teal - NEVER reduced opacity, visually crisp and full color */}
+                {/* Save: Dark Navy/Slate #1e293b - active anytime items exist to hold order */}
                 <button
                   id="cashier-cart-btn-save"
                   type="button"
@@ -1192,24 +1558,26 @@ export const CashierCart: React.FC<CashierCartProps> = ({
                     if (!canClickSave) return;
                     handleSaveRunningOrder();
                   }}
-                  className={`bg-slate-700 text-white font-semibold py-2 px-1.5 rounded-lg shadow-xs text-xs flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap ${
+                  style={{
+                    backgroundColor: '#1e293b',
+                    background: '#1e293b',
+                    color: '#ffffff',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    fontWeight: 700,
+                    fontSize: '13px',
+                  }}
+                  className={`text-white font-bold py-2 px-1.5 rounded-lg shadow-xs flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap ${
                     canClickSave
-                      ? 'pointer-events-auto cursor-pointer ring-2 ring-white/80 animate-pulse hover:bg-slate-600 active:scale-98'
-                      : 'pointer-events-none cursor-not-allowed'
+                      ? 'pointer-events-auto cursor-pointer hover:bg-[#334155] active:scale-98'
+                      : 'pointer-events-none cursor-not-allowed hover:bg-[#334155]'
                   }`}
-                  title={
-                    allItemsSaved
-                      ? 'Order already saved to Active Orders.'
-                      : isOrderSettled
-                      ? 'Order is already settled.'
-                      : 'Save current order to Active Orders (KOT not sent).'
-                  }
+                  title="Save current order / hold draft"
                 >
-                  <Save className="w-3.5 h-3.5 shrink-0" />
-                  <span>{hasUnsavedItems ? 'Save' : allItemsSaved ? 'Saved' : 'Save'}</span>
+                  <Save className="w-3.5 h-3.5 shrink-0 text-white" style={{ color: '#ffffff' }} />
+                  <span style={{ color: '#ffffff', fontWeight: 700, fontSize: '13px' }}>Save</span>
                 </button>
 
-                {/* Settle: Deep Crimson Red matching [ALL] badge - NEVER reduced opacity, visually crisp and full color */}
+                {/* Settle: Deep Maroon Accent #7a0c1a */}
                 <button
                   id="cashier-cart-btn-settle"
                   type="button"
@@ -1217,26 +1585,19 @@ export const CashierCart: React.FC<CashierCartProps> = ({
                     if (!canClickSettle) return;
                     handleSettle();
                   }}
-                  className={`bg-[#8b0000] text-white font-bold py-2 px-1.5 rounded-lg shadow-xs text-xs flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap ${
+                  style={{
+                    backgroundColor: '#7a0c1a',
+                    background: '#7a0c1a',
+                  }}
+                  className={`bg-[#7a0c1a] text-white font-bold py-2 px-1.5 rounded-lg shadow-xs text-xs flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap ${
                     canClickSettle
-                      ? 'pointer-events-auto cursor-pointer ring-2 ring-red-400 animate-pulse hover:bg-[#730000] active:scale-98 shadow-[0_0_14px_rgba(139,0,0,0.45)]'
-                      : 'pointer-events-none cursor-not-allowed hover:bg-[#730000]'
+                      ? 'pointer-events-auto cursor-pointer ring-2 ring-rose-400 animate-pulse hover:bg-[#8f1020] active:bg-[#4a030c] active:scale-98 shadow-[0_0_14px_rgba(122,12,26,0.45)]'
+                      : 'pointer-events-none cursor-not-allowed hover:bg-[#8f1020]'
                   }`}
-                  title={
-                    isOrderSettled
-                      ? 'Order is settled and paid. Next step: Click Send KOT to dispatch to kitchen.'
-                      : allItemsSaved
-                      ? 'Click to collect payment and mark order as Paid.'
-                      : 'Save order first before settling payment.'
-                  }
+                  title="Collect payment and settle order"
                 >
                   {isSettling ? (
                     'Settling...'
-                  ) : isOrderSettled ? (
-                    <span className="flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                      <span>PAID (Settled)</span>
-                    </span>
                   ) : (
                     <span>Settle ₹{Math.round(finalTotal)}</span>
                   )}
@@ -1245,7 +1606,7 @@ export const CashierCart: React.FC<CashierCartProps> = ({
 
               {/* 5. Action Row 2 (Quick Checkout & Print): Save & Print, Save & E-Bill */}
               <div className="flex items-center gap-1">
-                {/* Save & Print: Deep Navy Blue matching [BIRYANI] badge - NEVER reduced opacity, visually crisp and full color */}
+                {/* Save & Print: Deep Navy Blue matching [BIRYANI] badge - active anytime items exist */}
                 <button
                   id="cashier-cart-btn-save-print"
                   type="button"
@@ -1255,26 +1616,16 @@ export const CashierCart: React.FC<CashierCartProps> = ({
                   }}
                   className={`bg-[#0b1e3b] text-white font-bold py-2 px-2.5 rounded-lg text-xs flex-1 flex items-center justify-center gap-1.5 whitespace-nowrap ${
                     canClickSavePrint
-                      ? hasUnsavedItems
-                        ? 'pointer-events-auto cursor-pointer ring-2 ring-blue-300 animate-pulse hover:bg-[#162e56] active:scale-98 shadow-xs transition-colors'
-                        : 'pointer-events-auto cursor-pointer hover:bg-[#162e56] active:scale-98 shadow-xs transition-colors'
+                      ? 'pointer-events-auto cursor-pointer hover:bg-[#162e56] active:scale-98 shadow-xs transition-colors'
                       : 'pointer-events-none cursor-not-allowed shadow-none hover:bg-[#162e56]'
                   }`}
-                  title={
-                    isOrderSettled
-                      ? 'Order is already settled.'
-                      : effectiveIsBillPrinted
-                      ? 'Bill already printed (one-time print only). Proceed to Settle to collect payment.'
-                      : allItemsSaved
-                      ? 'Print customer bill receipt prior to payment.'
-                      : 'Save order to Active Orders and open thermal estimate print preview.'
-                  }
+                  title="Save order and print receipt preview"
                 >
                   <Printer className="w-3.5 h-3.5 shrink-0" />
-                  <span>{isSettling ? (hasUnsavedItems ? 'Saving...' : 'Printing...') : 'Save & Print'}</span>
+                  <span>{isSettling ? 'Printing...' : 'Save & Print'}</span>
                 </button>
 
-                {/* Save & E-Bill: Bright Blue/Cyan - NEVER reduced opacity, visually crisp and full color */}
+                {/* Save & E-Bill: Bright Blue/Cyan - active anytime items exist */}
                 <button
                   id="cashier-cart-btn-save-ebill"
                   type="button"
@@ -1282,8 +1633,12 @@ export const CashierCart: React.FC<CashierCartProps> = ({
                     if (!canClickSaveEBill) return;
                     handleOpenEBillModal();
                   }}
-                  className="bg-sky-600 text-white font-semibold py-2.5 px-3 rounded-lg shadow-xs text-xs flex-1 flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap pointer-events-none cursor-not-allowed"
-                  title="Only Settle performs payment action."
+                  className={`bg-sky-600 text-white font-semibold py-2.5 px-3 rounded-lg shadow-xs text-xs flex-1 flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap ${
+                    canClickSaveEBill
+                      ? 'pointer-events-auto cursor-pointer hover:bg-sky-500 active:scale-98'
+                      : 'pointer-events-none cursor-not-allowed'
+                  }`}
+                  title="Send digital E-Bill via WhatsApp or SMS"
                 >
                   <Smartphone className="w-3.5 h-3.5 shrink-0" />
                   <span>Save & E-Bill</span>

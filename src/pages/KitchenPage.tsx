@@ -210,8 +210,8 @@ export const KitchenPage: React.FC = () => {
         {/* Left Side: Status Filter Pills */}
         <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto ml-2 sm:ml-4">
           {KDS_STATUS_OPTIONS.map(opt => {
-            const count = counts[opt.key] ?? 0;
-            const isActive = kdsStatusFilter === opt.key;
+            const count = counts[opt.key] ?? counts[opt.label] ?? 0;
+            const isActive = kdsStatusFilter === opt.key || (opt.key === 'Served' && kdsStatusFilter === 'Served / Completed');
 
             return (
               <button

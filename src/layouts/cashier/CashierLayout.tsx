@@ -19,8 +19,8 @@ export const CashierLayout: React.FC<CashierLayoutProps> = ({
   return (
     <div
       id="cashier-workspace-root"
-      className="h-screen max-h-screen w-full flex flex-col overflow-hidden bg-[#0a0f1d] font-sans antialiased text-slate-200 select-none relative"
-      style={{ backgroundColor: '#0a0f1d' }}
+      className="h-screen max-h-screen w-full flex flex-col overflow-hidden bg-[#070b14] font-sans antialiased text-slate-200 select-none relative"
+      style={{ backgroundColor: '#070b14' }}
     >
       {/* High-speed Cashier Counter Header with Horizontal Navigation Tabs */}
       <div className="shrink-0 z-30">
@@ -30,11 +30,11 @@ export const CashierLayout: React.FC<CashierLayoutProps> = ({
       {/* Operational Billing Terminal Workspace - Full 100% Width */}
       <main
         id="cashier-workspace"
-        className={`flex-1 min-h-0 ${activeTabOverride === 'pos' ? 'overflow-hidden' : 'overflow-y-auto'} min-w-0 w-full overflow-x-hidden bg-[#0a0f1d] relative z-10`}
-        style={{ backgroundColor: '#0a0f1d' }}
+        className={`flex-1 min-h-0 ${activeTabOverride === 'pos' ? 'overflow-hidden' : 'overflow-y-auto'} min-w-0 w-full overflow-x-hidden relative z-2 bg-transparent`}
+        style={{ backgroundColor: 'transparent', position: 'relative', zIndex: 2 }}
       >
-        <BrandWatermark opacity={0.09} />
-        <div className="relative z-10 h-full w-full">
+        {activeTabOverride !== 'pos' && <BrandWatermark opacity={0.18} />}
+        <div className="relative z-2 h-full w-full bg-transparent" style={{ backgroundColor: 'transparent' }}>
           {children}
         </div>
       </main>

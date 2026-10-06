@@ -22,25 +22,17 @@ export const WaiterItemCard: React.FC<WaiterItemCardProps> = ({
 }) => {
   const isSoldOut = !item.available || item.stockStatus === 'sold_out' || (item.stockStatus === 'few_left' && (item.stockCount ?? 0) <= 0);
 
-  // Strict index-based alternating pattern (Checkerboard):
-  // Card 0, 2, 4... -> Deep Crimson Red (#8b0000)
-  // Card 1, 3, 5... -> Deep Navy Blue (#0b1e3b)
-  const isCrimson = index % 2 === 0;
+  // Standardized Brand Primary Button Color: Deep Maroon Accent (#7a0c1a)
+  const buttonColorClass = 'pos-card-btn-crimson bg-[#7a0c1a] hover:bg-[#8f1020] active:bg-[#4a030c] border border-[#580510]/50';
 
-  const buttonColorClass = isCrimson
-    ? 'pos-card-btn-crimson bg-[#8b0000] hover:bg-[#730000] active:bg-[#580000] border border-[#700000]/50'
-    : 'pos-card-btn-navy bg-[#0b1e3b] hover:bg-[#162e56] active:bg-[#061224] border border-[#1e3a8a]/50';
-
-  // Card Container Styling: Warm creamy biscuit surface bg-[#f8f3e6], clean subtle border, soft shadow, rounded-2xl p-4
-  let containerClasses = 'p-4 rounded-2xl flex flex-col justify-between relative select-none transition-all duration-150 ease-in-out bg-[#f8f3e6] ';
+  // Card Container Styling: Dark navy slate matching Tables screen cards, locked compact height 128px, padding 8px 12px, border-box, justify-between
+  let containerClasses = 'pos-food-card relative select-none transition-all duration-150 ease-in-out ';
   if (isSoldOut) {
-    containerClasses += 'pos-food-card-sold-out border border-red-200 bg-[#f1ebe0] opacity-65 pointer-events-none cursor-not-allowed shadow-sm';
+    containerClasses += 'pos-food-card-sold-out opacity-60 pointer-events-none cursor-not-allowed shadow-sm';
   } else if (inCartQty > 0) {
-    containerClasses += isCrimson
-      ? 'cursor-pointer border border-[#8b0000]/60 shadow-[0_0_12px_rgba(139,0,0,0.15)] hover:-translate-y-0.5 hover:shadow-md'
-      : 'cursor-pointer border border-[#1e3a8a]/60 shadow-[0_0_12px_rgba(30,58,138,0.15)] hover:-translate-y-0.5 hover:shadow-md';
+    containerClasses += 'cursor-pointer hover:-translate-y-0.5 hover:border-red-400/80';
   } else {
-    containerClasses += 'cursor-pointer border border-[#e2d5be] hover:border-amber-600/40 shadow-sm hover:shadow-md hover:-translate-y-0.5';
+    containerClasses += 'cursor-pointer hover:-translate-y-0.5 hover:border-blue-400/50';
   }
 
   return (
@@ -48,61 +40,92 @@ export const WaiterItemCard: React.FC<WaiterItemCardProps> = ({
       onClick={() => {
         if (!isSoldOut) onAdd(item);
       }}
-      className={`pos-food-card ${containerClasses}`}
+      style={{
+        height: '128px',
+        minHeight: '128px',
+        maxHeight: '128px',
+        padding: '8px 12px',
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        backgroundColor: isSoldOut ? '#e2d8b5' : '#F7EECA',
+        border: inCartQty > 0 ? '1.5px solid rgba(220, 38, 38, 0.7)' : '1px solid rgba(255, 255, 255, 0.14)',
+        borderRadius: '12px',
+        boxShadow: '0 4px 14px rgba(0, 0, 0, 0.45)',
+        position: 'relative',
+        zIndex: 2,
+      }}
+      className={containerClasses}
     >
       <div>
-        {/* Dish Title with standard Veg / Non-Veg dot indicator */}
-        <div className="flex items-start gap-2.5">
+        {/* Header (Veg/Non-Veg icon + Dish Name) */}
+        <div className="flex items-start gap-2">
           <span
-            className={`w-4 h-4 rounded-[3px] flex items-center justify-center shrink-0 mt-0.5 ${
+            className={`w-3.5 h-3.5 rounded-[3px] flex items-center justify-center shrink-0 mt-0.5 ${
               item.isVeg
-                ? 'border border-emerald-600 bg-emerald-50 text-emerald-600'
-                : 'border border-red-600 bg-red-50 text-red-600'
+                ? 'border border-emerald-500 bg-emerald-950/70 text-emerald-400'
+                : 'border border-red-500 bg-red-950/70 text-red-400'
             }`}
             title={item.isVeg ? 'Vegetarian' : 'Non-Vegetarian'}
           >
             {item.isVeg ? (
-              <span className="w-2 h-2 rounded-full bg-emerald-600" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             ) : (
-              <span className="w-2 h-2 rounded-[2px] bg-red-600" />
+              <span className="w-1.5 h-1.5 rounded-[2px] bg-red-400" />
             )}
           </span>
 
           <span
-            className={`text-slate-900 font-bold text-sm leading-snug line-clamp-2 transition-colors ${
+            style={{
+              color: isSoldOut ? '#64748b' : '#f8fafc',
+              fontWeight: 700,
+              fontSize: '15px',
+              lineHeight: 1.25,
+              margin: 0,
+            }}
+            className={`line-clamp-2 transition-colors ${
               isSoldOut
-                ? 'text-slate-400 line-through'
-                : 'hover:text-black'
+                ? 'text-slate-500 line-through'
+                : 'text-[#f8fafc] hover:text-white'
             }`}
           >
             {item.name}
           </span>
         </div>
 
-        {/* Price Label: Rich emerald green text-emerald-700 font-extrabold text-base */}
-        <div className="mt-2.5 flex items-center justify-between">
-          <div
-            className={`font-extrabold text-base ${
-              isSoldOut
-                ? 'text-slate-400'
-                : 'text-emerald-700'
-            }`}
-          >
-            ₹{item.price.toFixed(2)}
-          </div>
+        {/* Price Row: Exact deep rich Navy Blue (#112240) */}
+        <div
+          style={{
+            color: isSoldOut ? '#64748b' : '#112240',
+            fontWeight: 800,
+            fontSize: '16px',
+            lineHeight: 1.2,
+            marginTop: '10px',
+            marginBottom: '8px',
+            marginLeft: '12px',
+          }}
+          className={isSoldOut ? 'text-slate-500' : 'text-[#112240]'}
+        >
+          ₹{item.price.toFixed(2)}
         </div>
       </div>
 
-      {/* Internal Divider: Soft biscuit divider line */}
-      <div className="border-b border-[#e5d9c5] my-2" />
-
       {/* Action Row: '+ Add' Button / Stepper */}
-      <div>
+      <div style={{ marginTop: 'auto' }}>
         {isSoldOut ? (
           <button
             type="button"
             disabled
-            className="w-full py-2 px-3 text-xs rounded-xl font-bold flex items-center justify-center gap-1.5 cursor-not-allowed select-none bg-red-100 border border-red-200 text-red-600"
+            style={{
+              height: '30px',
+              minHeight: '30px',
+              maxHeight: '30px',
+              borderRadius: '6px',
+              fontSize: '13px',
+              fontWeight: 700,
+            }}
+            className="w-full px-2 text-xs flex items-center justify-center gap-1.5 cursor-not-allowed select-none bg-red-950/40 border border-red-800/40 text-red-400"
             title="Item marked sold out by kitchen"
           >
             <Ban className="w-3.5 h-3.5" />
@@ -111,24 +134,44 @@ export const WaiterItemCard: React.FC<WaiterItemCardProps> = ({
         ) : inCartQty > 0 ? (
           <div
             onClick={e => e.stopPropagation()}
+            style={{
+              height: '30px',
+              minHeight: '30px',
+              maxHeight: '30px',
+            }}
             className="flex items-center gap-1.5"
           >
             <button
               type="button"
               onClick={() => onDecrement(item.id)}
-              className="flex-1 py-1.5 px-2 rounded-lg font-bold text-center transition-colors border cursor-pointer flex items-center justify-center bg-[#ede4d3] hover:bg-[#e2d6c1] text-[#2b1810] border-[#d8c8af]"
+              style={{
+                height: '30px',
+                borderRadius: '6px',
+              }}
+              className="flex-1 px-2 font-bold text-center transition-colors border cursor-pointer flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-600/60"
               title="Decrease quantity"
             >
-              <Minus className="w-3.5 h-3.5" />
+              <Minus className="w-3.5 h-3.5 text-slate-200" />
             </button>
-            <span className="px-2.5 py-1.5 rounded-lg border text-xs min-w-7 text-center font-bold bg-white border-[#e2d5be] text-[#2b1810] shadow-2xs">
+            <span
+              style={{
+                height: '30px',
+                borderRadius: '6px',
+                fontSize: '13px',
+              }}
+              className="px-2 border flex items-center justify-center min-w-7 text-center font-bold bg-slate-900 border-slate-700 text-slate-100 shadow-2xs"
+            >
               {inCartQty}
             </span>
             <button
               type="button"
               onClick={() => onIncrement(item.id)}
-              style={{ color: '#ffffff' }}
-              className={`pos-card-btn ${buttonColorClass} flex-1 py-1.5 px-2 rounded-lg font-bold !text-white text-[#ffffff] text-center transition-colors cursor-pointer flex items-center justify-center shadow-sm active:scale-95`}
+              style={{
+                height: '30px',
+                borderRadius: '6px',
+                color: '#ffffff',
+              }}
+              className={`pos-card-btn ${buttonColorClass} flex-1 px-2 font-bold !text-white text-[#ffffff] text-center transition-colors cursor-pointer flex items-center justify-center shadow-sm active:scale-95`}
               title="Increase quantity"
             >
               <Plus className="w-3.5 h-3.5 !text-white text-[#ffffff]" />
@@ -141,13 +184,25 @@ export const WaiterItemCard: React.FC<WaiterItemCardProps> = ({
               e.stopPropagation();
               onAdd(item);
             }}
-            style={{ color: '#ffffff' }}
-            className={`pos-card-btn w-full ${buttonColorClass} !text-white text-[#ffffff] font-bold text-sm tracking-wide py-2 px-4 rounded-xl shadow-sm active:scale-95 transition-all flex items-center justify-center cursor-pointer select-none`}
+            style={{
+              height: '30px',
+              minHeight: '30px',
+              maxHeight: '30px',
+              borderRadius: '6px',
+              fontSize: '13px',
+              fontWeight: 700,
+              color: '#ffffff',
+            }}
+            className={`pos-card-btn w-full ${buttonColorClass} !text-white text-[#ffffff] shadow-sm active:scale-95 transition-all flex items-center justify-center cursor-pointer select-none`}
             title="Add item to bill"
           >
             <span
-              style={{ color: '#ffffff' }}
-              className="!text-white text-[#ffffff] font-bold text-sm tracking-wide leading-none select-none"
+              style={{
+                color: '#ffffff',
+                fontWeight: 700,
+                fontSize: '13px',
+              }}
+              className="!text-white text-[#ffffff] tracking-wide leading-none select-none"
             >
               + Add
             </span>

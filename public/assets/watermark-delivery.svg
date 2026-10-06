@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" fill="none" stroke="#ffffff">
+  <!-- Outer Decorative Concentric Rings -->
+  <circle cx="300" cy="300" r="280" stroke-width="2.5" stroke-opacity="0.85" />
+  <circle cx="300" cy="300" r="268" stroke-width="1" stroke-dasharray="6 6" stroke-opacity="0.65" />
+  <circle cx="300" cy="300" r="256" stroke-width="1.5" stroke-opacity="0.75" />
+
+  <!-- Top Stars & Cardinal Dots -->
+  <g fill="#ffffff" stroke="none" fill-opacity="0.9">
+    <polygon points="300,56 304,68 316,68 306,75 310,87 300,80 290,87 294,75 284,68 296,68" />
+    <polygon points="260,67 263,76 272,76 265,81 268,90 260,85 252,90 255,81 248,76 257,76" transform="scale(0.8) translate(65, 18)" />
+    <polygon points="340,67 343,76 352,76 345,81 348,90 340,85 332,90 335,81 328,76 337,76" transform="scale(0.8) translate(85, 18)" />
+    <circle cx="300" cy="36" r="4" />
+    <circle cx="300" cy="564" r="4" />
+    <circle cx="36" cy="300" r="4" />
+    <circle cx="564" cy="300" r="4" />
+  </g>
+
+  <!-- Laurel Wreaths -->
+  <g stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.8">
+    <path d="M 180,440 C 130,380 130,220 180,160" />
+    <path d="M 175,430 C 150,425 140,405 155,395 C 165,405 175,415 175,430 Z" fill="#ffffff" fill-opacity="0.2" />
+    <path d="M 160,395 C 135,390 128,370 142,360 C 152,370 160,380 160,395 Z" fill="#ffffff" fill-opacity="0.2" />
+    <path d="M 150,360 C 125,355 120,335 135,325 C 145,335 150,345 150,360 Z" fill="#ffffff" fill-opacity="0.2" />
+    <path d="M 145,320 C 120,315 118,295 132,285 C 142,295 145,305 145,320 Z" fill="#ffffff" fill-opacity="0.2" />
+    <path d="M 148,280 C 125,270 125,250 140,242 C 148,252 148,265 148,280 Z" fill="#ffffff" fill-opacity="0.2" />
+    <path d="M 158,240 C 138,225 140,205 155,200 C 160,212 158,228 158,240 Z" fill="#ffffff" fill-opacity="0.2" />
+    <path d="M 420,440 C 470,380 470,220 420,160" />
+    <path d="M 425,430 C 450,425 460,405 445,395 C 435,405 425,415 425,430 Z" fill="#ffffff" fill-opacity="0.2" />
+    <path d="M 440,395 C 465,390 472,370 458,360 C 448,370 440,380 440,395 Z" fill="#ffffff" fill-opacity="0.2" />
+    <path d="M 450,360 C 475,355 480,335 465,325 C 455,335 450,345 450,360 Z" fill="#ffffff" fill-opacity="0.2" />
+    <path d="M 455,320 C 480,315 482,295 468,285 C 458,295 455,305 455,320 Z" fill="#ffffff" fill-opacity="0.2" />
+    <path d="M 452,280 C 475,270 475,250 460,242 C 452,252 452,265 452,280 Z" fill="#ffffff" fill-opacity="0.2" />
+    <path d="M 442,240 C 462,225 460,205 445,200 C 440,212 442,228 442,240 Z" fill="#ffffff" fill-opacity="0.2" />
+  </g>
+
+  <!-- Central Motif: Express Delivery Scooter -->
+  <g stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <line x1="175" y1="210" x2="205" y2="210" stroke-width="2" stroke-dasharray="6 4" stroke-opacity="0.7" />
+    <line x1="160" y1="230" x2="210" y2="230" stroke-width="2.5" stroke-opacity="0.8" />
+    <line x1="170" y1="250" x2="200" y2="250" stroke-width="2" stroke-dasharray="5 3" stroke-opacity="0.7" />
+    <circle cx="230" cy="275" r="26" stroke-width="3" fill="#ffffff" fill-opacity="0.1" />
+    <circle cx="230" cy="275" r="14" stroke-width="2" />
+    <circle cx="230" cy="275" r="4" fill="#ffffff" />
+    <circle cx="365" cy="275" r="26" stroke-width="3" fill="#ffffff" fill-opacity="0.1" />
+    <circle cx="365" cy="275" r="14" stroke-width="2" />
+    <circle cx="365" cy="275" r="4" fill="#ffffff" />
+    <path d="M 230,275 L 260,275 L 285,275 L 310,245 L 345,210" stroke-width="3.5" />
+    <path d="M 255,275 L 310,275 L 325,245" stroke-width="3.5" />
+    <line x1="365" y1="275" x2="345" y2="195" stroke-width="3.5" />
+    <path d="M 335,190 L 358,190" stroke-width="4" />
+    <path d="M 345,190 L 350,165" stroke-width="2" stroke-opacity="0.75" />
+    <path d="M 358,205 L 375,205" stroke-width="3" />
+    <rect x="220" y="165" width="56" height="52" rx="5" fill="#ffffff" fill-opacity="0.25" stroke-width="3" />
+    <line x1="220" y1="185" x2="276" y2="185" stroke-width="1.5" stroke-dasharray="3 3" />
+    <polygon points="248,172 254,172 246,182 252,182 244,196 250,188 244,188" fill="#ffffff" stroke="none" />
+    <path d="M 276,215 C 276,205 315,205 320,225" stroke-width="3" fill="#ffffff" fill-opacity="0.2" />
+    <line x1="180" y1="305" x2="420" y2="305" stroke-width="2" stroke-dasharray="16 8" stroke-opacity="0.6" />
+  </g>
+
+  <!-- Decorative Ribbon Banner -->
+  <g stroke-width="2" fill="none" stroke-opacity="0.9">
+    <path d="M 180,445 L 205,435 L 395,435 L 420,445 L 405,465 L 395,455 L 205,455 L 195,465 Z" fill="#ffffff" fill-opacity="0.2" />
+    <path d="M 180,445 L 205,455 L 205,435" />
+    <path d="M 420,445 L 395,455 L 395,435" />
+  </g>
+
+  <!-- Typography Inscriptions -->
+  <g fill="#ffffff" stroke="none" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="800">
+    <text x="300" y="375" font-size="13" letter-spacing="3" fill-opacity="0.95">BILAAL RESTAURANT</text>
+    <text x="300" y="396" font-size="10" letter-spacing="2" fill-opacity="0.8">DOORSTEP DISPATCH</text>
+    <text x="300" y="449" font-size="12" letter-spacing="4" fill-opacity="0.98">DELIVERY</text>
+    <text x="300" y="485" font-size="9" letter-spacing="2.5" fill-opacity="0.75">FAST COURIER • EST. 2024</text>
+  </g>
+</svg>

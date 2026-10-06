@@ -17,6 +17,8 @@ html.light {
   --theme-text-primary: #ffffff;
   --theme-text-secondary: #94a3b8;
   --theme-text-muted: #64748b;
+  --dish-card-border: #EADBBA;
+  --dish-card-bg: #F7EECA;
 }
 
 /* Base HTML and Body layout defaults */
@@ -283,7 +285,7 @@ html.light .hover\:bg-white\/5:hover {
 }
 
 /* 7. Primary Text -> Rich Dark Slate (#0f172a) */
-html.light .text-white:not([class*="bg-emerald-"]):not([class*="bg-teal-"]):not([class*="bg-amber-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="bg-purple-"]):not([class*="bg-violet-"]):not([class*="bg-green-"]):not(button[class*="bg-emerald"]):not(button[class*="bg-teal"]):not(button[class*="bg-rose"]):not(button[class*="bg-amber"]):not(button[class*="bg-indigo"]):not(button[class*="bg-blue"]):not(button[class*="bg-\[\#8b0000\]"]):not(button[class*="bg-\[\#8b0000\]"] *):not(button[class*="bg-\[\#1e3a8a\]"]):not(button[class*="bg-\[\#1e3a8a\]"] *):not(.btn-table-bill):not(.btn-table-bill *):not(.btn-table-pos):not(.btn-table-pos *):not(.btn-mark-available):not(.btn-mark-available *):not(.pos-card-btn):not(.pos-card-btn *):not(.pos-food-card button):not(.pos-food-card button *):not([class*="text-black"]):not(.bill-modal):not(.bill-modal *):not(.category-counter-bubble):not(.category-counter-bubble *):not(.waiter-categories-title):not(.waiter-categories-items-pill):not(.waiter-cart-kot-header-badge):not(.category-name-text):not(#waiter-menu-categories-sidebar *):not(#cashier-menu-categories-sidebar *):not(.waiter-cart-item-title):not(.waiter-cart-portion-tag):not(.waiter-cart-rate-tag):not(#waiter-cart-middle-section *):not(#cashier-cart-items-container *):not(#kds-global-header *):not(#kds-global-header):not(#waiter-global-header *):not(#waiter-global-header):not(#waiter-global-header-secondary *):not(#waiter-global-header-secondary),
+html.light .text-white:not([class*="bg-emerald-"]):not([class*="bg-teal-"]):not([class*="bg-amber-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="bg-purple-"]):not([class*="bg-violet-"]):not([class*="bg-green-"]):not(button[class*="bg-emerald"]):not(button[class*="bg-teal"]):not(button[class*="bg-rose"]):not(button[class*="bg-amber"]):not(button[class*="bg-indigo"]):not(button[class*="bg-blue"]):not(button[class*="bg-\[\#7a0c1a\]"]):not(button[class*="bg-\[\#7a0c1a\]"] *):not(button[class*="bg-\[\#580510\]"]):not(button[class*="bg-\[\#580510\]"] *):not(button[class*="bg-\[\#8b0000\]"]):not(button[class*="bg-\[\#8b0000\]"] *):not(button[class*="bg-\[\#1e3a8a\]"]):not(button[class*="bg-\[\#1e3a8a\]"] *):not(.btn-table-bill):not(.btn-table-bill *):not(.btn-table-pos):not(.btn-table-pos *):not(.btn-mark-available):not(.btn-mark-available *):not(.pos-card-btn):not(.pos-card-btn *):not(.pos-food-card button):not(.pos-food-card button *):not([class*="text-black"]):not(.bill-modal):not(.bill-modal *):not(.category-counter-bubble):not(.category-counter-bubble *):not(.waiter-categories-title):not(.waiter-categories-items-pill):not(.waiter-cart-kot-header-badge):not(.category-name-text):not(#waiter-menu-categories-sidebar *):not(#cashier-menu-categories-sidebar *):not(.waiter-cart-item-title):not(.waiter-cart-portion-tag):not(.waiter-cart-rate-tag):not(#waiter-cart-middle-section *):not(#cashier-cart-items-container *):not(#kds-global-header *):not(#kds-global-header):not(#waiter-global-header *):not(#waiter-global-header):not(#waiter-global-header-secondary *):not(#waiter-global-header-secondary),
 html.light .text-slate-100:not([class*="bg-emerald-"]):not([class*="bg-teal-"]):not([class*="bg-amber-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="bg-purple-"]):not(.pos-card-btn):not(.pos-card-btn *):not(.bill-modal):not(.bill-modal *):not(.waiter-cart-item-title):not(#waiter-cart-middle-section *):not(#cashier-cart-items-container *):not(#kds-global-header *):not(#kds-global-header):not(#waiter-global-header *):not(#waiter-global-header):not(#waiter-global-header-secondary *):not(#waiter-global-header-secondary),
 html.light .text-slate-200:not([class*="bg-emerald-"]):not([class*="bg-teal-"]):not([class*="bg-amber-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="bg-purple-"]):not(.pos-card-btn):not(.pos-card-btn *):not(.bill-modal):not(.bill-modal *):not(#waiter-cart-middle-section *):not(#cashier-cart-items-container *):not(#kds-global-header *):not(#kds-global-header):not(#waiter-global-header *):not(#waiter-global-header):not(#waiter-global-header-secondary *):not(#waiter-global-header-secondary),
 html.light .text-\[\#E2E8F0\]:not(.bill-modal):not(.bill-modal *):not(#waiter-cart-middle-section *):not(#cashier-cart-items-container *):not(#kds-global-header *):not(#kds-global-header):not(#waiter-global-header *):not(#waiter-global-header):not(#waiter-global-header-secondary *):not(#waiter-global-header-secondary) {
@@ -291,18 +293,36 @@ html.light .text-\[\#E2E8F0\]:not(.bill-modal):not(.bill-modal *):not(#waiter-ca
 }
 
 /* Keep text inside filled action buttons bright and readable */
+button[class*="bg-\[\#7a0c1a\]"],
+button[class*="bg-\[\#7a0c1a\]"] span,
+button[class*="bg-\[\#7a0c1a\]"] svg,
+button[class*="bg-\[\#580510\]"],
+button[class*="bg-\[\#580510\]"] span,
+button[class*="bg-\[\#580510\]"] svg,
 button[class*="bg-\[\#8b0000\]"],
 button[class*="bg-\[\#8b0000\]"] span,
 button[class*="bg-\[\#8b0000\]"] svg,
 button[class*="bg-\[\#1e3a8a\]"],
 button[class*="bg-\[\#1e3a8a\]"] span,
 button[class*="bg-\[\#1e3a8a\]"] svg,
+html.light button[class*="bg-\[\#7a0c1a\]"],
+html.light button[class*="bg-\[\#7a0c1a\]"] span,
+html.light button[class*="bg-\[\#7a0c1a\]"] svg,
+html.light button[class*="bg-\[\#580510\]"],
+html.light button[class*="bg-\[\#580510\]"] span,
+html.light button[class*="bg-\[\#580510\]"] svg,
 html.light button[class*="bg-\[\#8b0000\]"],
 html.light button[class*="bg-\[\#8b0000\]"] span,
 html.light button[class*="bg-\[\#8b0000\]"] svg,
 html.light button[class*="bg-\[\#1e3a8a\]"],
 html.light button[class*="bg-\[\#1e3a8a\]"] span,
 html.light button[class*="bg-\[\#1e3a8a\]"] svg,
+html.dark button[class*="bg-\[\#7a0c1a\]"],
+html.dark button[class*="bg-\[\#7a0c1a\]"] span,
+html.dark button[class*="bg-\[\#7a0c1a\]"] svg,
+html.dark button[class*="bg-\[\#580510\]"],
+html.dark button[class*="bg-\[\#580510\]"] span,
+html.dark button[class*="bg-\[\#580510\]"] svg,
 html.dark button[class*="bg-\[\#8b0000\]"],
 html.dark button[class*="bg-\[\#8b0000\]"] span,
 html.dark button[class*="bg-\[\#8b0000\]"] svg,
@@ -659,21 +679,72 @@ html.light .fixed.inset-0.bg-slate-950\/80 {
   backdrop-filter: blur(4px) !important;
 }
 
-/* 15. POS Food Item Cards: Warm Biscuit / Creamy Theme (bg-[#f8f3e6], dark espresso dish names, rich emerald prices) */
+/* 15. POS Food Item Cards: Warm Butter Cream Theme (#F7EECA), border #d4c5a0, radius 14px, shadow 0 4px 10px rgba(0,0,0,0.25) */
+.pos-cards-grid,
+html.light .pos-cards-grid,
+html.dark .pos-cards-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
 .pos-food-card,
 html.light .pos-food-card,
 html.dark .pos-food-card {
-  background-color: #f8f3e6 !important;
-  border: 1px solid #e2d5be !important;
-  border-radius: 1rem !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  height: 128px !important;
+  min-height: 128px !important;
+  max-height: 128px !important;
+  padding: 8px 12px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  background-color: #F7EECA !important;
+  background: #F7EECA !important;
+  border: 1.5px solid #d4c5a0 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25) !important;
 }
 
 .pos-food-card:hover,
 html.light .pos-food-card:hover,
 html.dark .pos-food-card:hover {
-  border-color: rgba(217, 119, 6, 0.4) !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.06) !important;
+  border-color: #c4b38a !important;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Dish name typography: Crisp bold text, font-size: 15px, font-weight: 700, color: #0f172a, line-height: 1.25, margin: 0 */
+.pos-food-card .line-clamp-2,
+html.light .pos-food-card .line-clamp-2,
+html.dark .pos-food-card .line-clamp-2,
+.pos-food-card h3,
+.pos-food-card h4 {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  line-height: 1.25 !important;
+  margin: 0 !important;
+}
+
+/* Compact + Add button height & styling */
+.pos-food-card .pos-card-btn,
+.pos-food-card button.pos-card-btn,
+html.light .pos-food-card .pos-card-btn,
+html.dark .pos-food-card .pos-card-btn {
+  height: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  margin-top: auto !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+.pos-food-card svg:not(.pos-card-btn svg) {
+  color: #0f172a !important;
+  stroke: #0f172a !important;
 }
 
 /* Subtle delicate borders for active/in-cart cards without heavy borders */
@@ -693,7 +764,8 @@ html.dark .pos-food-card-navy {
 html.light .pos-food-card-sold-out,
 html.dark .pos-food-card-sold-out {
   border: 1px solid #fca5a5 !important;
-  background-color: #f1ebe0 !important;
+  background-color: #ede4c0 !important;
+  background: #ede4c0 !important;
   opacity: 0.65 !important;
 }
 
@@ -745,34 +817,53 @@ html.dark .waiter-billing-panel {
   border-left-color: rgba(139, 0, 0, 0.6) !important;
 }
 
-/* Dish name typography: High-contrast dark espresso/black text-slate-900 */
+/* Dish name typography: Crisp bold dark charcoal/slate color: #0f172a, font-weight: 700, font-size: 15px, line-height: 1.25, margin: 0 */
 .pos-food-card .line-clamp-2,
 html.light .pos-food-card .line-clamp-2,
 html.dark .pos-food-card .line-clamp-2 {
   color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
   font-weight: 700 !important;
-  font-size: 0.875rem !important;
-  line-height: 1.375 !important;
+  font-size: 15px !important;
+  line-height: 1.25 !important;
+  margin: 0 !important;
 }
 
-/* Price typography: Rich emerald green text-emerald-700 font-extrabold text-base */
+/* Price typography: Exact deep rich Navy Blue #112240 from BIRYANI category button against butter cream, font-weight: 800 */
+.pos-food-card .text-\[\#112240\],
+.pos-food-card .text-\[\#38bdf8\],
 .pos-food-card .text-\[\#10b981\],
 .pos-food-card .text-emerald-400,
 .pos-food-card .text-emerald-700,
+.pos-food-card .text-\[\#0b1528\],
+.pos-food-card .text-\[\#1e3a8a\],
+html.light .pos-food-card .text-\[\#112240\],
+html.dark .pos-food-card .text-\[\#112240\],
+html.light .pos-food-card .text-\[\#38bdf8\],
+html.dark .pos-food-card .text-\[\#38bdf8\],
+html.light .pos-food-card .text-\[\#1e3a8a\],
+html.dark .pos-food-card .text-\[\#1e3a8a\],
+html.light .pos-food-card .text-\[\#0b1528\],
+html.dark .pos-food-card .text-\[\#0b1528\],
 html.light .pos-food-card .text-emerald-700,
 html.dark .pos-food-card .text-emerald-700,
 html.dark .pos-food-card .text-emerald-400 {
-  color: #047857 !important;
+  color: #112240 !important;
+  -webkit-text-fill-color: #112240 !important;
   font-weight: 800 !important;
-  font-size: 1rem !important;
+  font-size: 16px !important;
+  line-height: 1.2 !important;
+  margin-top: 10px !important;
+  margin-bottom: 8px !important;
+  margin-left: 12px !important;
 }
 
-/* Dish divider line: Soft biscuit divider */
+/* Dish divider line: Soft divider */
 .pos-food-card .border-t,
 .pos-food-card .border-b,
 html.light .pos-food-card .border-t,
 html.dark .pos-food-card .border-t {
-  border-color: #e5d9c5 !important;
+  border-color: #E0D1A8 !important;
 }
 
 /* Food Card Action Buttons (+ Add & Stepper) with High-Contrast Pure White Text */
@@ -814,7 +905,7 @@ html.dark .pos-card-btn-crimson:hover {
 .pos-card-btn-navy,
 html.light .pos-card-btn-navy,
 html.dark .pos-card-btn-navy {
-  background-color: #0b1e3b !important;
+  background-color: #1e3a8a !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
   border-color: rgba(30, 58, 138, 0.5) !important;
@@ -822,7 +913,7 @@ html.dark .pos-card-btn-navy {
 .pos-card-btn-navy:hover,
 html.light .pos-card-btn-navy:hover,
 html.dark .pos-card-btn-navy:hover {
-  background-color: #162e56 !important;
+  background-color: #172554 !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
 }
@@ -856,6 +947,33 @@ html.dark #cashier-cart-btn-send-kot:hover,
 html.light #cashier-cart-btn-settle:hover,
 html.dark #cashier-cart-btn-settle:hover {
   background-color: #730000 !important;
+}
+
+#cashier-cart-btn-save,
+html.light #cashier-cart-btn-save,
+html.dark #cashier-cart-btn-save {
+  background-color: #1e293b !important;
+  background: #1e293b !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+}
+
+#cashier-cart-btn-save *,
+html.light #cashier-cart-btn-save *,
+html.dark #cashier-cart-btn-save * {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#cashier-cart-btn-save:hover,
+html.light #cashier-cart-btn-save:hover,
+html.dark #cashier-cart-btn-save:hover {
+  background-color: #334155 !important;
+  background: #334155 !important;
 }
 
 #cashier-cart-btn-save-print,
@@ -916,12 +1034,48 @@ html.dark #cashier-cart-btn-save-print:hover {
   border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
-/* 17. Cashier Global Top Header Dark Crimson Red Styling (Preserving All Buttons & Controls) */
+/* 17. Cashier Global Top Header Rich Burgundy/Maroon Wine Styling */
 #cashier-global-header,
 html.light #cashier-global-header,
 html.dark #cashier-global-header {
-  background-color: #5c0b16 !important;
-  border-bottom: 1px solid #3d060e !important;
+  background: #580510 !important;
+  background-color: #580510 !important;
+  background-image: linear-gradient(180deg, #5c0612 0%, #4a030c 100%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+#cashier-global-header .cashier-nav-pills-container,
+#cashier-header-nav-pills,
+html.light #cashier-header-nav-pills,
+html.dark #cashier-header-nav-pills {
+  background: rgba(0, 0, 0, 0.35) !important;
+  background-color: rgba(0, 0, 0, 0.35) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+#cashier-global-header .header-tab-pill-inactive,
+#cashier-global-header button.header-tab-pill-inactive,
+#cashier-global-header button.header-tab-pill-inactive span,
+#cashier-global-header button.header-tab-pill-inactive * {
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+}
+
+#cashier-global-header .header-tab-pill-active,
+#cashier-global-header button.header-tab-pill-active {
+  background-color: #F7EECA !important;
+  background: #F7EECA !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border-color: #EADBBA !important;
+}
+
+#cashier-global-header .header-tab-pill-active span,
+#cashier-global-header .header-tab-pill-active * {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 700 !important;
 }
 
 #cashier-global-header .header-brand-title,
@@ -1084,6 +1238,9 @@ html.light #item-variation-modal,
 html.dark #item-variation-modal {
   background-color: #0f172a !important;
   border-color: #334155 !important;
+  width: 440px !important;
+  max-width: 95vw !important;
+  box-sizing: border-box !important;
 }
 
 #item-variation-modal-title,
@@ -1100,18 +1257,34 @@ html.dark .item-variation-portion-name {
   -webkit-text-fill-color: #0f172a !important;
 }
 
+#item-variation-modal button:has(svg.lucide-minus),
+#item-variation-modal button.item-variation-minus-btn,
+html.light #item-variation-modal button:has(svg.lucide-minus),
+html.dark #item-variation-modal button:has(svg.lucide-minus),
 #item-variation-modal button.bg-\[\#0b1e3b\],
 html.light #item-variation-modal button.bg-\[\#0b1e3b\],
 html.dark #item-variation-modal button.bg-\[\#0b1e3b\] {
-  background-color: #0b1e3b !important;
+  background-color: #0f172a !important;
+  background: #0f172a !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
 
-#item-variation-modal button.bg-\[\#0b1e3b\]:hover,
-html.light #item-variation-modal button.bg-\[\#0b1e3b\]:hover,
-html.dark #item-variation-modal button.bg-\[\#0b1e3b\]:hover {
-  background-color: #162e56 !important;
+#item-variation-modal button:has(svg.lucide-minus) svg,
+#item-variation-modal button:has(svg.lucide-minus) *,
+html.light #item-variation-modal button:has(svg.lucide-minus) svg,
+html.dark #item-variation-modal button:has(svg.lucide-minus) svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+#item-variation-modal button:has(svg.lucide-minus):hover:not(:disabled),
+#item-variation-modal button.bg-\[\#0b1e3b\]:hover:not(:disabled),
+html.light #item-variation-modal button.bg-\[\#0b1e3b\]:hover:not(:disabled),
+html.dark #item-variation-modal button.bg-\[\#0b1e3b\]:hover:not(:disabled) {
+  background-color: #1e293b !important;
+  background: #1e293b !important;
 }
 
 #item-variation-modal button.bg-\[\#8b0000\],
@@ -1126,6 +1299,95 @@ html.dark #item-variation-modal button.bg-\[\#8b0000\] {
 html.light #item-variation-modal button.bg-\[\#8b0000\]:hover,
 html.dark #item-variation-modal button.bg-\[\#8b0000\]:hover {
   background-color: #a10d0d !important;
+}
+
+/* Order Type Dropdown inside Item Variation Modal: Light Slate/Cream Pill (#ffffff), Deep Slate Text (#0f172a) */
+.portion-order-type-select-wrapper,
+#item-variation-modal .portion-order-type-select-wrapper {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.portion-order-type-select,
+#item-variation-modal .portion-order-type-select,
+html.light #item-variation-modal .portion-order-type-select,
+html.dark #item-variation-modal .portion-order-type-select {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  min-width: 95px !important;
+  width: 95px !important;
+  height: 28px !important;
+  padding: 2px 20px 2px 6px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color-scheme: light !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+}
+
+#item-variation-modal .portion-stepper-btn-minus,
+#item-variation-modal .portion-stepper-btn-plus {
+  width: 26px !important;
+  height: 26px !important;
+  min-width: 26px !important;
+  min-height: 26px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+#item-variation-modal .portion-stepper-qty-input {
+  width: 28px !important;
+  min-width: 24px !important;
+  height: 26px !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  box-sizing: border-box !important;
+}
+
+.portion-order-type-select:hover,
+#item-variation-modal .portion-order-type-select:hover {
+  background: #f8fafc !important;
+  background-color: #f8fafc !important;
+  border-color: #94a3b8 !important;
+}
+
+.portion-order-type-select-wrapper svg,
+#item-variation-modal .portion-order-type-select-wrapper svg {
+  color: #475569 !important;
+  stroke: #475569 !important;
+}
+
+.portion-order-type-select option,
+#item-variation-modal .portion-order-type-select option,
+html.light #item-variation-modal .portion-order-type-select option,
+html.dark #item-variation-modal .portion-order-type-select option {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+.portion-order-type-select option:hover,
+.portion-order-type-select option:focus,
+.portion-order-type-select option:checked,
+#item-variation-modal .portion-order-type-select option:hover,
+#item-variation-modal .portion-order-type-select option:focus,
+#item-variation-modal .portion-order-type-select option:checked {
+  background: #e2e8f0 !important;
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
 }
 
 /* 20. Categories Header, Table Details, and KOT Ribbon High-Contrast */
@@ -1175,40 +1437,251 @@ html.dark .kot-badge-ribbon {
   border-color: rgba(239, 68, 68, 0.4) !important;
 }
 
-/* 21. Payment Method Selector Contrast */
+/* 21. Payment Method & Offer Buttons: Butter Cream Default -> Vibrant Emerald Green Active */
 #cashier-payment-methods-selector button.payment-method-active,
 html.light #cashier-payment-methods-selector button.payment-method-active,
-html.dark #cashier-payment-methods-selector button.payment-method-active {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
-  -webkit-text-fill-color: #0f172a !important;
-  border-color: #ffffff !important;
+html.dark #cashier-payment-methods-selector button.payment-method-active,
+button.offer-btn-active,
+#cashier-cart-btn-bogo.offer-btn-active,
+#cashier-cart-btn-comp.offer-btn-active,
+#cashier-cart-btn-discount.offer-btn-active,
+html.light button.offer-btn-active,
+html.dark button.offer-btn-active {
+  background-color: #059669 !important;
+  background: #059669 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid #34d399 !important;
+  font-weight: 800 !important;
 }
 
-#cashier-payment-methods-selector button.payment-method-active svg {
-  color: #0f172a !important;
-  stroke: #0f172a !important;
+#cashier-payment-methods-selector button.payment-method-active span,
+button.offer-btn-active span,
+#cashier-cart-btn-bogo.offer-btn-active span,
+#cashier-cart-btn-comp.offer-btn-active span,
+#cashier-cart-btn-discount.offer-btn-active span {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+#cashier-payment-methods-selector button.payment-method-active svg,
+button.offer-btn-active svg,
+#cashier-cart-btn-bogo.offer-btn-active svg,
+#cashier-cart-btn-comp.offer-btn-active svg,
+#cashier-cart-btn-discount.offer-btn-active svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
 }
 
 #cashier-payment-methods-selector button.payment-method-inactive,
 html.light #cashier-payment-methods-selector button.payment-method-inactive,
-html.dark #cashier-payment-methods-selector button.payment-method-inactive {
-  background-color: #131f33 !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-  border-color: rgba(51, 65, 85, 0.8) !important;
+html.dark #cashier-payment-methods-selector button.payment-method-inactive,
+button.offer-btn-inactive,
+#cashier-cart-btn-bogo.offer-btn-inactive,
+#cashier-cart-btn-comp.offer-btn-inactive,
+#cashier-cart-btn-discount.offer-btn-inactive,
+html.light button.offer-btn-inactive,
+html.dark button.offer-btn-inactive {
+  background-color: #F7EECA !important;
+  background: #F7EECA !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  font-weight: 700 !important;
+}
+
+#cashier-payment-methods-selector button.payment-method-inactive span,
+button.offer-btn-inactive span,
+#cashier-cart-btn-bogo.offer-btn-inactive span,
+#cashier-cart-btn-comp.offer-btn-inactive span,
+#cashier-cart-btn-discount.offer-btn-inactive span {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 700 !important;
 }
 
 #cashier-payment-methods-selector button.payment-method-inactive:hover,
 html.light #cashier-payment-methods-selector button.payment-method-inactive:hover,
-html.dark #cashier-payment-methods-selector button.payment-method-inactive:hover {
-  background-color: #334155 !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
+html.dark #cashier-payment-methods-selector button.payment-method-inactive:hover,
+button.offer-btn-inactive:hover,
+#cashier-cart-btn-bogo.offer-btn-inactive:hover,
+#cashier-cart-btn-comp.offer-btn-inactive:hover,
+#cashier-cart-btn-discount.offer-btn-inactive:hover,
+html.light button.offer-btn-inactive:hover,
+html.dark button.offer-btn-inactive:hover {
+  background-color: #faedd0 !important;
+  background: #faedd0 !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border-color: rgba(0, 0, 0, 0.25) !important;
 }
 
-#cashier-payment-methods-selector button.payment-method-inactive svg {
-  color: #f1f5f9 !important;
+#cashier-payment-methods-selector button.payment-method-inactive svg,
+button.offer-btn-inactive svg,
+#cashier-cart-btn-bogo.offer-btn-inactive svg,
+#cashier-cart-btn-comp.offer-btn-inactive svg,
+#cashier-cart-btn-discount.offer-btn-inactive svg {
+  color: #0f172a !important;
+  stroke: #0f172a !important;
+}
+
+/* Standardized Top Navigation Bar Center Tabs: Unified Capsule Pill Geometry */
+#cashier-tab-tables,
+#cashier-tab-pos,
+#cashier-tab-bills,
+#cashier-tab-kots,
+#cashier-tab-zreport,
+#manager-tab-tables,
+#manager-tab-pos,
+#manager-tab-bills,
+#manager-tab-kots,
+#manager-tab-zreport,
+#manager-tab-reports,
+#manager-tab-settings,
+#waiter-header-nav-tables,
+#waiter-header-nav-pos,
+#waiter-header-nav-kot,
+.header-nav-tab-pill,
+.header-tab-pill-active,
+.header-tab-pill-inactive {
+  border-radius: 9999px !important;
+  height: 38px !important;
+  padding: 6px 18px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  box-sizing: border-box !important;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  font-weight: 600 !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* Inactive tabs: Transparent or subtle dark slate with transparent border and rounded pill shape */
+.header-tab-pill-inactive,
+html.light .header-tab-pill-inactive,
+html.dark .header-tab-pill-inactive {
+  background-color: transparent !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 9999px !important;
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+  font-weight: 600 !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+.header-tab-pill-inactive:hover,
+html.light .header-tab-pill-inactive:hover,
+html.dark .header-tab-pill-inactive:hover {
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  background: rgba(0, 0, 0, 0.2) !important;
+  border: 1px solid transparent !important;
+  border-radius: 9999px !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+/* Active Tabs in Header: Warm Butter Cream Theme with matching outline */
+#cashier-tab-pos.header-tab-pos-active,
+#manager-tab-pos.header-tab-pos-active,
+#cashier-tab-tables.header-tab-tables-active,
+#manager-tab-tables.header-tab-tables-active,
+#cashier-tab-bills.header-tab-bills-active,
+#manager-tab-bills.header-tab-bills-active,
+#cashier-tab-kots.header-tab-kots-active,
+#manager-tab-kots.header-tab-kots-active,
+#cashier-tab-zreport.header-tab-zreport-active,
+#manager-tab-zreport.header-tab-zreport-active,
+#manager-tab-reports.header-tab-reports-active,
+#manager-tab-settings.header-tab-settings-active,
+#waiter-header-nav-tables.header-tab-tables-active,
+#waiter-header-nav-pos.header-tab-pos-active,
+#waiter-header-nav-kot.header-tab-kots-active,
+.header-tab-pos-active,
+.header-tab-tables-active,
+.header-tab-bills-active,
+.header-tab-kots-active,
+.header-tab-zreport-active,
+.header-tab-reports-active,
+.header-tab-settings-active,
+.header-tab-pill-active,
+html.light .header-tab-pill-active,
+html.dark .header-tab-pill-active {
+  background-color: #F7EECA !important;
+  background: #F7EECA !important;
+  border: 1.5px solid #d4c5a0 !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 600 !important;
+  border-radius: 9999px !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+#cashier-tab-pos.header-tab-pos-active span,
+#manager-tab-pos.header-tab-pos-active span,
+#cashier-tab-tables.header-tab-tables-active span,
+#manager-tab-tables.header-tab-tables-active span,
+#cashier-tab-bills.header-tab-bills-active span,
+#manager-tab-bills.header-tab-bills-active span,
+#cashier-tab-kots.header-tab-kots-active span,
+#manager-tab-kots.header-tab-kots-active span,
+#cashier-tab-zreport.header-tab-zreport-active span,
+#manager-tab-zreport.header-tab-zreport-active span,
+#manager-tab-reports.header-tab-reports-active span,
+#manager-tab-settings.header-tab-settings-active span,
+#waiter-header-nav-tables.header-tab-tables-active span,
+#waiter-header-nav-pos.header-tab-pos-active span,
+#waiter-header-nav-kot.header-tab-kots-active span,
+.header-tab-pos-active span,
+.header-tab-tables-active span,
+.header-tab-bills-active span,
+.header-tab-kots-active span,
+.header-tab-zreport-active span,
+.header-tab-reports-active span,
+.header-tab-settings-active span,
+.header-tab-pill-active span:not(.rounded-full):not(.header-tab-badge):not(.tab-badge),
+html.light .header-tab-pill-active span:not(.rounded-full):not(.header-tab-badge):not(.tab-badge),
+html.dark .header-tab-pill-active span:not(.rounded-full):not(.header-tab-badge):not(.tab-badge) {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 600 !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* Icons & Emojis inside active header tabs */
+.header-tab-pill-active svg,
+html.light .header-tab-pill-active svg,
+html.dark .header-tab-pill-active svg {
+  color: #0f172a !important;
+  stroke: #0f172a !important;
+  fill: currentColor;
+}
+
+/* Numeric Count Badges on Cream Active Tabs */
+.header-tab-pill-active span.rounded-full,
+.header-tab-pill-active .header-tab-badge,
+.header-tab-pill-active .tab-badge,
+#cashier-tab-kots.header-tab-kots-active span.rounded-full,
+#manager-tab-kots.header-tab-kots-active span.rounded-full,
+#waiter-header-nav-kot.header-tab-kots-active span.rounded-full {
+  background-color: #0f172a !important;
+  background: #0f172a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 600 !important;
+  padding: 2px 7px !important;
+  border-radius: 9999px !important;
+  font-size: 11px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
 }
 
 /* 22. Cart Item Stepper Quantity Contrast */
@@ -1438,8 +1911,14 @@ html.dark .cart-qty-btn-plus:hover {
 html.light .table-card,
 html.dark .table-card {
   background-color: #0d1527 !important;
-  border: 1px solid rgba(59, 130, 246, 0.25) !important;
+  border: 1px solid var(--dish-card-border, #EADBBA) !important;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+
+.table-card:hover,
+html.light .table-card:hover,
+html.dark .table-card:hover {
+  border-color: var(--dish-card-border, #EADBBA) !important;
 }
 
 /* Waiter/Staff Pills (T1 - T10) */
@@ -1562,16 +2041,19 @@ html.dark .table-card .btn-table-dark:hover {
   -webkit-text-fill-color: #ffffff !important;
 }
 
-/* Occupied Table [POS] Solid Crimson Red Button (Synced exactly with [Bill] button typography) */
+/* Occupied Table [POS] Solid Deep Maroon Button (Synced with Brand Maroon/Burgundy) */
 .table-card .btn-table-pos,
+.table-card button[class*="bg-[#7a0c1a]"],
 .table-card button[class*="bg-[#8b0000]"],
 html.light .table-card .btn-table-pos,
+html.light .table-card button[class*="bg-[#7a0c1a]"],
 html.light .table-card button[class*="bg-[#8b0000]"],
 html.dark .table-card .btn-table-pos,
+html.dark .table-card button[class*="bg-[#7a0c1a]"],
 html.dark .table-card button[class*="bg-[#8b0000]"] {
-  background-color: #8b0000 !important;
-  border: 1px solid #b91c1c !important;
-  border-color: #b91c1c !important;
+  background-color: #7a0c1a !important;
+  border: 1px solid #8f1020 !important;
+  border-color: #8f1020 !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
   font-weight: 700 !important;
@@ -1579,13 +2061,16 @@ html.dark .table-card button[class*="bg-[#8b0000]"] {
 }
 
 .table-card .btn-table-pos:hover,
+.table-card button[class*="bg-[#7a0c1a]"]:hover,
 .table-card button[class*="bg-[#8b0000]"]:hover,
 html.light .table-card .btn-table-pos:hover,
+html.light .table-card button[class*="bg-[#7a0c1a]"]:hover,
 html.light .table-card button[class*="bg-[#8b0000]"]:hover,
 html.dark .table-card .btn-table-pos:hover,
+html.dark .table-card button[class*="bg-[#7a0c1a]"]:hover,
 html.dark .table-card button[class*="bg-[#8b0000]"]:hover {
-  background-color: #a10000 !important;
-  border-color: #dc2626 !important;
+  background-color: #8f1020 !important;
+  border-color: #a31326 !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
   opacity: 1 !important;
@@ -2124,115 +2609,100 @@ html.dark .bills-kpi-value {
   font-weight: 800 !important;
 }
 
-.bills-tab-active,
-html.light .bills-tab-active,
-html.dark .bills-tab-active {
-  background-color: #8b0000 !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-  border-color: #b91c1c !important;
-}
-
-.bills-count-active,
-html.light .bills-count-active,
-html.dark .bills-count-active {
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-  font-weight: 800 !important;
-  background-color: rgba(0, 0, 0, 0.3) !important;
-}
-
-.bills-tab-inactive,
-html.light .bills-tab-inactive,
-html.dark .bills-tab-inactive {
-  background-color: #1e293b !important;
-  color: #f1f5f9 !important;
-  -webkit-text-fill-color: #f1f5f9 !important;
-  border: 1px solid #334155 !important;
-  font-weight: 600 !important;
-}
-
-.bills-tab-inactive:hover,
-html.light .bills-tab-inactive:hover,
-html.dark .bills-tab-inactive:hover {
-  background-color: #334155 !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-  border-color: #475569 !important;
-}
-
-/* 3 Vanilla Ice Cream Filter Buttons ([Dine In], [Takeaway], [Delivery]) */
+/* Order Type Filter Pills: [All Bills], [Dine In], [Takeaway], [Delivery] */
 .bills-tab-vanilla,
+.bills-tab-inactive,
+#filter-pill-all,
 #filter-pill-dine-in,
 #filter-pill-takeaway,
 #filter-pill-delivery,
+button#filter-pill-all,
 button#filter-pill-dine-in,
 button#filter-pill-takeaway,
 button#filter-pill-delivery,
+html.light #filter-pill-all,
 html.light #filter-pill-dine-in,
 html.light #filter-pill-takeaway,
 html.light #filter-pill-delivery,
-html.light button#filter-pill-dine-in,
-html.light button#filter-pill-takeaway,
-html.light button#filter-pill-delivery,
+html.dark #filter-pill-all,
 html.dark #filter-pill-dine-in,
 html.dark #filter-pill-takeaway,
 html.dark #filter-pill-delivery,
+html.light button#filter-pill-all,
+html.light button#filter-pill-dine-in,
+html.light button#filter-pill-takeaway,
+html.light button#filter-pill-delivery,
+html.dark button#filter-pill-all,
 html.dark button#filter-pill-dine-in,
 html.dark button#filter-pill-takeaway,
 html.dark button#filter-pill-delivery {
   background-color: #faf5ef !important;
+  background: #faf5ef !important;
   color: #0f172a !important;
   -webkit-text-fill-color: #0f172a !important;
-  border: 1px solid #f1e9db !important;
+  border: 1px solid #eadbba !important;
   border-radius: 9999px !important;
-  font-weight: 700 !important;
+  font-weight: 750 !important;
 }
 
 .bills-tab-vanilla:hover,
+.bills-tab-inactive:hover,
+#filter-pill-all:hover,
 #filter-pill-dine-in:hover,
 #filter-pill-takeaway:hover,
 #filter-pill-delivery:hover,
+button#filter-pill-all:hover,
 button#filter-pill-dine-in:hover,
 button#filter-pill-takeaway:hover,
 button#filter-pill-delivery:hover,
+html.light #filter-pill-all:hover,
 html.light #filter-pill-dine-in:hover,
 html.light #filter-pill-takeaway:hover,
 html.light #filter-pill-delivery:hover,
+html.dark #filter-pill-all:hover,
 html.dark #filter-pill-dine-in:hover,
 html.dark #filter-pill-takeaway:hover,
 html.dark #filter-pill-delivery:hover {
   background-color: #f3ebd9 !important;
-  border-color: #e5dac7 !important;
+  background: #f3ebd9 !important;
+  border-color: #dfce9f !important;
 }
 
 .bills-tab-vanilla *,
+.bills-tab-inactive *,
+#filter-pill-all span:first-child,
 #filter-pill-dine-in span:first-child,
 #filter-pill-takeaway span:first-child,
 #filter-pill-delivery span:first-child,
+html.light #filter-pill-all span:first-child,
 html.light #filter-pill-dine-in span:first-child,
 html.light #filter-pill-takeaway span:first-child,
 html.light #filter-pill-delivery span:first-child,
+html.dark #filter-pill-all span:first-child,
 html.dark #filter-pill-dine-in span:first-child,
 html.dark #filter-pill-takeaway span:first-child,
 html.dark #filter-pill-delivery span:first-child {
   color: #0f172a !important;
   -webkit-text-fill-color: #0f172a !important;
-  font-weight: 700 !important;
+  font-weight: 750 !important;
 }
 
 .bills-count-vanilla,
 .bills-tab-vanilla .bills-count-vanilla,
+#filter-pill-all .bills-count-vanilla,
 #filter-pill-dine-in .bills-count-vanilla,
 #filter-pill-takeaway .bills-count-vanilla,
 #filter-pill-delivery .bills-count-vanilla,
+html.light #filter-pill-all .bills-count-vanilla,
 html.light #filter-pill-dine-in .bills-count-vanilla,
 html.light #filter-pill-takeaway .bills-count-vanilla,
 html.light #filter-pill-delivery .bills-count-vanilla,
+html.dark #filter-pill-all .bills-count-vanilla,
 html.dark #filter-pill-dine-in .bills-count-vanilla,
 html.dark #filter-pill-takeaway .bills-count-vanilla,
 html.dark #filter-pill-delivery .bills-count-vanilla {
-  background-color: #eaddd0 !important;
+  background-color: #e5dac2 !important;
+  background: #e5dac2 !important;
   color: #0f172a !important;
   -webkit-text-fill-color: #0f172a !important;
   font-weight: 800 !important;
@@ -2240,35 +2710,97 @@ html.dark #filter-pill-delivery .bills-count-vanilla {
   border-radius: 9999px !important;
 }
 
+/* Active State for ALL order type pills ([All Bills], [Dine In], [Takeaway], [Delivery]) */
+.bills-tab-active,
+#filter-pill-all.bills-tab-active,
 #filter-pill-dine-in.bills-tab-active,
 #filter-pill-takeaway.bills-tab-active,
 #filter-pill-delivery.bills-tab-active,
+button#filter-pill-all.bills-tab-active,
 button#filter-pill-dine-in.bills-tab-active,
 button#filter-pill-takeaway.bills-tab-active,
 button#filter-pill-delivery.bills-tab-active,
+html.light .bills-tab-active,
+html.light #filter-pill-all.bills-tab-active,
 html.light #filter-pill-dine-in.bills-tab-active,
-html.light button#filter-pill-dine-in.bills-tab-active,
+html.light #filter-pill-takeaway.bills-tab-active,
+html.light #filter-pill-delivery.bills-tab-active,
+html.dark .bills-tab-active,
+html.dark #filter-pill-all.bills-tab-active,
 html.dark #filter-pill-dine-in.bills-tab-active,
-html.dark button#filter-pill-dine-in.bills-tab-active {
+html.dark #filter-pill-takeaway.bills-tab-active,
+html.dark #filter-pill-delivery.bills-tab-active,
+html.light button#filter-pill-all.bills-tab-active,
+html.light button#filter-pill-dine-in.bills-tab-active,
+html.light button#filter-pill-takeaway.bills-tab-active,
+html.light button#filter-pill-delivery.bills-tab-active,
+html.dark button#filter-pill-all.bills-tab-active,
+html.dark button#filter-pill-dine-in.bills-tab-active,
+html.dark button#filter-pill-takeaway.bills-tab-active,
+html.dark button#filter-pill-delivery.bills-tab-active {
   background-color: #8b0000 !important;
-  border-color: #b91c1c !important;
+  background: #8b0000 !important;
+  border: 1px solid #dc2626 !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
+  border-radius: 9999px !important;
+  font-weight: 800 !important;
 }
 
+.bills-tab-active span,
+.bills-tab-active span:first-child,
+#filter-pill-all.bills-tab-active span,
+#filter-pill-all.bills-tab-active span:first-child,
+#filter-pill-dine-in.bills-tab-active span,
 #filter-pill-dine-in.bills-tab-active span:first-child,
+#filter-pill-takeaway.bills-tab-active span,
 #filter-pill-takeaway.bills-tab-active span:first-child,
-#filter-pill-delivery.bills-tab-active span:first-child {
+#filter-pill-delivery.bills-tab-active span,
+#filter-pill-delivery.bills-tab-active span:first-child,
+html.light .bills-tab-active span,
+html.light #filter-pill-all.bills-tab-active span,
+html.light #filter-pill-dine-in.bills-tab-active span,
+html.light #filter-pill-takeaway.bills-tab-active span,
+html.light #filter-pill-delivery.bills-tab-active span,
+html.dark .bills-tab-active span,
+html.dark #filter-pill-all.bills-tab-active span,
+html.dark #filter-pill-dine-in.bills-tab-active span,
+html.dark #filter-pill-takeaway.bills-tab-active span,
+html.dark #filter-pill-delivery.bills-tab-active span {
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
 }
 
+.bills-tab-active .bills-count-active,
+.bills-tab-active .bills-count-vanilla,
+#filter-pill-all.bills-tab-active .bills-count-active,
+#filter-pill-all.bills-tab-active .bills-count-vanilla,
 #filter-pill-dine-in.bills-tab-active .bills-count-vanilla,
+#filter-pill-dine-in.bills-tab-active .bills-count-active,
 #filter-pill-takeaway.bills-tab-active .bills-count-vanilla,
-#filter-pill-delivery.bills-tab-active .bills-count-vanilla {
-  background-color: rgba(0, 0, 0, 0.3) !important;
+#filter-pill-takeaway.bills-tab-active .bills-count-active,
+#filter-pill-delivery.bills-tab-active .bills-count-vanilla,
+#filter-pill-delivery.bills-tab-active .bills-count-active,
+html.light .bills-tab-active .bills-count-active,
+html.light .bills-tab-active .bills-count-vanilla,
+html.dark .bills-tab-active .bills-count-active,
+html.dark .bills-tab-active .bills-count-vanilla,
+html.light #filter-pill-all.bills-tab-active .bills-count-active,
+html.light #filter-pill-dine-in.bills-tab-active .bills-count-vanilla,
+html.light #filter-pill-takeaway.bills-tab-active .bills-count-vanilla,
+html.light #filter-pill-delivery.bills-tab-active .bills-count-vanilla,
+html.dark #filter-pill-all.bills-tab-active .bills-count-active,
+html.dark #filter-pill-dine-in.bills-tab-active .bills-count-vanilla,
+html.dark #filter-pill-takeaway.bills-tab-active .bills-count-vanilla,
+html.dark #filter-pill-delivery.bills-tab-active .bills-count-vanilla {
+  background-color: rgba(0, 0, 0, 0.35) !important;
+  background: rgba(0, 0, 0, 0.35) !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+  padding: 2px 8px !important;
+  border-radius: 9999px !important;
 }
 
 .bills-search-input,
@@ -3029,46 +3561,16 @@ html.light .kot-filter-bar,
 html.dark .kot-filter-bar {
   background-color: #0a0f18 !important;
   border-bottom: 1px solid #1e293b !important;
+  overflow: visible !important;
+  z-index: 50 !important;
 }
 
-.kot-filter-pill-active,
-html.light .kot-filter-pill-active,
-html.dark .kot-filter-pill-active,
-button.kot-filter-pill-active,
-html.light button.kot-filter-pill-active,
-html.dark button.kot-filter-pill-active {
-  background-color: #8b0000 !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-  border: 1px solid #b91c1c !important;
-  font-weight: 800 !important;
+.kot-filter-pill {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-.kot-filter-pill-active *,
-html.light .kot-filter-pill-active *,
-html.dark .kot-filter-pill-active * {
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-}
-
-.kot-filter-pill-inactive,
-html.light .kot-filter-pill-inactive,
-html.dark .kot-filter-pill-inactive,
-button.kot-filter-pill-inactive,
-html.light button.kot-filter-pill-inactive,
-html.dark button.kot-filter-pill-inactive {
-  background-color: #0f172a !important;
-  color: #f1f5f9 !important;
-  -webkit-text-fill-color: #f1f5f9 !important;
-  border: 1px solid #334155 !important;
-  font-weight: 700 !important;
-}
-
-.kot-filter-pill-inactive *,
-html.light .kot-filter-pill-inactive *,
-html.dark .kot-filter-pill-inactive * {
-  color: #f1f5f9 !important;
-  -webkit-text-fill-color: #f1f5f9 !important;
+.kot-filter-pill:hover {
+  transform: translateY(-1px);
 }
 
 .kot-btn-columns-active,
@@ -3092,46 +3594,187 @@ html.light .kot-btn-grid-active * {
 }
 
 /* Columns & Column Headers */
+.kot-columns-grid-wrapper,
+.kot-scroll-view > .grid {
+  height: calc(100vh - 120px) !important;
+  padding-bottom: 12px !important;
+  box-sizing: border-box !important;
+  align-items: stretch !important;
+}
+
 .kot-column-box,
 html.light .kot-column-box,
 html.dark .kot-column-box {
   background-color: #0b1120 !important;
   border: 1px solid #1e293b !important;
   border-radius: 1rem !important;
+  height: 100% !important;
+  max-height: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
 }
 
 .kot-col-header,
 html.light .kot-col-header,
 html.dark .kot-col-header {
-  background-color: #0d1527 !important;
-  border: 1px solid #1e293b !important;
+  border-radius: 12px !important;
+  height: 42px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 14px !important;
+  transition: all 0.2s ease !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 20 !important;
+  flex-shrink: 0 !important;
+  margin-bottom: 12px !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+.kot-col-cards-body {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  overflow-y: auto !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  padding-right: 6px !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent !important;
+}
+
+.kot-col-cards-body::-webkit-scrollbar {
+  width: 5px;
+}
+.kot-col-cards-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.kot-col-cards-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+.kot-col-cards-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* 1. NEW ORDERS COLUMN HEADER */
+.kot-col-header-new,
+html.light .kot-col-header-new,
+html.dark .kot-col-header-new {
+  background: rgba(159, 18, 57, 0.25) !important;
+  background-color: rgba(159, 18, 57, 0.25) !important;
+  border: 1px solid rgba(244, 63, 94, 0.45) !important;
+}
+
+.kot-col-header-new:hover,
+html.light .kot-col-header-new:hover,
+html.dark .kot-col-header-new:hover {
+  border-color: rgba(251, 113, 133, 0.8) !important;
+}
+
+.kot-col-header-new .kot-col-title,
+.kot-col-header-new span.tracking-wider {
+  color: #fda4af !important;
+  -webkit-text-fill-color: #fda4af !important;
+  font-weight: 800 !important;
+}
+
+.kot-col-header-new .kot-col-dot {
+  background-color: #f43f5e !important;
+  box-shadow: 0 0 8px #f43f5e !important;
 }
 
 .kot-col-badge-new,
 html.light .kot-col-badge-new,
 html.dark .kot-col-badge-new {
-  background-color: #8b0000 !important;
+  background-color: #e11d48 !important;
+  background: #e11d48 !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
-  border: 1px solid rgba(244, 63, 94, 0.5) !important;
+  border: 1px solid #fb7185 !important;
+  font-weight: 900 !important;
+}
+
+/* 2. PREPARING COLUMN HEADER */
+.kot-col-header-prep,
+html.light .kot-col-header-prep,
+html.dark .kot-col-header-prep {
+  background: rgba(180, 83, 9, 0.25) !important;
+  background-color: rgba(180, 83, 9, 0.25) !important;
+  border: 1px solid rgba(245, 158, 11, 0.45) !important;
+}
+
+.kot-col-header-prep:hover,
+html.light .kot-col-header-prep:hover,
+html.dark .kot-col-header-prep:hover {
+  border-color: rgba(253, 230, 138, 0.8) !important;
+}
+
+.kot-col-header-prep .kot-col-title,
+.kot-col-header-prep span.tracking-wider {
+  color: #fde68a !important;
+  -webkit-text-fill-color: #fde68a !important;
+  font-weight: 800 !important;
+}
+
+.kot-col-header-prep .kot-col-dot {
+  background-color: #f59e0b !important;
+  box-shadow: 0 0 8px #f59e0b !important;
 }
 
 .kot-col-badge-prep,
 html.light .kot-col-badge-prep,
 html.dark .kot-col-badge-prep {
   background-color: #d97706 !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-  border: 1px solid rgba(245, 158, 11, 0.5) !important;
+  background: #d97706 !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  border: 1px solid #fde68a !important;
+  font-weight: 900 !important;
+}
+
+/* 3. READY / DISPATCH COLUMN HEADER */
+.kot-col-header-ready,
+html.light .kot-col-header-ready,
+html.dark .kot-col-header-ready {
+  background: rgba(6, 95, 70, 0.25) !important;
+  background-color: rgba(6, 95, 70, 0.25) !important;
+  border: 1px solid rgba(16, 185, 129, 0.45) !important;
+}
+
+.kot-col-header-ready:hover,
+html.light .kot-col-header-ready:hover,
+html.dark .kot-col-header-ready:hover {
+  border-color: rgba(110, 231, 183, 0.8) !important;
+}
+
+.kot-col-header-ready .kot-col-title,
+.kot-col-header-ready span.tracking-wider {
+  color: #6ee7b7 !important;
+  -webkit-text-fill-color: #6ee7b7 !important;
+  font-weight: 800 !important;
+}
+
+.kot-col-header-ready .kot-col-dot {
+  background-color: #10b981 !important;
+  box-shadow: 0 0 8px #10b981 !important;
 }
 
 .kot-col-badge-ready,
 html.light .kot-col-badge-ready,
 html.dark .kot-col-badge-ready {
-  background-color: #1e3a8a !important;
+  background-color: #059669 !important;
+  background: #059669 !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
-  border: 1px solid rgba(59, 130, 246, 0.5) !important;
+  border: 1px solid #6ee7b7 !important;
+  font-weight: 900 !important;
 }
 
 /* KOT Cards */
@@ -3141,6 +3784,11 @@ html.dark .kot-card-box {
   background-color: #0d1527 !important;
   border: 1px solid #1e293b !important;
   border-radius: 12px !important;
+  flex-shrink: 0 !important;
+  min-height: fit-content !important;
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 .kot-card-header,
@@ -3238,9 +3886,30 @@ html.dark .kot-btn-action-handover {
 html.light .kot-btn-view-bill,
 html.dark .kot-btn-view-bill {
   background-color: #1e293b !important;
-  color: #e2e8f0 !important;
-  -webkit-text-fill-color: #e2e8f0 !important;
-  border: 1px solid #334155 !important;
+  color: #93c5fd !important;
+  -webkit-text-fill-color: #93c5fd !important;
+  border: 1px solid #3b82f6 !important;
+  font-weight: 700 !important;
+}
+
+.kot-btn-view-bill:hover,
+html.light .kot-btn-view-bill:hover,
+html.dark .kot-btn-view-bill:hover {
+  background-color: #26354f !important;
+  border-color: #60a5fa !important;
+  color: #bfdbfe !important;
+  -webkit-text-fill-color: #bfdbfe !important;
+}
+
+.kot-btn-in-kitchen,
+html.light .kot-btn-in-kitchen,
+html.dark .kot-btn-in-kitchen {
+  background: linear-gradient(135deg, #d97706, #b45309) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.35) !important;
 }
 
 .kot-btn-start-prep,
@@ -3387,16 +4056,15 @@ html.dark .zreport-modal-card {
 /* GLOBAL THEME UNIFICATION & BRAND WATERMARK ENFORCEMENT                   */
 /* ========================================================================= */
 
-/* 1. Global Canvas Background: Deep Navy/Slate #0a0f1d / #0b1120 */
+/* 1. Global Canvas Background: Midnight Black #070b14 matching Tables screen */
 html,
 body,
 #root,
 #app,
 #login-root-wrapper,
 #admin-root-wrapper,
-#cashier-workspace-root,
-#cashier-workspace {
-  background-color: #0a0f1d !important;
+#cashier-workspace-root {
+  background-color: #070b14 !important;
 }
 
 /* 2. Unified Form Controls: Eliminate Default White Backgrounds */
@@ -3507,7 +4175,7 @@ tr.bills-table-row:hover {
 }
 
 /* ========================================================================= */
-/* FLOOR AREAS AND TABLE STATUS FILTER PILLS - Warm Vanilla Cream Theme      */
+/* FLOOR AREAS AND TABLE STATUS FILTER PILLS - Warm Butter Cream Theme       */
 /* ========================================================================= */
 .floor-pill-inactive,
 html.light .floor-pill-inactive,
@@ -3518,12 +4186,12 @@ html.dark .status-pill-inactive,
 .status-filter-pill:not(.status-pill-active),
 html.light .status-filter-pill:not(.status-pill-active),
 html.dark .status-filter-pill:not(.status-pill-active) {
-  background-color: #faf5ef !important;
-  background: #faf5ef !important;
+  background-color: var(--dish-card-bg, #F7EECA) !important;
+  background: var(--dish-card-bg, #F7EECA) !important;
   color: #0f172a !important;
   -webkit-text-fill-color: #0f172a !important;
-  border: 1px solid #f1e9db !important;
-  font-weight: 700 !important;
+  border: 1.5px solid #d4c5a0 !important;
+  font-weight: 800 !important;
   font-size: 12px !important;
 }
 
@@ -3534,8 +4202,17 @@ html.light .floor-pill-inactive span:not(.floor-inactive-badge):not(.status-inac
 html.dark .floor-pill-inactive span:not(.floor-inactive-badge):not(.status-inactive-badge) {
   color: #0f172a !important;
   -webkit-text-fill-color: #0f172a !important;
-  font-weight: 700 !important;
+  font-weight: 800 !important;
   font-size: 12px !important;
+}
+
+.floor-pill-inactive svg,
+.status-pill-inactive svg,
+html.light .floor-pill-inactive svg,
+html.dark .floor-pill-inactive svg {
+  color: #0f172a !important;
+  stroke: #0f172a !important;
+  fill: currentColor;
 }
 
 .floor-pill-inactive:hover,
@@ -3545,9 +4222,9 @@ html.dark .floor-pill-inactive:hover,
 html.light .status-pill-inactive:hover,
 html.dark .status-pill-inactive:hover,
 .status-filter-pill:not(.status-pill-active):hover {
-  background-color: #f3ebd9 !important;
-  background: #f3ebd9 !important;
-  border-color: #e2d5bd !important;
+  background-color: #efe5c0 !important;
+  background: #efe5c0 !important;
+  border-color: #c4b38a !important;
   color: #0f172a !important;
   -webkit-text-fill-color: #0f172a !important;
 }
@@ -3558,14 +4235,14 @@ html.light .floor-inactive-badge,
 html.dark .floor-inactive-badge,
 html.light .status-inactive-badge,
 html.dark .status-inactive-badge {
-  background-color: #eaddd0 !important;
-  background: #eaddd0 !important;
-  border: 1px solid rgba(0, 0, 0, 0.05) !important;
-  color: #0f172a !important;
-  -webkit-text-fill-color: #0f172a !important;
+  background-color: #1e293b !important;
+  background: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
   font-weight: 800 !important;
   font-size: 11px !important;
-  padding: 2px 7px !important;
+  padding: 2px 8px !important;
   border-radius: 9999px !important;
   text-shadow: none !important;
 }
@@ -3591,7 +4268,7 @@ html.dark .status-pill-active {
 }
 
 /* ========================================================================= */
-/* WAITER LEFT SIDEBAR NAVIGATION - CASHIER POS ALTERNATING THEME            */
+/* WAITER LEFT SIDEBAR NAVIGATION - STANDARDIZED CASHIER MAROON THEME        */
 /* ========================================================================= */
 #waiter-bottom-navigation,
 #waiter-bottom-navigation-comp {
@@ -3600,111 +4277,141 @@ html.dark .status-pill-active {
   border-right: 1px solid #1e293b !important;
 }
 
-/* 1. Deep Navy Button (Floor/Tables, KOTs, Call Kitchen) */
-.waiter-nav-navy-btn,
-#waiter-bottom-navigation .waiter-nav-navy-btn,
-#waiter-bottom-navigation-comp .waiter-nav-navy-btn,
-html.light #waiter-bottom-navigation .waiter-nav-navy-btn,
-html.dark #waiter-bottom-navigation .waiter-nav-navy-btn {
-  background-color: #1e3a8a !important;
-  background: #1e3a8a !important;
-  border: 1px solid #3b82f6 !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-  border-radius: 12px !important;
-  margin-bottom: 8px !important;
+/* 1. Base button container on sidebar */
+.waiter-sidebar-nav-btn,
+#waiter-bottom-navigation .waiter-sidebar-nav-btn,
+#waiter-bottom-navigation-comp .waiter-sidebar-nav-btn {
   width: 100% !important;
   padding: 8px 4px !important;
+  border-radius: 12px !important;
+  margin-bottom: 8px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  transition: all 0.2s ease !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
   cursor: pointer !important;
+  outline: none !important;
+  position: relative !important;
 }
 
-.waiter-nav-navy-btn:hover,
-#waiter-bottom-navigation .waiter-nav-navy-btn:hover,
-#waiter-bottom-navigation-comp .waiter-nav-navy-btn:hover,
-html.light #waiter-bottom-navigation .waiter-nav-navy-btn:hover,
-html.dark #waiter-bottom-navigation .waiter-nav-navy-btn:hover,
-.waiter-nav-navy-btn:focus,
-#waiter-bottom-navigation .waiter-nav-navy-btn:focus,
-#waiter-bottom-navigation-comp .waiter-nav-navy-btn:focus {
-  background-color: #2563eb !important;
-  background: #2563eb !important;
-  border-color: #60a5fa !important;
+/* 2. Odd Buttons (1st, 3rd, 5th -> "Floor / Tables", "KOTs", "Call Kitchen"): Exact Cashier Deep Maroon */
+.waiter-nav-odd-maroon,
+#waiter-bottom-navigation .waiter-nav-odd-maroon,
+#waiter-bottom-navigation-comp .waiter-nav-odd-maroon,
+html.light #waiter-bottom-navigation .waiter-nav-odd-maroon,
+html.dark #waiter-bottom-navigation .waiter-nav-odd-maroon {
+  background: #580510 !important;
+  background-image: linear-gradient(180deg, #630714 0%, #4a030c 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35) !important;
+}
+
+.waiter-nav-odd-maroon:hover,
+#waiter-bottom-navigation .waiter-nav-odd-maroon:hover,
+#waiter-bottom-navigation-comp .waiter-nav-odd-maroon:hover,
+html.light #waiter-bottom-navigation .waiter-nav-odd-maroon:hover,
+html.dark #waiter-bottom-navigation .waiter-nav-odd-maroon:hover {
+  background: #6e0817 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
 }
 
-/* 2. Deep Crimson Red Button (Quick Punch, Bill Requests) */
-.waiter-nav-crimson-btn,
-#waiter-bottom-navigation .waiter-nav-crimson-btn,
-#waiter-bottom-navigation-comp .waiter-nav-crimson-btn,
-html.light #waiter-bottom-navigation .waiter-nav-crimson-btn,
-html.dark #waiter-bottom-navigation .waiter-nav-crimson-btn {
-  background-color: #8b0000 !important;
-  background: #8b0000 !important;
-  border: 1px solid #dc2626 !important;
+/* 3. Even Buttons (2nd, 4th -> "Quick Punch", "Bill Requests"): Cohesive Deep Midnight Navy */
+.waiter-nav-even-navy,
+#waiter-bottom-navigation .waiter-nav-even-navy,
+#waiter-bottom-navigation-comp .waiter-nav-even-navy,
+html.light #waiter-bottom-navigation .waiter-nav-even-navy,
+html.dark #waiter-bottom-navigation .waiter-nav-even-navy {
+  background: #112240 !important;
+  background-image: linear-gradient(180deg, #162a52 0%, #0d1a33 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
-  border-radius: 12px !important;
-  margin-bottom: 8px !important;
-  width: 100% !important;
-  padding: 8px 4px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  transition: all 0.2s ease !important;
-  cursor: pointer !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35) !important;
 }
 
-.waiter-nav-crimson-btn:hover,
-#waiter-bottom-navigation .waiter-nav-crimson-btn:hover,
-#waiter-bottom-navigation-comp .waiter-nav-crimson-btn:hover,
-html.light #waiter-bottom-navigation .waiter-nav-crimson-btn:hover,
-html.dark #waiter-bottom-navigation .waiter-nav-crimson-btn:hover,
-.waiter-nav-crimson-btn:focus,
-#waiter-bottom-navigation .waiter-nav-crimson-btn:focus,
-#waiter-bottom-navigation-comp .waiter-nav-crimson-btn:focus {
-  background-color: #991b1b !important;
-  background: #991b1b !important;
-  border-color: #ef4444 !important;
+.waiter-nav-even-navy:hover,
+#waiter-bottom-navigation .waiter-nav-even-navy:hover,
+#waiter-bottom-navigation-comp .waiter-nav-even-navy:hover,
+html.light #waiter-bottom-navigation .waiter-nav-even-navy:hover,
+html.dark #waiter-bottom-navigation .waiter-nav-even-navy:hover {
+  background: #1a3260 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
 }
 
-/* Pure Crisp White Text and Icons on Sidebar Buttons (Never white background) */
-.waiter-nav-navy-btn span,
-.waiter-nav-crimson-btn span,
-#waiter-bottom-navigation .waiter-nav-navy-btn span,
-#waiter-bottom-navigation .waiter-nav-crimson-btn span,
-html.light #waiter-bottom-navigation .waiter-nav-navy-btn span,
-html.light #waiter-bottom-navigation .waiter-nav-crimson-btn span {
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
+/* 4. Active Selected State on Alternating Buttons */
+.waiter-nav-active,
+#waiter-bottom-navigation .waiter-nav-active,
+#waiter-bottom-navigation-comp .waiter-nav-active {
+  border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65), inset 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
+  transform: scale(1.02) !important;
+}
+
+/* 5. Text and Icons: Crisp White on All Buttons */
+.waiter-sidebar-nav-btn span:not(.badge-counter),
+#waiter-bottom-navigation .waiter-sidebar-nav-btn span:not(.badge-counter),
+#waiter-bottom-navigation-comp .waiter-sidebar-nav-btn span:not(.badge-counter) {
   font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
-.waiter-nav-navy-btn svg,
-.waiter-nav-crimson-btn svg,
-#waiter-bottom-navigation .waiter-nav-navy-btn svg,
-#waiter-bottom-navigation .waiter-nav-crimson-btn svg,
-html.light #waiter-bottom-navigation .waiter-nav-navy-btn svg,
-html.light #waiter-bottom-navigation .waiter-nav-crimson-btn svg {
+.waiter-sidebar-nav-btn svg,
+#waiter-bottom-navigation .waiter-sidebar-nav-btn svg,
+#waiter-bottom-navigation-comp .waiter-sidebar-nav-btn svg {
   color: #ffffff !important;
   stroke: #ffffff !important;
 }
 
-/* Badge exception: Black text inside amber/emerald counter badge */
+/* 6. Notification Badges on Buttons: Amber/Gold Pill */
 #waiter-bottom-navigation .badge-counter,
 #waiter-bottom-navigation-comp .badge-counter,
-html.light #waiter-bottom-navigation .badge-counter,
-html.light #waiter-bottom-navigation-comp .badge-counter {
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+.waiter-sidebar-nav-btn .badge-counter {
+  min-width: 18px !important;
+  height: 18px !important;
+  padding: 0 4px !important;
+  border-radius: 9999px !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  background-color: #f59e0b !important;
+  background: #f59e0b !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  line-height: 1 !important;
+}
+
+/* Backward compatibility aliases */
+.waiter-nav-navy-btn {
+  background: #112240 !important;
+  background-image: linear-gradient(180deg, #162a52 0%, #0d1a33 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: #ffffff !important;
+}
+.waiter-nav-crimson-btn {
+  background: #580510 !important;
+  background-image: linear-gradient(180deg, #630714 0%, #4a030c 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
 }
 
 /* ========================================================================= */
@@ -4020,22 +4727,33 @@ html.dark #waiter-cart-kitchen-note-input::placeholder {
 }
 
 /* ========================================================================= */
-/* WAITER ORDER PAD MIDDLE DISH GRID PANEL - EXACT CASHIER DARK CANVAS       */
+/* POS MIDDLE DISH GRID PANEL & CONTAINERS - TRANSPARENT WATERMARK CANVAS    */
 /* ========================================================================= */
 .pos-middle-panel,
+#cashier-middle-dish-panel,
 #waiter-middle-dish-panel,
+#cashier-dish-grid-container,
 #waiter-dish-grid-container,
 .pos-center-grid-scroll,
+.pos-cards-grid,
 html.light .pos-middle-panel,
 html.dark .pos-middle-panel,
+html.light #cashier-middle-dish-panel,
+html.dark #cashier-middle-dish-panel,
 html.light #waiter-middle-dish-panel,
 html.dark #waiter-middle-dish-panel,
+html.light #cashier-dish-grid-container,
+html.dark #cashier-dish-grid-container,
 html.light #waiter-dish-grid-container,
 html.dark #waiter-dish-grid-container,
 html.light .pos-center-grid-scroll,
-html.dark .pos-center-grid-scroll {
-  background-color: #0a0f1d !important;
-  background: #0a0f1d !important;
+html.dark .pos-center-grid-scroll,
+html.light .pos-cards-grid,
+html.dark .pos-cards-grid {
+  background-color: transparent !important;
+  background: transparent !important;
+  position: relative !important;
+  z-index: 1 !important;
 }
 
 #waiter-search-filter-bar,
@@ -4582,13 +5300,10 @@ html.dark #waiter-header-active-tables-badge svg {
 
 .waiter-header-theme-toggle-wrapper button,
 .waiter-header-theme-toggle-btn,
-#waiter-ready-notifications-bell,
 html.light .waiter-header-theme-toggle-wrapper button,
 html.light .waiter-header-theme-toggle-btn,
-html.light #waiter-ready-notifications-bell,
 html.dark .waiter-header-theme-toggle-wrapper button,
-html.dark .waiter-header-theme-toggle-btn,
-html.dark #waiter-ready-notifications-bell {
+html.dark .waiter-header-theme-toggle-btn {
   background-color: #0b1120 !important;
   color: #f1f5f9 !important;
   -webkit-text-fill-color: #f1f5f9 !important;
@@ -4598,14 +5313,72 @@ html.dark #waiter-ready-notifications-bell {
 
 .waiter-header-theme-toggle-wrapper button svg,
 .waiter-header-theme-toggle-btn svg,
-#waiter-ready-notifications-bell svg,
 html.light .waiter-header-theme-toggle-wrapper button svg,
 html.light .waiter-header-theme-toggle-btn svg,
-html.light #waiter-ready-notifications-bell svg,
 html.dark .waiter-header-theme-toggle-wrapper button svg,
-html.dark .waiter-header-theme-toggle-btn svg,
-html.dark #waiter-ready-notifications-bell svg {
+html.dark .waiter-header-theme-toggle-btn svg {
   color: #f1f5f9 !important;
+}
+
+/* Top Header Right Notification Bell Icon Button: Butter Cream Theme */
+#cashier-notification-bell-btn,
+#manager-notification-bell-btn,
+#waiter-ready-notifications-bell,
+#owner-notification-bell-btn,
+#global-header-notification-bell,
+.notification-bell-butter-cream,
+html.light #cashier-notification-bell-btn,
+html.light #manager-notification-bell-btn,
+html.light #waiter-ready-notifications-bell,
+html.light #owner-notification-bell-btn,
+html.light #global-header-notification-bell,
+html.light .notification-bell-butter-cream,
+html.dark #cashier-notification-bell-btn,
+html.dark #manager-notification-bell-btn,
+html.dark #waiter-ready-notifications-bell,
+html.dark #owner-notification-bell-btn,
+html.dark #global-header-notification-bell,
+html.dark .notification-bell-butter-cream {
+  background-color: #F7EECA !important;
+  background: #F7EECA !important;
+  border: 1px solid #EADBBA !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+#cashier-notification-bell-btn:hover,
+#manager-notification-bell-btn:hover,
+#waiter-ready-notifications-bell:hover,
+#owner-notification-bell-btn:hover,
+#global-header-notification-bell:hover,
+.notification-bell-butter-cream:hover,
+html.light #cashier-notification-bell-btn:hover,
+html.light #manager-notification-bell-btn:hover,
+html.light #waiter-ready-notifications-bell:hover,
+html.light #owner-notification-bell-btn:hover,
+html.light #global-header-notification-bell:hover,
+html.light .notification-bell-butter-cream:hover,
+html.dark #cashier-notification-bell-btn:hover,
+html.dark #manager-notification-bell-btn:hover,
+html.dark #waiter-ready-notifications-bell:hover,
+html.dark #owner-notification-bell-btn:hover,
+html.dark #global-header-notification-bell:hover,
+html.dark .notification-bell-butter-cream:hover {
+  background-color: #efe5c0 !important;
+  background: #efe5c0 !important;
+  border-color: #dfce9f !important;
+}
+
+#cashier-notification-bell-btn svg,
+#manager-notification-bell-btn svg,
+#waiter-ready-notifications-bell svg,
+#owner-notification-bell-btn svg,
+#global-header-notification-bell svg,
+.notification-bell-butter-cream svg,
+html.light .notification-bell-butter-cream svg,
+html.dark .notification-bell-butter-cream svg {
+  color: #0f172a !important;
+  stroke: #0f172a !important;
 }
 
 #waiter-header-user-profile,
@@ -4639,6 +5412,531 @@ html.dark #waiter-logout-btn svg {
   color: #f87171 !important;
   stroke: #f87171 !important;
 }
+
+/* ========================================================================= */
+/* WAITER CART [SAVE / HOLD ORDER] BUTTON STYLING                            */
+/* ========================================================================= */
+#waiter-save-hold-btn,
+.waiter-hold-btn,
+html.light #waiter-save-hold-btn,
+html.light .waiter-hold-btn,
+html.dark #waiter-save-hold-btn,
+html.dark .waiter-hold-btn {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  border: 1px solid #3b82f6 !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+#waiter-save-hold-btn:hover:not(:disabled),
+.waiter-hold-btn:hover:not(:disabled) {
+  background-color: rgba(30, 58, 138, 0.6) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#waiter-save-hold-btn:disabled,
+.waiter-hold-btn:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+.table-badge-draft {
+  background-color: rgba(120, 53, 15, 0.5) !important;
+  border: 1px solid #f59e0b !important;
+  color: #fbbf24 !important;
+  -webkit-text-fill-color: #fbbf24 !important;
+  font-weight: 800 !important;
+  font-size: 11px !important;
+}
+
+/* 24. Bilaal Restaurant Fixed Viewport Centered Watermark & Transparent Layering */
+html,
+body,
+#root,
+#cashier-workspace-root {
+  background-color: #070b14 !important;
+}
+
+.brand-watermark-fixed,
+#brand-watermark-fixed-container,
+#brand-watermark-container,
+html.light .brand-watermark-fixed,
+html.dark .brand-watermark-fixed {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: min(600px, 80vw) !important;
+  height: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+  overflow: visible !important;
+}
+
+.brand-watermark-fixed img,
+#brand-watermark-fixed-container img,
+html.light .brand-watermark-fixed img,
+html.dark .brand-watermark-fixed img {
+  opacity: 0.18 !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: 75vh !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+/* Force parent wrapper and scrollable views to have a transparent background so the watermark shines through */
+#cashier-workspace,
+#manager-workspace,
+.kot-main-wrapper,
+.tables-main-wrapper,
+.kot-viewport-container,
+.tables-viewport-container,
+.kot-scroll-view,
+.tables-scroll-view {
+  background: transparent !important;
+  background-color: transparent !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+/* KOT Order Type Floating Pill Trigger */
+.kot-order-type-trigger,
+html.light .kot-order-type-trigger,
+html.dark .kot-order-type-trigger,
+button.kot-order-type-trigger {
+  background-color: #0f172a !important;
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 9999px !important;
+  padding: 6px 14px !important;
+  height: 38px !important;
+  width: auto !important;
+  min-width: fit-content !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  white-space: nowrap !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  outline: none !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+  transition: all 0.2s ease-in-out !important;
+  flex-shrink: 0 !important;
+}
+
+.kot-order-type-trigger span.whitespace-nowrap,
+button.kot-order-type-trigger span.whitespace-nowrap {
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  font-weight: 700 !important;
+}
+
+.kot-order-type-trigger svg,
+button.kot-order-type-trigger svg {
+  stroke: #f8fafc !important;
+  color: #f8fafc !important;
+}
+
+.kot-order-type-badge,
+html.light .kot-order-type-badge,
+html.dark .kot-order-type-badge,
+.kot-order-type-trigger .kot-order-type-badge,
+html.light .kot-order-type-trigger .kot-order-type-badge,
+html.dark .kot-order-type-trigger .kot-order-type-badge,
+button.kot-order-type-trigger .kot-order-type-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 24px !important;
+  width: auto !important;
+  height: 20px !important;
+  padding: 0 6px !important;
+  background-color: #1e293b !important;
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  border-radius: 9999px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.kot-order-type-trigger:hover,
+button.kot-order-type-trigger:hover {
+  background-color: #1e293b !important;
+  background: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* KOT Order Type Floating Menu */
+.kot-order-type-menu {
+  position: absolute !important;
+  top: calc(100% + 8px) !important;
+  right: 0 !important;
+  min-width: 240px !important;
+  z-index: 9999 !important;
+  background: rgba(11, 17, 32, 0.95) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7), 0 0 1px rgba(255, 255, 255, 0.2) !important;
+  padding: 8px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.kot-order-type-item,
+button.kot-order-type-item {
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  text-align: left !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  cursor: pointer !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  border-left: 4px solid transparent !important;
+  outline: none !important;
+  transition: all 0.15s ease-in-out !important;
+}
+
+.kot-order-type-item:hover,
+button.kot-order-type-item:hover {
+  background-color: rgba(30, 41, 59, 0.6) !important;
+  color: #ffffff !important;
+}
+
+/* Active "All Types" item inside Order Type dropdown - soft dark highlight without cream color */
+.kot-order-type-item-all-active,
+button.kot-order-type-item-all-active {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-left: 4px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+}
+
+.kot-order-type-item-all-active span,
+button.kot-order-type-item-all-active span {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.kot-order-type-item-all-active svg,
+button.kot-order-type-item-all-active svg {
+  stroke: #ffffff !important;
+  color: #ffffff !important;
+}
+
+.kot-order-type-badge-all,
+.kot-order-type-item-all-active .kot-order-type-badge-all,
+button.kot-order-type-item-all-active .kot-order-type-badge-all {
+  background-color: #1e293b !important;
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  font-weight: 700 !important;
+  padding: 2px 8px !important;
+  border-radius: 9999px !important;
+  font-size: 11px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+/* KOT Center Search Input */
+.kot-search-input,
+input.kot-search-input {
+  background-color: rgba(11, 17, 32, 0.7) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 9999px !important;
+  padding: 6px 16px 6px 36px !important;
+  font-size: 13px !important;
+  min-width: 260px !important;
+}
+
+/* KOT Card Petpooja-Style Header: Combined KOT & Bill Identifier */
+.kot-card-combined-id {
+  display: inline-flex !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
+}
+
+.kot-card-kot-id {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 13px !important;
+}
+
+.kot-card-id-separator {
+  color: rgba(255, 255, 255, 0.3) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.3) !important;
+  margin: 0 6px !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+
+.kot-card-bill-id,
+.kot-card-inv-id {
+  color: #fde68a !important;
+  -webkit-text-fill-color: #fde68a !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+}
+
+.kot-search-input:focus,
+input.kot-search-input:focus {
+  border-color: rgba(234, 219, 186, 0.6) !important;
+  box-shadow: 0 0 0 2px rgba(234, 219, 186, 0.2) !important;
+  outline: none !important;
+}
+
+/* POS Table Selector Dropdown & Trigger */
+.pos-table-selector-trigger,
+button.pos-table-selector-trigger {
+  background-color: #0b1120 !important;
+  border: 1px solid rgba(234, 219, 186, 0.4) !important;
+  outline: none !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.pos-table-selector-trigger:hover,
+button.pos-table-selector-trigger:hover {
+  border-color: rgba(234, 219, 186, 0.8) !important;
+}
+
+.pos-table-selector-trigger .table-name {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.pos-table-selector-trigger .table-status-tag,
+.pos-table-selector-trigger .table-waiter-tag,
+.pos-table-selector-trigger .table-guest-tag {
+  color: #10b981 !important;
+  -webkit-text-fill-color: #10b981 !important;
+  font-weight: 600 !important;
+}
+
+.pos-table-selector-trigger .table-total-price {
+  color: #34d399 !important;
+  -webkit-text-fill-color: #34d399 !important;
+  font-weight: 800 !important;
+}
+
+/* Floating Table Options Menu (When open) */
+.pos-table-selector-menu {
+  background-color: #0b1120 !important;
+  border: 1px solid #EADBBA !important;
+  border-radius: 10px !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Menu Items (Every single table row) */
+.pos-table-item,
+button.pos-table-item {
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  transition: all 0.15s ease-in-out !important;
+}
+
+.pos-table-item:hover:not(.pos-table-item-selected),
+button.pos-table-item:hover:not(.pos-table-item-selected) {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.pos-table-item-selected,
+button.pos-table-item-selected {
+  background-color: #F7EECA !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  font-weight: 800 !important;
+}
+
+.pos-table-item-selected *,
+button.pos-table-item-selected * {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+/* ==========================================================================
+   POS Dynamic Fixed Background Watermark (Non-scrolling & centered)
+   ========================================================================== */
+.pos-fixed-watermark,
+.pos-watermark-overlay,
+#pos-bilaal-watermark-container,
+#waiter-bilaal-watermark-container {
+  position: fixed !important;
+  top: 50% !important;
+  left: calc(140px + (100% - 140px - 380px) / 2) !important;
+  transform: translate(-50%, -50%) !important;
+  width: 440px !important;
+  max-width: 80% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: none !important; /* Never block mouse clicks */
+  z-index: 0 !important; /* Stays beneath the cards */
+  opacity: 0.20 !important; /* Clearly visible behind cream dish cards */
+  user-select: none !important;
+}
+
+.pos-fixed-watermark svg,
+.pos-watermark-overlay svg,
+#pos-bilaal-watermark-container svg,
+#waiter-bilaal-watermark-container svg {
+  width: 440px !important;
+  max-width: 100% !important;
+  height: auto !important;
+  stroke: #cbd5e1 !important;
+  pointer-events: none !important;
+}
+
+.pos-fixed-watermark img,
+.pos-watermark-overlay img,
+#pos-bilaal-watermark-container img,
+#waiter-bilaal-watermark-container img {
+  width: 440px !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: 75vh !important;
+  pointer-events: none !important;
+  object-fit: contain !important;
+}
+
+.pos-middle-panel,
+#cashier-middle-dish-panel,
+#waiter-middle-dish-panel,
+#cashier-dish-grid-container,
+#waiter-dish-grid-container,
+.pos-center-grid-scroll,
+.pos-cards-grid,
+html.light .pos-middle-panel,
+html.dark .pos-middle-panel,
+html.light #cashier-middle-dish-panel,
+html.dark #cashier-middle-dish-panel,
+html.light #waiter-middle-dish-panel,
+html.dark #waiter-middle-dish-panel,
+html.light #cashier-dish-grid-container,
+html.dark #cashier-dish-grid-container,
+html.light #waiter-dish-grid-container,
+html.dark #waiter-dish-grid-container,
+html.light .pos-center-grid-scroll,
+html.dark .pos-center-grid-scroll,
+html.light .pos-cards-grid,
+html.dark .pos-cards-grid {
+  position: relative !important;
+  z-index: 1 !important;
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+.pos-food-card,
+html.light .pos-food-card,
+html.dark .pos-food-card {
+  position: relative !important;
+  z-index: 2 !important;
+  background-color: #F7EECA !important;
+  background: #F7EECA !important;
+}
+
+/* ==========================================================================
+   HIDE REDUNDANT ORDER TYPE BADGES FROM CART LINE ITEMS
+   ========================================================================== */
+.cart-item-order-type-badge,
+.cart-order-type-tag,
+.waiter-cart-order-type-badge,
+.cart-item-order-type,
+[data-cart-order-type-badge] {
+  display: none !important;
+}
+
+/* ==========================================================================
+   FLOOR TOOLBAR RELOCATED "SEARCH TABLE NO." INPUT & REMOVED LEFT ICON
+   ========================================================================== */
+.floor-toolbar-search-input,
+#toolbar-table-search-input,
+input#toolbar-table-search-input {
+  height: 32px !important;
+  width: 210px !important;
+  background: rgba(15, 23, 42, 0.6) !important;
+  background-color: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 9999px !important;
+  padding: 0 28px 0 32px !important;
+  font-size: 12px !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  outline: none !important;
+}
+
+.floor-toolbar-search-input::placeholder,
+#toolbar-table-search-input::placeholder {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  font-size: 12px !important;
+}
+
+.floor-toolbar-search-input:focus,
+#toolbar-table-search-input:focus {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Ensure far-left floor toolbar icon is completely hidden */
+.floor-toolbar-left-icon,
+.floor-filter-toolbar > svg:first-child,
+.floor-filter-left-icon {
+  display: none !important;
+}
+
+/* ==========================================================================
+   HIDE "ALL FLOORS" AND "ACTIVE TABLES" BADGES FROM TOP HEADER
+   ========================================================================== */
+#waiter-header-floor-badge,
+.waiter-header-floor-badge,
+#waiter-header-active-tables-badge,
+.waiter-header-active-tables-badge {
+  display: none !important;
+}
+
+
+
+
 
 
 
