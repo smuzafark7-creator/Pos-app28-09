@@ -157,7 +157,7 @@ export const WaiterTableCard: React.FC<WaiterTableCardProps> = ({
           }}
           className="btn-table-pos flex-1 py-2 rounded-lg text-xs font-bold text-center transition-all bg-[#7a0c1a] hover:bg-[#8f1020] active:bg-[#4a030c] text-white border border-[#8f1020] cursor-pointer shadow-xs"
         >
-          Punch POS
+          {table.status === 'available' ? '+ Open POS' : 'POS'}
         </button>
 
         {table.status === 'occupied' && (

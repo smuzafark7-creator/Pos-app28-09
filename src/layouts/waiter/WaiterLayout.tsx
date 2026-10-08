@@ -22,21 +22,24 @@ export const WaiterLayout: React.FC<WaiterLayoutProps> = ({
       className="h-screen max-h-screen w-full flex flex-col overflow-hidden bg-[#0a0f1d] font-sans antialiased text-slate-200 select-none relative"
       style={{ backgroundColor: '#0a0f1d' }}
     >
-      {/* 1. PERSISTENT MASTER TOP HEADER - pinned at the top */}
+      {/* 1. PERSISTENT MASTER TOP HEADER - Top navbar with relocated horizontal navigation pills */}
       <div className="shrink-0 z-30">
-        <WaiterHeader />
+        <WaiterHeader 
+          activeTabOverride={activeTabOverride}
+          onNavigate={onNavigate}
+        />
       </div>
 
-      {/* 2. REPOSITIONED SLIM LEFT VERTICAL SIDEBAR NAVIGATION */}
+      {/* 2. LEFT VERTICAL SIDEBAR COMPLETELY REMOVED */}
       <WaiterNav 
         activeTabOverride={activeTabOverride}
         onNavigate={onNavigate}
       />
       
-      {/* 3. MAIN VIEWPORT ARCHITECTURE - offset by 84px left margin for sidebar */}
+      {/* 3. MAIN VIEWPORT ARCHITECTURE - Expands to occupy full 100% available horizontal screen width */}
       <main 
-        className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-[#0a0f1d] relative z-10 ml-[84px]"
-        style={{ backgroundColor: '#0a0f1d', marginLeft: '84px' }}
+        className={`flex-1 min-h-0 ${activeTabOverride === 'pos' ? 'overflow-hidden' : 'overflow-y-auto'} overflow-x-hidden bg-[#0a0f1d] relative z-10 w-full ml-0`}
+        style={{ backgroundColor: '#0a0f1d', marginLeft: '0px', width: '100%' }}
       >
         {activeTabOverride !== 'pos' && <BrandWatermark opacity={0.09} />}
         <div className="relative z-10 h-full w-full">

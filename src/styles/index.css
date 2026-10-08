@@ -683,9 +683,11 @@ html.light .fixed.inset-0.bg-slate-950\/80 {
 .pos-cards-grid,
 html.light .pos-cards-grid,
 html.dark .pos-cards-grid {
+  width: 100% !important;
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
-  gap: 12px !important;
+  gap: 10px !important;
+  margin: 0 !important;
   align-items: start !important;
 }
 
@@ -3593,13 +3595,128 @@ html.light .kot-btn-grid-active * {
   -webkit-text-fill-color: #ffffff !important;
 }
 
-/* Columns & Column Headers */
-.kot-columns-grid-wrapper,
-.kot-scroll-view > .grid {
+/* Columns & Column Headers (strictly 3-column workflow board) */
+.kot-columns-grid-wrapper {
   height: calc(100vh - 120px) !important;
   padding-bottom: 12px !important;
   box-sizing: border-box !important;
   align-items: stretch !important;
+}
+
+/* ========================================================================= */
+/* KOT ALL GRID VIEW - RESTORED DIMENSIONS & PREVENT OVERLAPPING CARDS       */
+/* ========================================================================= */
+.kot-all-grid-container,
+#kot-all-grid-container {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+  gap: 16px !important;
+  padding: 16px !important;
+  align-items: start !important;
+  height: auto !important;
+  min-height: min-content !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  box-sizing: border-box !important;
+}
+
+/* Restore Individual KOT Card Dimensions & Padding in All Grid View */
+.kot-all-grid-container .kot-card-box,
+#kot-all-grid-container .kot-card-box {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 220px !important;
+  height: auto !important;
+  padding: 14px !important;
+  background: #0f172a !important;
+  background-color: #0f172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 10px !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
+
+/* Card Header (KOT #, Inv #, Paid/Unpaid, Table/Takeaway) */
+.kot-all-grid-container .kot-card-header,
+#kot-all-grid-container .kot-card-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 10px !important;
+  line-height: 1.4 !important;
+  font-size: 13px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding: 0 0 8px 0 !important;
+}
+
+.kot-all-grid-container .kot-card-header *,
+#kot-all-grid-container .kot-card-header * {
+  line-height: 1.4 !important;
+}
+
+/* Dish Item Lines */
+.kot-all-grid-container .kot-card-items,
+#kot-all-grid-container .kot-card-items {
+  max-height: none !important;
+  overflow: visible !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+.kot-all-grid-container .kot-item-row,
+#kot-all-grid-container .kot-item-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 4px 0 !important;
+  margin: 2px 0 !important;
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+.kot-all-grid-container .kot-item-row *,
+#kot-all-grid-container .kot-item-row * {
+  line-height: 1.4 !important;
+}
+
+/* Action Buttons (In Kitchen, Hand Over, View Bill) */
+.kot-all-grid-container .kot-card-footer,
+#kot-all-grid-container .kot-card-footer {
+  margin-top: 12px !important;
+  display: flex !important;
+  gap: 8px !important;
+  padding: 8px 0 0 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.kot-all-grid-container .kot-card-footer > div,
+#kot-all-grid-container .kot-card-footer > div {
+  min-height: 34px !important;
+  height: 34px !important;
+  gap: 8px !important;
+}
+
+.kot-all-grid-container .kot-card-footer button,
+.kot-all-grid-container .kot-card-footer .kot-btn-in-kitchen,
+.kot-all-grid-container .kot-card-footer .kot-btn-action-handover,
+.kot-all-grid-container .kot-card-footer .kot-btn-view-bill,
+#kot-all-grid-container .kot-card-footer button,
+#kot-all-grid-container .kot-card-footer .kot-btn-in-kitchen,
+#kot-all-grid-container .kot-card-footer .kot-btn-action-handover,
+#kot-all-grid-container .kot-card-footer .kot-btn-view-bill {
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  font-size: 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .kot-column-box,
@@ -4268,6 +4385,134 @@ html.dark .status-pill-active {
 }
 
 /* ========================================================================= */
+/* WAITER TOP HEADER SEGMENTED CAPSULE BAR (MATCHING CASHIER CAPSULE)        */
+/* ========================================================================= */
+#waiter-bottom-navigation,
+#waiter-bottom-navigation-comp,
+.waiter-sidebar-nav-btn {
+  display: none !important;
+}
+
+.waiter-header-nav-capsule,
+#waiter-header-nav-capsule,
+.waiter-nav-pills-container,
+#waiter-header-nav-pills {
+  min-width: 540px !important;
+  width: auto !important;
+  height: 44px !important;
+  background: rgba(0, 0, 0, 0.45) !important;
+  background-color: rgba(0, 0, 0, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 9999px !important;
+  padding: 4px 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+.waiter-capsule-tab,
+.waiter-header-nav-pill,
+#waiter-header-nav-pills button,
+#waiter-header-nav-capsule button {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+  border: none !important;
+  border-radius: 9999px !important;
+  padding: 0 16px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  height: 36px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  transition: all 0.15s ease-in-out !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+}
+
+.waiter-capsule-tab svg,
+.waiter-header-nav-pill svg,
+#waiter-header-nav-pills button svg,
+#waiter-header-nav-capsule button svg {
+  color: #e2e8f0 !important;
+  stroke: #e2e8f0 !important;
+  transition: color 0.15s ease-in-out !important;
+  width: 15px !important;
+  height: 15px !important;
+  margin-right: 6px !important;
+}
+
+.waiter-capsule-tab:hover:not(.waiter-capsule-tab-active):not(.waiter-nav-pill-active),
+.waiter-header-nav-pill:hover:not(.waiter-capsule-tab-active):not(.waiter-nav-pill-active),
+#waiter-header-nav-pills button:hover:not(.waiter-capsule-tab-active):not(.waiter-nav-pill-active) {
+  background: rgba(255, 255, 255, 0.1) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.waiter-capsule-tab:hover:not(.waiter-capsule-tab-active):not(.waiter-nav-pill-active) svg,
+.waiter-header-nav-pill:hover:not(.waiter-capsule-tab-active):not(.waiter-nav-pill-active) svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+.waiter-capsule-tab.waiter-capsule-tab-active,
+.waiter-capsule-tab.waiter-nav-pill-active,
+.waiter-header-nav-pill.waiter-capsule-tab-active,
+.waiter-header-nav-pill.waiter-nav-pill-active,
+#waiter-header-nav-pills button.waiter-capsule-tab-active,
+#waiter-header-nav-capsule button.waiter-capsule-tab-active {
+  background: #FFFBEB !important;
+  background-color: #FFFBEB !important;
+  color: #112240 !important;
+  -webkit-text-fill-color: #112240 !important;
+  border-radius: 9999px !important;
+  padding: 0 18px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  height: 36px !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35) !important;
+  border: none !important;
+}
+
+.waiter-capsule-tab.waiter-capsule-tab-active svg,
+.waiter-capsule-tab.waiter-nav-pill-active svg,
+.waiter-header-nav-pill.waiter-capsule-tab-active svg,
+.waiter-header-nav-pill.waiter-nav-pill-active svg,
+#waiter-header-nav-pills button.waiter-capsule-tab-active svg,
+#waiter-header-nav-capsule button.waiter-capsule-tab-active svg {
+  color: #112240 !important;
+  stroke: #112240 !important;
+}
+
+.waiter-capsule-tab .waiter-capsule-badge,
+.waiter-header-nav-pill .waiter-nav-pill-badge {
+  background: #f59e0b !important;
+  background-color: #f59e0b !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  padding: 0 5px !important;
+  margin-left: 6px !important;
+  border-radius: 9999px !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* ========================================================================= */
 /* WAITER LEFT SIDEBAR NAVIGATION - STANDARDIZED CASHIER MAROON THEME        */
 /* ========================================================================= */
 #waiter-bottom-navigation,
@@ -4623,13 +4868,153 @@ html.dark #waiter-header-user-profile span {
 /* WAITER ORDER PAD RIGHT-SIDE CART / ORDER SUMMARY PANEL - CASHIER DARK     */
 /* ========================================================================= */
 
-/* 1. Outer Right Sidebar Container: #0b1120 */
+/* 1. POS Outer Container & Three-Column Proportions (215px | 1fr | 520px) */
+#waiter-pos-screen-container,
+.waiter-pos-screen-container,
+#cashier-pos-screen-container,
+.cashier-pos-screen-container {
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: calc(100vh - 56px) !important;
+  min-height: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Left Column: Fixed 215px Categories Sidebar */
+#waiter-menu-categories-sidebar,
+#cashier-menu-categories-sidebar,
+.waiter-menu-categories-sidebar,
+.cashier-menu-categories-sidebar,
+html.light #waiter-menu-categories-sidebar,
+html.dark #waiter-menu-categories-sidebar,
+html.light #cashier-menu-categories-sidebar,
+html.dark #cashier-menu-categories-sidebar {
+  width: 215px !important;
+  min-width: 215px !important;
+  max-width: 215px !important;
+  flex: 0 0 215px !important;
+  box-sizing: border-box !important;
+}
+
+/* Middle Column: Flexible 1fr Dish Panel with 4-Column Food Cards Grid */
+#waiter-middle-dish-panel,
+#cashier-middle-dish-panel,
+.pos-middle-panel,
+html.light #waiter-middle-dish-panel,
+html.dark #waiter-middle-dish-panel,
+html.light #cashier-middle-dish-panel,
+html.dark #cashier-middle-dish-panel {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+#waiter-dish-grid-container,
+#cashier-dish-grid-container,
+.pos-center-grid-scroll,
+.middle-food-grid-wrapper {
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+#waiter-dish-grid-container .pos-cards-grid,
+#cashier-dish-grid-container .pos-cards-grid,
+.pos-cards-grid,
+html.light .pos-cards-grid,
+html.dark .pos-cards-grid {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Right Column: Fixed 520px Cart Drawer */
 .waiter-billing-panel,
 #waiter-cart-panel,
+.cashier-billing-panel,
+#cashier-billing-panel,
 html.light .waiter-billing-panel,
 html.dark .waiter-billing-panel,
 html.light #waiter-cart-panel,
 html.dark #waiter-cart-panel,
+html.light .cashier-billing-panel,
+html.dark .cashier-billing-panel,
+html.light #cashier-billing-panel,
+html.dark #cashier-billing-panel {
+  width: 520px !important;
+  min-width: 520px !important;
+  max-width: 520px !important;
+  flex: 0 0 520px !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+  background-color: #0b1120 !important;
+  background: #0b1120 !important;
+  border-left-color: rgba(139, 0, 0, 0.6) !important;
+}
+
+.waiter-cart-line-item-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 6px 10px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Placed KOT Items: Cashier's dark pill quantity count */
+.waiter-kot-qty-pill,
+.waiter-cart-kot-qty-pill {
+  background: rgba(255, 255, 255, 0.08) !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-radius: 6px !important;
+  padding: 2px 8px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Unprinted / New items: Compact blue stepper pills */
+.waiter-cart-qty-stepper {
+  background: #1e293b !important;
+  background-color: #1e293b !important;
+  border: 1px solid rgba(59, 130, 246, 0.5) !important;
+  border-radius: 6px !important;
+  padding: 2px 4px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+/* Hide redundant per-row Order: Dine-In dropdown */
+.waiter-cart-order-select,
+select[id^="waiter-cart-order-select"],
+.waiter-order-select-container {
+  display: none !important;
+}
+
 #waiter-cart-top-section,
 html.light #waiter-cart-top-section,
 html.dark #waiter-cart-top-section,
@@ -4644,15 +5029,36 @@ html.dark #waiter-cart-bottom-section {
   border-left-color: rgba(139, 0, 0, 0.6) !important;
 }
 
-/* 2. Table Info & Total Bar: #0d1527 */
+/* 2. Table Details Banner: rgba(15, 23, 42, 0.75), padding: 8px 12px, border-radius: 6px */
 #waiter-table-info-bar,
 .waiter-table-info-bar,
+#waiter-table-info-summary,
 html.light #waiter-table-info-bar,
 html.dark #waiter-table-info-bar,
 html.light .waiter-table-info-bar,
 html.dark .waiter-table-info-bar {
-  background-color: #0d1527 !important;
-  background: #0d1527 !important;
+  background-color: rgba(15, 23, 42, 0.75) !important;
+  background: rgba(15, 23, 42, 0.75) !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+}
+
+#waiter-table-info-summary .table-info-text,
+#waiter-table-info-bar .table-info-text,
+.waiter-table-server-info {
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+#waiter-table-info-summary .table-total-price,
+#waiter-table-info-bar .table-total-price,
+.waiter-table-subtotal-price {
+  color: #10b981 !important;
+  -webkit-text-fill-color: #10b981 !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
 }
 
 /* Table Selector Dropdown: #080c16 with #1e293b border */
@@ -4965,8 +5371,37 @@ html.dark span.category-counter-bubble {
 }
 
 /* Category item name label within button */
+.category-badge-btn,
+button.category-badge-btn,
+#cashier-menu-categories-sidebar button.category-badge-btn,
+#waiter-menu-categories-sidebar button.category-badge-btn {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+.category-badge-btn:hover,
+.category-badge-btn:active,
+.category-badge-btn.category-active-crimson,
+.category-badge-btn.category-active-navy {
+  transform: none !important;
+}
+
 .category-name-text,
 .category-badge-btn .category-name-text,
+.category-badge-btn .category-label-text,
 .category-badge-btn > span,
 html.light .category-name-text,
 html.dark .category-name-text,
@@ -4976,6 +5411,41 @@ html.light .category-badge-btn > span,
 html.dark .category-badge-btn > span {
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
+}
+
+.category-badge-btn .category-name-text,
+.category-badge-btn .category-name-text span,
+.category-badge-btn .category-label-text,
+.category-name-text,
+.category-name-text span {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+  text-align: left !important;
+  flex: 1 !important;
+  margin-left: 6px !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+
+.category-counter-bubble,
+html.light .category-counter-bubble,
+html.dark .category-counter-bubble,
+html.light span.category-counter-bubble,
+html.dark span.category-counter-bubble {
+  flex-shrink: 0 !important;
+  margin-right: 0 !important;
+}
+
+.category-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
 }
 
 /* 3. Right Cart Panel KOT Header ("KOT-10105") */
@@ -5803,7 +6273,7 @@ button.pos-table-item-selected * {
 #waiter-bilaal-watermark-container {
   position: fixed !important;
   top: 50% !important;
-  left: calc(140px + (100% - 140px - 380px) / 2) !important;
+  left: calc(215px + (100% - 215px - 520px) / 2) !important;
   transform: translate(-50%, -50%) !important;
   width: 440px !important;
   max-width: 80% !important;
@@ -5933,6 +6403,27 @@ input#toolbar-table-search-input {
 .waiter-header-active-tables-badge {
   display: none !important;
 }
+
+/* ==========================================================================
+   HEADER BRANDING & ROLE DETAILS CLEANUP
+   ========================================================================== */
+#waiter-header-brand-title,
+#waiter-comp-brand-title,
+.waiter-header-title {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 16px !important;
+}
+
+#waiter-header-role-badge,
+#waiter-header-role-subtitle,
+.waiter-header-role-badge,
+.waiter-header-role-subtitle,
+.waiter-header-subtitle {
+  display: none !important;
+}
+
 
 
 

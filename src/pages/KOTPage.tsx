@@ -978,12 +978,29 @@ export const KOTPage: React.FC = () => {
       ) : (
         /* Full-Width Grid View - When in All Grid mode or filtering by a specific status */
         <div 
-          className="kot-scroll-view flex-1 overflow-y-auto min-h-0 w-full px-4 py-3 relative z-2 bg-transparent"
-          style={{ position: 'relative', zIndex: 2, backgroundColor: 'transparent' }}
+          className="kot-scroll-view kot-grid-scroll-view flex-1 min-h-0 w-full relative z-2 bg-transparent"
+          style={{ 
+            position: 'relative', 
+            zIndex: 2, 
+            backgroundColor: 'transparent',
+            height: 'calc(100vh - 120px)',
+            overflowY: 'auto'
+          }}
         >
           <div 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full relative z-2"
-            style={{ position: 'relative', zIndex: 2 }}
+            id="kot-all-grid-container"
+            className="kot-all-grid-container w-full relative z-2"
+            style={{ 
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+              gap: '16px',
+              padding: '16px',
+              alignItems: 'start',
+              height: 'auto',
+              overflowY: 'auto',
+              position: 'relative', 
+              zIndex: 2 
+            }}
           >
             {displayedKots.map(kot => (
               <KdsCard

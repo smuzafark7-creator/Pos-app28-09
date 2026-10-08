@@ -1,7 +1,7 @@
 import React from 'react';
-import { WaiterPOSView as IsolatedWaiterPOSView } from './waiter/WaiterPOSView';
+import { SharedPosScreen } from './pos/SharedPosScreen';
 
 export const WaiterPOSView: React.FC = () => {
-  return <IsolatedWaiterPOSView />;
+  return <SharedPosScreen role="waiter" />;
 };
 export default WaiterPOSView;

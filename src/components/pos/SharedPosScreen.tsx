@@ -1,20 +1,19 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-import { useTheme } from '../../context/ThemeContext';
-import { MenuItem, ItemVariation, PortionSelection } from '../../types';
-import { CashierCategorySidebar } from './CashierCategorySidebar';
-import { CashierItemCard } from './CashierItemCard';
-import { CashierCart } from './CashierCart';
+import { MenuItem, PortionSelection } from '../../types';
+import { CashierCategorySidebar } from '../cashier/CashierCategorySidebar';
+import { CashierItemCard } from '../cashier/CashierItemCard';
+import { CashierCart } from '../cashier/CashierCart';
 import { ItemVariationModal } from '../ItemVariationModal';
-import { POSOrderTypeWatermark } from './POSOrderTypeWatermark';
-import { POSBilaalWatermark } from './POSBilaalWatermark';
+import { POSOrderTypeWatermark } from '../cashier/POSOrderTypeWatermark';
+import { POSBilaalWatermark } from '../cashier/POSBilaalWatermark';
 import { Search, X } from 'lucide-react';
 
-export interface CashierPOSViewProps {
-  userRole?: 'cashier' | 'waiter' | 'admin' | string;
+export interface SharedPosScreenProps {
+  role?: 'cashier' | 'waiter' | 'manager' | 'admin';
 }
 
-export const CashierPOSView: React.FC<CashierPOSViewProps> = ({ userRole = 'cashier' }) => {
+export const SharedPosScreen: React.FC<SharedPosScreenProps> = ({ role = 'cashier' }) => {
   const {
     menuItems,
     categories,
@@ -25,11 +24,19 @@ export const CashierPOSView: React.FC<CashierPOSViewProps> = ({ userRole = 'cash
     setCartOrderType,
     cartTableNumber,
     setCartTableNumber,
-    cartTakeawayId,
-    cartCustomerMobile,
     kots,
     currentBranch,
+    currentUser,
   } = useApp();
+
+  const effectiveRole = role || (currentUser?.role === 'waiter' ? 'waiter' : 'cashier');
+
+  // Ensure default order type is dine_in if none is selected
+  useEffect(() => {
+    if (!cartOrderType) {
+      setCartOrderType('dine_in');
+    }
+  }, [cartOrderType, setCartOrderType]);
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [dietaryFilter, setDietaryFilter] = useState<'all' | 'veg' | 'non-veg'>('all');
@@ -73,12 +80,12 @@ export const CashierPOSView: React.FC<CashierPOSViewProps> = ({ userRole = 'cash
   // Active unbilled KOTs for current table or takeaway ticket
   const activeSessionKots = useMemo(() => {
     const effectiveBranch = currentBranch === 'all' ? 'main' : currentBranch;
+    const norm = (s?: string) => (s || '').trim().toLowerCase().replace(/^t\s*/, 'table ');
+    const cartNorm = norm(cartTableNumber);
+    const cartDigits = (cartTableNumber || '').replace(/[^0-9]/g, '');
+
     if (cartOrderType === 'dine_in') {
       if (!cartTableNumber) return [];
-      const norm = (s?: string) => (s || '').trim().toLowerCase().replace(/^t\s*/, 'table ');
-      const cartNorm = norm(cartTableNumber);
-      const cartDigits = cartTableNumber.replace(/[^0-9]/g, '');
-
       return kots.filter(
         k => {
           if (k.branchId !== effectiveBranch) return false;
@@ -94,30 +101,17 @@ export const CashierPOSView: React.FC<CashierPOSViewProps> = ({ userRole = 'cash
         if (timeDiff !== 0) return timeDiff;
         return (a.kotNumber || '').localeCompare(b.kotNumber || '');
       });
-    } else {
-      // Takeaway, delivery, or parcel
-      return kots.filter(
-        k => {
-          if (k.branchId !== effectiveBranch) return false;
-          if (k.isBilled || k.status === 'cancelled') return false;
-          const isTakeawayType = k.orderType === 'takeaway' || k.orderType === 'parcel' || k.orderType === 'delivery';
-          if (!isTakeawayType) return false;
-
-          const kotTakeawayId = k.takeawayId || (k.kotNumber ? `TK-${k.kotNumber.replace(/\D/g, '').slice(-3)}` : undefined);
-          if (cartTakeawayId && kotTakeawayId) {
-            return kotTakeawayId.toLowerCase() === cartTakeawayId.toLowerCase();
-          }
-          if (cartCustomerMobile && k.customerMobile) {
-            return k.customerMobile === cartCustomerMobile;
-          }
-          if (cartTakeawayId && !kotTakeawayId && !k.customerMobile) {
-            return true;
-          }
-          return false;
-        }
-      );
     }
-  }, [kots, currentBranch, cartOrderType, cartTableNumber, cartTakeawayId, cartCustomerMobile]);
+
+    // Takeaway & delivery tickets
+    return kots.filter(
+      k =>
+        k.branchId === effectiveBranch &&
+        (k.orderType === 'takeaway' || k.orderType === 'parcel' || k.orderType === 'delivery') &&
+        !k.isBilled &&
+        k.status !== 'cancelled'
+    );
+  }, [cartOrderType, cartTableNumber, currentBranch, kots]);
 
   const handleItemClick = (item: MenuItem) => {
     if (item.variations && item.variations.length > 0) {
@@ -141,67 +135,67 @@ export const CashierPOSView: React.FC<CashierPOSViewProps> = ({ userRole = 'cash
     });
   };
 
-  const { isDark } = useTheme();
-
   return (
-    <div 
-      id="pos-main-parent-wrapper"
-      className="pos-main-parent-wrapper select-none font-sans bg-[#070b14]"
+    <div
+      id="shared-pos-screen"
+      className="shared-pos-screen select-none font-sans bg-[#070b14]"
       style={{
         display: 'flex',
         flexDirection: 'row',
         width: '100vw',
         height: 'calc(100vh - 56px)',
         overflow: 'hidden',
-        alignItems: 'stretch',
         backgroundColor: '#070b14',
-        background: '#070b14',
       }}
     >
-      {/* 1. Category Sidebar (Left) - Column 2 */}
-      <CashierCategorySidebar
-        categories={safeCategories}
-        selectedCategory={selectedCategory}
-        onSelectCategory={setSelectedCategory}
-        categoryCounts={categoryCounts}
-        totalItems={(menuItems || []).length}
-      />
-
-      {/* 2. Menu Items & Fast Search (Middle) - Touches top edge */}
-      <div 
-        id="cashier-middle-dish-panel"
-        className="pos-middle-panel border-r border-[#8b0000]/60 relative bg-transparent"
+      {/* 1. Left Category Sidebar: Hard-locked to 175px */}
+      <div
+        id="shared-pos-category-sidebar-wrapper"
+        className="shrink-0"
         style={{
-          flex: '1 1 auto',
-          width: 'auto',
-          minWidth: 0,
-          maxWidth: 'none',
-          display: 'flex',
-          flexDirection: 'column',
-          padding: 0,
-          marginLeft: 0,
-          marginRight: 0,
-          overflowY: 'hidden',
-          backgroundColor: 'transparent',
-          background: 'transparent',
+          width: '175px',
+          minWidth: '175px',
+          maxWidth: '175px',
+          flex: '0 0 175px',
+          height: '100%',
         }}
       >
-        {/* Sticky Item Search & Filters - Touches top edge */}
-        <div 
-          id="cashier-search-filter-bar" 
+        <CashierCategorySidebar
+          categories={safeCategories}
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+          categoryCounts={categoryCounts}
+          totalItems={(menuItems || []).length}
+        />
+      </div>
+
+      {/* 2. Middle Food Grid: Hard-locked flex: 1 1 0%, min-width: 0, overflow-y: auto */}
+      <div
+        id="shared-pos-middle-panel"
+        className="shared-pos-middle-panel pos-middle-panel flex flex-col relative bg-transparent border-r border-[#8b0000]/60 min-w-0"
+        style={{
+          flex: '1 1 0%',
+          minWidth: 0,
+          overflowY: 'auto',
+          backgroundColor: 'transparent',
+          position: 'relative',
+        }}
+      >
+        {/* Search & Dietary Filters Bar at Top */}
+        <div
+          id="shared-pos-search-filter-bar"
           className="px-3.5 py-3 shrink-0 bg-transparent border-b border-[#8b0000]/30 z-20"
-          style={{ backgroundColor: 'transparent', background: 'transparent' }}
+          style={{ backgroundColor: 'transparent' }}
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
             {/* Search Input Wrapper */}
             <div
-              id="cashier-search-wrapper"
               className="relative flex-1 rounded-xl shadow-inner bg-[#070b14]/75 border border-slate-700/60 focus-within:border-emerald-500/80 transition-colors"
               style={{ backgroundColor: 'rgba(7, 11, 20, 0.75)' }}
             >
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
-                id="cashier-dish-search-input"
+                id="shared-pos-search-input"
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
@@ -221,7 +215,6 @@ export const CashierPOSView: React.FC<CashierPOSViewProps> = ({ userRole = 'cash
 
             {/* Veg / Non-Veg Filter Pills Container */}
             <div
-              id="cashier-dietary-pills"
               className="flex items-center gap-1 p-1 rounded-xl shrink-0 text-xs bg-[#070b14]/75 border border-slate-700/60"
               style={{ backgroundColor: 'rgba(7, 11, 20, 0.75)' }}
             >
@@ -264,105 +257,69 @@ export const CashierPOSView: React.FC<CashierPOSViewProps> = ({ userRole = 'cash
           </div>
         </div>
 
-        {/* Fixed Non-Scrolling Watermark Layer - Exact Bilaal Restaurant Emblem Matching Tables Screen */}
-        <POSBilaalWatermark orderType={cartOrderType} opacity={0.20} />
+        {/* Dynamic Watermark Background */}
+        <POSOrderTypeWatermark orderType={cartOrderType || 'dine_in'} />
+        <POSBilaalWatermark />
 
-        {/* Cards Grid Container - The scrolling area in the middle */}
-        <div 
-          id="cashier-dish-grid-container"
-          className="relative flex-1 overflow-y-auto pos-center-grid-scroll middle-food-grid-wrapper z-10"
+        {/* 4-Column Grid: Hard-locked repeat(4, minmax(130px, 1fr)) gap 10px padding 10px */}
+        <div
+          id="shared-pos-food-grid"
+          className="shared-pos-food-grid relative z-10 flex-1 overflow-y-auto"
           style={{
-            position: 'relative',
-            zIndex: 1,
-            backgroundColor: 'transparent',
-            background: 'transparent',
-            width: '100%',
-            paddingLeft: '8px',
-            paddingRight: '8px',
-            paddingTop: '8px',
-            paddingBottom: '8px',
-            marginLeft: 0,
-            marginRight: 0,
-            boxSizing: 'border-box',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, minmax(130px, 1fr))',
+            gap: '10px',
+            padding: '10px',
           }}
         >
-          <div 
-            className="relative z-10 pos-cards-grid" 
-            style={{ 
-              width: '100%',
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(4, 1fr)', 
-              gap: '10px',
-              margin: 0,
-              boxSizing: 'border-box',
-            }}
-          >
-            {filteredItems.map((item, index) => {
-              const matchingCartItems = (cart || []).filter(
-                c => c.item.id === item.id || c.item.id.startsWith(`${item.id}_`)
-              );
-              const inCartQty = matchingCartItems.reduce((acc, c) => acc + c.quantity, 0);
-
-              return (
-                <CashierItemCard
-                  key={item.id}
-                  item={item}
-                  index={index}
-                  inCartQty={inCartQty}
-                  onAdd={() => handleItemClick(item)}
-                  onIncrement={() => {
-                    if (item.variations && item.variations.length > 0) {
-                      handleItemClick(item);
-                    } else {
-                      updateCartQuantity(item.id, 1);
-                    }
-                  }}
-                  onDecrement={() => {
-                    if (item.variations && item.variations.length > 0) {
-                      if (matchingCartItems.length > 0) {
-                        updateCartQuantity(matchingCartItems[matchingCartItems.length - 1].item.id, -1);
-                      }
-                    } else {
-                      updateCartQuantity(item.id, -1);
-                    }
-                  }}
-                />
-              );
-            })}
-          </div>
-
-          {filteredItems.length === 0 && (
-            <div className="relative z-10 flex flex-col items-center justify-center p-12 text-slate-400">
-              <p className="text-sm">No items found matching criteria.</p>
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchQuery('');
-                  setSelectedCategory('All');
-                  setDietaryFilter('all');
-                }}
-                className="mt-3 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-medium border border-slate-700 cursor-pointer"
-              >
-                Reset Filters
-              </button>
-            </div>
-          )}
+          {filteredItems.map((item, idx) => {
+            const inCartItem = cart.find(c => c.item.id === item.id);
+            const inCartQty = inCartItem ? inCartItem.quantity : 0;
+            return (
+              <CashierItemCard
+                key={item.id}
+                item={item}
+                inCartQty={inCartQty}
+                index={idx}
+                onAdd={handleItemClick}
+                onIncrement={(itemId) => updateCartQuantity(itemId, 1)}
+                onDecrement={(itemId) => updateCartQuantity(itemId, -1)}
+              />
+            );
+          })}
         </div>
+
+        {filteredItems.length === 0 && (
+          <div className="relative z-10 flex flex-col items-center justify-center p-12 text-slate-400">
+            <p className="text-sm">No dishes found matching selection.</p>
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery('');
+                setSelectedCategory('All');
+                setDietaryFilter('all');
+              }}
+              className="mt-3 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-medium border border-slate-700 cursor-pointer"
+            >
+              Reset Filters
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* 3. Cashier Order, Audit & Settlement Panel (Right) */}
+      {/* 3. Right Cart Drawer: Hard-locked to 420px */}
       <CashierCart
-        orderType={cartOrderType}
+        role={effectiveRole === 'waiter' ? 'waiter' : 'cashier'}
+        orderType={cartOrderType || 'dine_in'}
         setOrderType={setCartOrderType}
         tableNumber={cartTableNumber}
         setTableNumber={setCartTableNumber}
         activeSessionKots={activeSessionKots}
-        userRole={userRole}
       />
 
-      {/* Petpooja Item Variation Modal */}
+      {/* Variation Selection Modal */}
       <ItemVariationModal
-        isOpen={!!variationModalItem}
+        isOpen={Boolean(variationModalItem)}
         item={variationModalItem}
         onClose={() => setVariationModalItem(null)}
         onSave={handleSaveVariations}
@@ -370,3 +327,5 @@ export const CashierPOSView: React.FC<CashierPOSViewProps> = ({ userRole = 'cash
     </div>
   );
 };
+
+export default SharedPosScreen;

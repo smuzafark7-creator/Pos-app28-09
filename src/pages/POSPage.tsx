@@ -1,10 +1,6 @@
 import React from 'react';
-import { CashierPOSView } from '../components/cashier/CashierPOSView';
+import { SharedPosScreen } from '../components/pos/SharedPosScreen';
 
-/**
- * POSPage: Modern Milk-White / Soft Porcelain Point-of-Sale view
- * Unified with CashierPOSView implementing the Toast / Square POS aesthetic.
- */
 export const POSPage: React.FC = () => {
-  return <CashierPOSView />;
+  return <SharedPosScreen role="cashier" />;
 };

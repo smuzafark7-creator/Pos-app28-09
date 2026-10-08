@@ -41,6 +41,8 @@ export const CashierItemCard: React.FC<CashierItemCardProps> = ({
         if (!isSoldOut) onAdd(item);
       }}
       style={{
+        width: '100%',
+        maxWidth: 'none',
         height: '128px',
         minHeight: '128px',
         maxHeight: '128px',
@@ -78,16 +80,18 @@ export const CashierItemCard: React.FC<CashierItemCardProps> = ({
 
           <span
             style={{
-              color: isSoldOut ? '#64748b' : '#f8fafc',
+              color: isSoldOut ? '#64748b' : '#0f172a',
               fontWeight: 700,
-              fontSize: '15px',
+              fontSize: '13px',
               lineHeight: 1.25,
               margin: 0,
+              whiteSpace: 'normal',
+              wordBreak: 'break-word',
             }}
-            className={`line-clamp-2 transition-colors ${
+            className={`card-dish-name transition-colors ${
               isSoldOut
                 ? 'text-slate-500 line-through'
-                : 'text-[#f8fafc]'
+                : 'text-[#0f172a]'
             }`}
           >
             {item.name}

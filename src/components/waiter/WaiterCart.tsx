@@ -1,18 +1,24 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { KOT, ItemServeType, ServeType, CartItem, SavedActiveOrder } from '../../types';
+import { KOT, ItemServeType, ServeType, CartItem, SavedActiveOrder, OrderType } from '../../types';
 import { 
   Phone, 
   Send, 
   Receipt, 
   Trash2, 
   Edit3,
-  Printer
+  Printer,
+  ChevronDown,
+  Utensils,
+  ShoppingBag,
+  Bike
 } from 'lucide-react';
 import { KOTCancelModal } from '../KOTCancelModal';
 import { KOTModifyModal } from '../KOTModifyModal';
 
 export interface WaiterCartProps {
+  orderType?: OrderType;
+  setOrderType?: (type: OrderType) => void;
   tableNumber: string;
   onTableChange?: (tableName: string) => void;
   activeSessionKots?: KOT[];
@@ -39,6 +45,8 @@ const isTableMatch = (kotTable?: string, selectedTable?: string): boolean => {
 };
 
 export const WaiterCart: React.FC<WaiterCartProps> = ({
+  orderType: propOrderType,
+  setOrderType: setPropOrderType,
   tableNumber: propTableNumber,
   onTableChange,
 }) => {
@@ -56,6 +64,9 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
     setCartCustomerMobile,
     cartSpecialNotes,
     setCartSpecialNotes,
+    cartOrderType,
+    setCartOrderType,
+    currentUser,
     sendKOT,
     requestBill,
     pendingBillRequests,
@@ -73,8 +84,26 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
   } = useApp();
 
   const currentTable = propTableNumber || cartTableNumber || 'Table 1';
+  const orderType = propOrderType || cartOrderType || 'dine_in';
 
   const [isSendingKot, setIsSendingKot] = useState<boolean>(false);
+  const [isTableDropdownOpen, setIsTableDropdownOpen] = useState<boolean>(false);
+  const tableDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Click outside listener for table dropdown
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (tableDropdownRef.current && !tableDropdownRef.current.contains(e.target as Node)) {
+        setIsTableDropdownOpen(false);
+      }
+    };
+    if (isTableDropdownOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [isTableDropdownOpen]);
 
   // KOT item modify/cancel modals
   const [cancelModalTarget, setCancelModalTarget] = useState<{ kot: KOT; itemIndex?: number } | null>(null);
@@ -99,6 +128,13 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
   })());
 
   const prevTableRef = useRef<string>(currentTable);
+
+  const handleOrderTypeChange = (type: OrderType) => {
+    if (setPropOrderType) {
+      setPropOrderType(type);
+    }
+    setCartOrderType(type);
+  };
 
   // Synchronize draft cart when changing tables
   const handleTableChange = (newTable: string) => {
@@ -149,78 +185,41 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
     const orderKey = `dine_in:${norm}`;
     const altKey = digits ? `dine_in:table ${digits}` : orderKey;
     const shortKey = digits ? `dine_in:t${digits}` : orderKey;
-    const contextDraft = savedActiveOrders[orderKey]?.cart || savedActiveOrders[altKey]?.cart || savedActiveOrders[shortKey]?.cart;
-    const targetDraft = tableDraftsRef.current[newTable] || tableDraftsRef.current[`Table ${digits}`] || contextDraft || [];
 
-    if (setCartItems) {
-      setCartItems(targetDraft);
-    }
+    const existingDraft = tableDraftsRef.current[newTable] || 
+      tableDraftsRef.current[`Table ${digits}`] ||
+      tableDraftsRef.current[`T${digits}`] ||
+      savedActiveOrders?.[orderKey]?.cart ||
+      savedActiveOrders?.[altKey]?.cart ||
+      savedActiveOrders?.[shortKey]?.cart ||
+      [];
+
+    setCartItems(existingDraft);
     prevTableRef.current = newTable;
   };
 
-  // Watch for external table changes (e.g. from header search or tables floor plan)
-  useEffect(() => {
-    if (currentTable && currentTable !== prevTableRef.current) {
-      if (prevTableRef.current && cart.length > 0) {
-        tableDraftsRef.current[prevTableRef.current] = [...cart];
-        try {
-          sessionStorage.setItem('zaffran_waiter_table_drafts', JSON.stringify(tableDraftsRef.current));
-        } catch {
-          // ignore
-        }
-      }
-      const norm = currentTable.toLowerCase().trim();
-      const digits = currentTable.replace(/[^0-9]/g, '');
-      const orderKey = `dine_in:${norm}`;
-      const altKey = digits ? `dine_in:table ${digits}` : orderKey;
-      const shortKey = digits ? `dine_in:t${digits}` : orderKey;
-      const contextDraft = savedActiveOrders[orderKey]?.cart || savedActiveOrders[altKey]?.cart || savedActiveOrders[shortKey]?.cart;
-      const targetDraft = tableDraftsRef.current[currentTable] || tableDraftsRef.current[`Table ${digits}`] || contextDraft || [];
-
-      if (setCartItems) {
-        setCartItems(targetDraft);
-      }
-      prevTableRef.current = currentTable;
-    }
-  }, [currentTable, setCartItems, savedActiveOrders]);
-
-  // Continuously persist current cart changes for current table
-  useEffect(() => {
-    if (currentTable) {
-      tableDraftsRef.current[currentTable] = cart;
-      if (cart.length > 0) {
-        try {
-          sessionStorage.setItem('zaffran_waiter_table_drafts', JSON.stringify(tableDraftsRef.current));
-        } catch {
-          // ignore
-        }
-      }
-    }
-  }, [cart, currentTable]);
-
   // Check if current table has an active draft held
   const isDraftHeld = useMemo(() => {
-    if (!currentTable || cart.length === 0) return false;
     const norm = currentTable.toLowerCase().trim();
     const digits = currentTable.replace(/[^0-9]/g, '');
     const orderKey = `dine_in:${norm}`;
     const altKey = digits ? `dine_in:table ${digits}` : orderKey;
     const shortKey = digits ? `dine_in:t${digits}` : orderKey;
-    return !!(savedActiveOrders[orderKey] || savedActiveOrders[altKey] || savedActiveOrders[shortKey] || tableDraftsRef.current[currentTable]?.length > 0);
-  }, [currentTable, cart.length, savedActiveOrders]);
+    return Boolean(
+      (tableDraftsRef.current[currentTable] && tableDraftsRef.current[currentTable].length > 0) ||
+      savedActiveOrders?.[orderKey] ||
+      savedActiveOrders?.[altKey] ||
+      savedActiveOrders?.[shortKey]
+    );
+  }, [currentTable, savedActiveOrders]);
 
-  // Explicit Save / Hold handler for waiter action button
+  // Handle Save / Hold draft button explicitly
   const handleSaveHoldOrder = () => {
     if (cart.length === 0) {
-      showToast('Cart Empty', 'Please add items before saving / holding draft.', 'warning');
-      return;
-    }
-    if (!currentTable) {
-      showToast('Select Table', 'Please assign a table before saving order.', 'warning');
+      showToast('No Items', 'Add items before saving a draft.', 'warning');
       return;
     }
 
-    // 1. Save in tableDraftsRef and sessionStorage
     tableDraftsRef.current[currentTable] = [...cart];
     try {
       sessionStorage.setItem('zaffran_waiter_table_drafts', JSON.stringify(tableDraftsRef.current));
@@ -228,7 +227,6 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
       // ignore
     }
 
-    // 2. Persist to AppContext savedActiveOrders
     const norm = currentTable.toLowerCase().trim();
     const digits = currentTable.replace(/[^0-9]/g, '');
     const orderKey = `dine_in:${norm}`;
@@ -269,17 +267,24 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
     return (kots || [])
       .filter(k => {
         if (k.branchId !== effectiveBranch) return false;
-        if (k.orderType !== 'dine_in') return false;
-        if (k.isBilled) return false;
-        if (k.status === 'cancelled') return false;
-        return isTableMatch(k.tableNumber, currentTable);
+        if (orderType === 'dine_in') {
+          if (k.orderType !== 'dine_in') return false;
+          if (k.isBilled) return false;
+          if (k.status === 'cancelled') return false;
+          return isTableMatch(k.tableNumber, currentTable);
+        } else {
+          if (k.orderType !== orderType) return false;
+          if (k.isBilled) return false;
+          if (k.status === 'cancelled') return false;
+          return true;
+        }
       })
       .sort((a, b) => {
         const timeDiff = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
         if (timeDiff !== 0) return timeDiff;
         return (a.kotNumber || '').localeCompare(b.kotNumber || '');
       });
-  }, [kots, effectiveBranch, currentTable]);
+  }, [kots, effectiveBranch, currentTable, orderType]);
 
   const safePendingBillRequests = Array.isArray(pendingBillRequests) ? pendingBillRequests : [];
   const pendingBillRequestForCurrentTable = safePendingBillRequests.find(
@@ -311,7 +316,7 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
 
   const handleSendKOT = () => {
     if (isSendingKot) return;
-    if (!currentTable) {
+    if (orderType === 'dine_in' && !currentTable) {
       showToast('Select Table', 'Please assign a table before sending KOT.', 'warning');
       return;
     }
@@ -322,7 +327,7 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
 
     setIsSendingKot(true);
     setTimeout(() => {
-      const kot = sendKOT(currentTable);
+      const kot = sendKOT(orderType === 'dine_in' ? currentTable : undefined, orderType);
       setIsSendingKot(false);
       if (kot) {
         // Clear saved draft for this table
@@ -344,7 +349,7 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
           delete next[shortKey];
           return next;
         });
-        showToast('KOT Dispatched', `${kot.kotNumber} sent to Kitchen for ${currentTable}.`, 'success');
+        showToast('KOT Dispatched', `${kot.kotNumber} sent to Kitchen for ${orderType === 'dine_in' ? currentTable : orderType.toUpperCase()}.`, 'success');
       }
     }, 200);
   };
@@ -372,7 +377,7 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
   };
 
   const handleRequestBill = () => {
-    if (!currentTable) {
+    if (orderType === 'dine_in' && !currentTable) {
       showToast('Select Table', 'Please select a table to request bill.', 'warning');
       return;
     }
@@ -387,67 +392,241 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
     showToast('Bill Requested', `Cashier desk notified for ${currentTable}.`, 'info');
   };
 
+  const assignedWaiterName = selectedTable?.assignedWaiterName || currentUser?.name?.replace(/\s*\(Waiter\)$/i, '').trim() || 'Ramesh Patel';
+  const guestNameDisplay = selectedTable?.guestName || cartCustomerName || 'Guest';
+
   return (
     <div 
       id="waiter-cart-panel"
-      className="waiter-billing-panel w-full lg:w-[420px] bg-[#0b1120] border-l border-[#8b0000]/60 flex flex-col justify-between shrink-0 shadow-lg z-10 text-slate-200 select-none font-sans"
-      style={{ backgroundColor: '#0b1120' }}
+      className="waiter-billing-panel w-[470px] min-w-[470px] max-w-[470px] bg-[#0b1120] border-l border-[#8b0000]/60 flex flex-col justify-between shrink-0 shadow-lg z-10 text-slate-200 select-none font-sans overflow-x-hidden"
+      style={{
+        width: '470px',
+        minWidth: '470px',
+        maxWidth: '470px',
+        flex: '0 0 470px',
+        backgroundColor: '#0b1120',
+        overflowX: 'hidden',
+      }}
     >
       
-      {/* Top Section: Table Selector, Selected Table Header & Running Total */}
+      {/* Top Section: Cashier Clean Dual-Bar & Customer Inputs */}
       <div 
         id="waiter-cart-top-section"
-        className="p-3.5 border-b border-slate-800 space-y-2.5 shrink-0 bg-[#0b1120]"
+        className="p-3 border-b border-slate-800 space-y-2 shrink-0 bg-[#0b1120]"
         style={{ backgroundColor: '#0b1120' }}
       >
-        {/* Table Selector Dropdown */}
-        <div className="space-y-1.5">
-          <div className="relative">
-            <select
-              id="waiter-table-selector"
-              value={currentTable}
-              onChange={e => handleTableChange(e.target.value)}
-              style={{ backgroundColor: '#080c16', border: '1px solid #1e293b', color: '#ffffff' }}
-              className="w-full pl-3 pr-8 py-2 bg-[#080c16] border border-slate-800 rounded-lg text-xs font-semibold text-white focus:outline-none focus:border-slate-700 shadow-xs cursor-pointer"
-            >
-              {(filteredBranchTables.length > 0 ? filteredBranchTables : safeBranchTables).map(tbl => {
-                const normStatus = (tbl.status === 'ready' || tbl.status === 'waiting') ? 'occupied' : tbl.status;
-                return (
-                  <option key={tbl.id} value={tbl.name} className="bg-[#0b1120] text-white">
-                    {tbl.name} • ({tbl.capacity} Seats) • {normStatus.toUpperCase()}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-
-          {/* Selected Table Sub-Header & Running Total */}
-          <div 
-            id="waiter-table-info-bar"
-            className="waiter-table-info-bar flex items-center justify-between px-2.5 py-1.5 bg-[#0d1527] border-[1.5px] border-[rgba(255,255,255,0.12)] hover:border-[#10B981] transition-all duration-200 rounded-lg text-[11px]"
-            style={{ backgroundColor: '#0d1527' }}
+        {/* Bar 1 (Top segmented tabs): [🍽 Dine In] (Active deep maroon #580510) | [🛍 Takeaway] | [🛵 Delivery] */}
+        <div id="waiter-order-type-switcher" className="flex w-full items-center gap-2 bg-transparent p-0 border-0">
+          {/* 1. Dine In */}
+          <button
+            id="order-type-dine-in"
+            type="button"
+            onClick={() => handleOrderTypeChange('dine_in')}
+            style={
+              orderType === 'dine_in'
+                ? {
+                    backgroundColor: '#7a0c1a',
+                    border: '2px solid #ffffff',
+                  }
+                : {
+                    backgroundColor: '#580510',
+                    border: '1px solid transparent',
+                  }
+            }
+            className={`flex-1 py-1.5 text-center rounded-lg text-xs transition-all duration-150 inline-flex items-center justify-center gap-1.5 cursor-pointer ${
+              orderType === 'dine_in'
+                ? 'bg-[#7a0c1a] text-white font-bold ring-2 ring-white shadow-lg scale-[1.02] border-2 border-white z-10'
+                : 'bg-[#580510] text-white/90 font-semibold hover:bg-[#6b0816] hover:text-white border border-transparent'
+            }`}
           >
-            <div className="flex items-center gap-1.5 text-slate-400 truncate">
-              <span className="font-semibold text-white">{selectedTable?.name || currentTable}</span>
-              <span>•</span>
-              <span>{selectedTable?.capacity || 4} Seats</span>
-              {selectedTable?.assignedWaiterName && (
-                <>
-                  <span>•</span>
-                  <span className="text-emerald-400 font-medium">{selectedTable.assignedWaiterName}</span>
-                </>
-              )}
-            </div>
-            <div className="flex items-center gap-1.5 shrink-0">
-              <span className="text-[10px] text-slate-400">Total:</span>
-              <span className="font-bold text-emerald-400 text-xs">
+            <Utensils className="w-3.5 h-3.5 shrink-0 stroke-[2.5]" size={14} />
+            <span>Dine In</span>
+          </button>
+
+          {/* 2. Takeaway */}
+          <button
+            id="order-type-takeaway"
+            type="button"
+            onClick={() => handleOrderTypeChange('takeaway')}
+            style={
+              orderType === 'takeaway'
+                ? {
+                    backgroundColor: '#1e3a8a',
+                    border: '2px solid #ffffff',
+                  }
+                : {
+                    backgroundColor: '#0b1e3b',
+                    border: '1px solid transparent',
+                  }
+            }
+            className={`flex-1 py-1.5 text-center rounded-lg text-xs transition-all duration-150 inline-flex items-center justify-center gap-1.5 cursor-pointer ${
+              orderType === 'takeaway'
+                ? 'bg-[#1e3a8a] text-white font-bold ring-2 ring-white shadow-lg scale-[1.02] border-2 border-white z-10'
+                : 'bg-[#0b1e3b] text-white/90 font-semibold hover:bg-[#12284e] hover:text-white border border-transparent'
+            }`}
+          >
+            <ShoppingBag className="w-3.5 h-3.5 shrink-0 stroke-[2.5]" size={14} />
+            <span>Takeaway</span>
+          </button>
+
+          {/* 3. Delivery */}
+          <button
+            id="order-type-delivery"
+            type="button"
+            onClick={() => handleOrderTypeChange('delivery')}
+            style={
+              orderType === 'delivery'
+                ? {
+                    backgroundColor: '#b45309',
+                    border: '2px solid #ffffff',
+                  }
+                : {
+                    backgroundColor: '#92400e',
+                    border: '1px solid transparent',
+                  }
+            }
+            className={`flex-1 py-1.5 text-center rounded-lg text-xs transition-all duration-150 inline-flex items-center justify-center gap-1.5 cursor-pointer ${
+              orderType === 'delivery'
+                ? 'bg-[#b45309] text-white font-bold ring-2 ring-white shadow-lg scale-[1.02] border-2 border-white z-10'
+                : 'bg-[#92400e] text-white/90 font-semibold hover:bg-[#a34810] hover:text-white border border-transparent'
+            }`}
+          >
+            <Bike className="w-3.5 h-3.5 shrink-0 stroke-[2.5]" size={14} />
+            <span>Delivery</span>
+          </button>
+        </div>
+
+        {/* Bar 2 (Table info bar): Table 5 • 4 Seats • Ramesh Patel • Guest ∨ | Subtotal ₹2320.00 */}
+        {orderType === 'dine_in' ? (
+          <div className="relative w-full" ref={tableDropdownRef}>
+            <div
+              id="waiter-table-info-summary"
+              onClick={() => setIsTableDropdownOpen(prev => !prev)}
+              className="pos-table-selector-trigger flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer select-none transition-all shadow-xs"
+              style={{
+                backgroundColor: '#0b1120',
+                border: '1px solid rgba(234, 219, 186, 0.4)',
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setIsTableDropdownOpen(prev => !prev);
+                }
+              }}
+              title="Click to select table"
+            >
+              <div className="table-info-text waiter-table-server-info flex items-center gap-1.5 truncate text-[13px] text-slate-100 font-semibold min-w-0 pr-2" style={{ color: '#f8fafc', fontSize: '13px', fontWeight: 600 }}>
+                <span className="font-bold text-white truncate">{selectedTable?.name || currentTable}</span>
+                <span>•</span>
+                <span className="text-emerald-400 font-semibold shrink-0">{selectedTable?.capacity || 4} Seats</span>
+                <span>•</span>
+                <span className="text-slate-200 font-semibold truncate">{assignedWaiterName}</span>
+                <span>•</span>
+                <span className="text-slate-200 truncate">{guestNameDisplay}</span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ml-0.5 ${isTableDropdownOpen ? 'rotate-180' : ''}`} style={{ stroke: 'rgba(234, 219, 186, 0.9)' }} />
+              </div>
+
+              <span 
+                className="table-total-price waiter-table-subtotal-price font-extrabold text-[14px] shrink-0 ml-2"
+                style={{ color: '#10b981', fontWeight: 800, fontSize: '14px' }}
+              >
                 ₹{totalTableAmount.toFixed(2)}
               </span>
             </div>
-          </div>
-        </div>
 
-        {/* Customer / Guest Information */}
+            {/* Floating Table Selector Dropdown */}
+            {isTableDropdownOpen && (
+              <div
+                id="waiter-table-selector-menu"
+                className="pos-table-selector-menu absolute left-0 right-0 top-[calc(100%+4px)] z-50 max-h-64 overflow-y-auto p-1.5 flex flex-col gap-1 shadow-2xl"
+                style={{
+                  backgroundColor: '#0b1120',
+                  border: '1px solid #EADBBA',
+                  borderRadius: '10px',
+                }}
+                role="listbox"
+              >
+                {(filteredBranchTables.length > 0 ? filteredBranchTables : safeBranchTables).map(tbl => {
+                  const isSelected = isTableMatch(tbl.name, currentTable);
+                  const normStatus = (tbl.status === 'ready' || tbl.status === 'waiting') ? 'occupied' : tbl.status;
+                  const upperStatus = normStatus.toUpperCase();
+                  const isMint = upperStatus === 'CLEANING' || upperStatus === 'AVAILABLE';
+
+                  return (
+                    <button
+                      key={tbl.id}
+                      type="button"
+                      onClick={() => {
+                        handleTableChange(tbl.name);
+                        setIsTableDropdownOpen(false);
+                      }}
+                      className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-[#F7EECA] text-[#0f172a] font-bold shadow-xs'
+                          : 'text-slate-200 hover:bg-slate-800/80 font-medium'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 truncate">
+                        <span className="font-bold text-sm" style={{ color: isSelected ? '#0f172a' : '#ffffff' }}>
+                          {tbl.name}
+                        </span>
+                        <span style={{ color: isSelected ? '#047857' : '#10b981', fontSize: '11px', fontWeight: 600 }}>
+                          • {tbl.capacity} Seats
+                        </span>
+                        {tbl.assignedWaiterName && (
+                          <span style={{ color: isSelected ? '#047857' : '#10b981', fontSize: '11px', fontWeight: 600 }}>
+                            • {tbl.assignedWaiterName}
+                          </span>
+                        )}
+                        {tbl.guestName && (
+                          <span style={{ color: isSelected ? '#0369a1' : '#38bdf8', fontSize: '11px', fontWeight: 600 }}>
+                            • {tbl.guestName}
+                          </span>
+                        )}
+                      </div>
+                      <span
+                        className="px-2 py-0.5 rounded-md text-[11px] uppercase tracking-wide shrink-0 ml-2 font-bold"
+                        style={{
+                          color: isSelected ? '#0f172a' : isMint ? '#34d399' : '#fbbf24',
+                          backgroundColor: isSelected ? 'rgba(15, 23, 42, 0.12)' : isMint ? 'rgba(52, 211, 153, 0.12)' : 'rgba(251, 191, 36, 0.12)',
+                          border: isSelected ? '1px solid rgba(15, 23, 42, 0.25)' : isMint ? '1px solid rgba(52, 211, 153, 0.3)' : '1px solid rgba(251, 191, 36, 0.3)',
+                        }}
+                      >
+                        {upperStatus}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div
+            className="flex items-center justify-between px-3 py-2 rounded-xl shadow-xs"
+            style={{
+              backgroundColor: '#0b1120',
+              border: '1px solid rgba(234, 219, 186, 0.4)',
+            }}
+          >
+            <div className="table-info-text waiter-table-server-info flex items-center gap-1.5 truncate text-[13px] text-slate-100 font-semibold min-w-0 pr-2" style={{ color: '#f8fafc', fontSize: '13px', fontWeight: 600 }}>
+              <span className="font-bold text-white capitalize">{orderType} Order</span>
+              <span>•</span>
+              <span className="text-emerald-400 font-semibold">{assignedWaiterName}</span>
+              <span>•</span>
+              <span className="text-slate-200 truncate">{guestNameDisplay}</span>
+            </div>
+            <span 
+              className="table-total-price waiter-table-subtotal-price font-extrabold text-[14px] shrink-0 ml-2"
+              style={{ color: '#10b981', fontWeight: 800, fontSize: '14px' }}
+            >
+              ₹{totalTableAmount.toFixed(2)}
+            </span>
+          </div>
+        )}
+
+        {/* Bar 3 (Optional fields): Compact dual inputs for [Phone (Optional)] and [Guest Name (Optional)] */}
         <div className="w-full grid grid-cols-2 gap-2">
           {/* Customer Mobile / Phone */}
           <div className="relative w-full min-w-0">
@@ -455,7 +634,7 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
             <input
               id="waiter-customer-mobile-input"
               type="tel"
-              value={cartCustomerMobile}
+              value={cartCustomerMobile || ''}
               onChange={e => setCartCustomerMobile(e.target.value.slice(0, 12))}
               placeholder="Phone (Optional)"
               maxLength={12}
@@ -473,7 +652,7 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
             <input
               id="waiter-customer-name-input"
               type="text"
-              value={cartCustomerName}
+              value={cartCustomerName || ''}
               onChange={e => setCartCustomerName(e.target.value)}
               placeholder="Guest Name (Optional)"
               style={{
@@ -487,7 +666,7 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
         </div>
       </div>
 
-      {/* Middle Scrollable: Order Items List (Flat Cashier-Style) */}
+      {/* Middle Scrollable: Order Items List (Full-Width Cashier Style) */}
       <div 
         id="waiter-cart-middle-section"
         className="flex-1 overflow-y-auto flex flex-col bg-[#0b1120] min-h-0"
@@ -501,7 +680,7 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
             return (
               <div key={kot.id} className="space-y-1">
                 {/* Compact KOT Header Row */}
-                <div className="flex items-center justify-between px-1 text-[11px] font-semibold text-slate-400 pb-1 border-b border-slate-800/60">
+                <div className="flex items-center justify-between px-2 text-[11px] font-semibold text-slate-400 pb-1 border-b border-slate-800/60">
                   <div className="flex items-center gap-1.5">
                     <span 
                       className="waiter-cart-kot-header-badge font-mono tracking-tight"
@@ -516,7 +695,7 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
                     <button
                       type="button"
                       onClick={() => openKOTModal(kot)}
-                      className="waiter-cart-kot-print-btn p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition-colors cursor-pointer border border-[#334155] flex items-center justify-center shrink-0"
+                      className="waiter-cart-kot-print-btn p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition-colors cursor-pointer border border-[#334155] flex items-center justify-center shrink-0 ml-1"
                       style={{
                         backgroundColor: '#1e293b',
                         color: '#f1f5f9',
@@ -531,7 +710,7 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
                   <span className="text-emerald-400 font-bold">₹{kot.totalAmount.toFixed(2)}</span>
                 </div>
 
-                {/* Compact Item Rows with horizontal dividers */}
+                {/* Compact Item Rows (Line Item Compact Full-Width Spread) */}
                 <div className="divide-y divide-slate-800/60">
                   {(kot.items || []).map((it, idx) => {
                     const itName = it.name || (it as any)?.menuItem?.name || 'Item';
@@ -542,91 +721,100 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
                     const isVoided = it.status === 'voided';
 
                     return (
-                      <div key={idx} className={`flex items-center justify-between gap-2 py-2 px-1 text-xs ${isVoided ? 'opacity-60 bg-rose-950/10' : ''}`}>
-                        {/* Left side: Item name with variation & rate below it */}
-                        <div className="flex-1 min-w-0 pr-2">
-                          <div 
-                            className={`waiter-cart-item-title font-semibold truncate leading-tight ${isVoided ? 'line-through text-slate-400' : ''}`}
-                            style={{
-                              color: isVoided ? '#94a3b8' : '#ffffff',
-                              fontWeight: 750,
-                              fontSize: '13px',
-                              lineHeight: '1.3'
-                            }}
+                      <div 
+                        key={idx} 
+                        className={`waiter-cart-line-item-row flex items-center justify-between text-xs w-full transition-colors ${
+                          isVoided ? 'opacity-60 bg-rose-950/10' : 'hover:bg-slate-800/30'
+                        }`}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '6px 10px',
+                          width: '100%',
+                        }}
+                      >
+                        {/* Left Column: Dish Name + Yellow Portion tag + Rate */}
+                        <div className="flex items-center gap-1.5 min-w-0 flex-1 pr-2 truncate">
+                          <span 
+                            className={`waiter-cart-item-title font-semibold text-white text-[13px] truncate ${isVoided ? 'line-through text-slate-400' : ''}`}
+                            style={{ color: isVoided ? '#94a3b8' : '#ffffff', fontWeight: 650, fontSize: '13px' }}
+                            title={baseName}
                           >
                             {baseName}
-                          </div>
-                          <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium truncate mt-0.5">
-                            {variationName && (
-                              <span 
-                                className="waiter-cart-portion-tag font-bold"
-                                style={{
-                                  color: '#fbbf24',
-                                  fontWeight: 700,
-                                  fontSize: '11px'
-                                }}
-                              >
-                                {variationName}
-                              </span>
-                            )}
-                            {variationName && <span className="text-slate-600">•</span>}
+                          </span>
+                          {variationName && (
                             <span 
-                              className="waiter-cart-rate-tag font-bold"
-                              style={{
-                                color: '#10b981',
-                                fontWeight: 800,
-                                fontSize: '13px'
-                              }}
+                              className="waiter-cart-portion-tag font-bold text-[11px] text-amber-400 shrink-0"
+                              style={{ color: '#fbbf24', fontWeight: 700, fontSize: '11px' }}
                             >
-                              ₹{itRate.toFixed(2)}
+                              ({variationName})
                             </span>
-                            {it.notes && (
-                              <>
-                                <span className="text-slate-600">•</span>
-                                <span className="text-[11px] text-amber-300/90 italic truncate max-w-[140px]" title={it.notes}>
-                                  Note: {it.notes}
-                                </span>
-                              </>
-                            )}
-                            {isVoided && (
-                              <>
-                                <span className="text-slate-600">•</span>
-                                <span className="text-[10px] text-rose-400 font-bold uppercase tracking-wider">
-                                  [CANCELLED]
-                                </span>
-                              </>
-                            )}
-                            {isVoided && it.voidReason && (
-                              <>
-                                <span className="text-slate-600">•</span>
-                                <span className="text-rose-400/80 italic">
-                                  Voided: {it.voidReason}
-                                </span>
-                              </>
-                            )}
-                          </div>
+                          )}
+                          <span className="text-slate-500 shrink-0">•</span>
+                          <span 
+                            className="waiter-cart-rate-tag font-medium text-slate-400 text-xs shrink-0"
+                            style={{ color: '#94a3b8', fontSize: '12px' }}
+                          >
+                            ₹{itRate.toFixed(2)}
+                          </span>
+                          {it.notes && (
+                            <span className="text-[11px] text-amber-300/80 italic truncate max-w-[90px]" title={it.notes}>
+                              • {it.notes}
+                            </span>
+                          )}
+                          {isVoided && (
+                            <span className="text-[10px] text-rose-400 font-bold uppercase shrink-0">
+                              [VOID]
+                            </span>
+                          )}
                         </div>
 
-                        {/* Right side: Qty badge, Total Price, and Void action */}
-                        <div className="flex items-center gap-2 shrink-0">
-                          <span className={`px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 font-bold text-xs min-w-7 text-center ${isVoided ? 'line-through text-slate-500' : 'text-slate-200'}`}>
-                            ×{it.quantity}
+                        {/* Center/Action Column: Compact quantity box x1 */}
+                        <div className="flex items-center justify-center shrink-0 mx-2">
+                          <span 
+                            className={`px-2 py-0.5 rounded bg-slate-800 border border-slate-700 font-bold text-xs text-center min-w-[28px] ${
+                              isVoided ? 'line-through text-slate-500' : 'text-slate-200'
+                            }`}
+                            style={{
+                              backgroundColor: '#1e293b',
+                              border: '1px solid #334155',
+                              borderRadius: '6px',
+                              padding: '2px 8px',
+                              fontWeight: 700,
+                              fontSize: '12px',
+                              color: '#e2e8f0',
+                            }}
+                          >
+                            x{it.quantity}
                           </span>
-                          <div className={`w-16 text-right font-bold text-xs whitespace-nowrap ${isVoided ? 'line-through text-slate-500' : 'text-emerald-400'}`}>
+                        </div>
+
+                        {/* Right Column: Crisp Emerald Green price aligned to far right edge + subtle trash icon */}
+                        <div className="flex items-center justify-end gap-1.5 shrink-0 min-w-[80px]">
+                          <span 
+                            className={`font-bold text-[13px] text-right whitespace-nowrap ${
+                              isVoided ? 'line-through text-slate-500' : 'text-emerald-400'
+                            }`}
+                            style={{
+                              color: isVoided ? '#64748b' : '#34d399',
+                              fontWeight: 800,
+                              fontSize: '13px',
+                            }}
+                          >
                             ₹{(itRate * it.quantity).toFixed(2)}
-                          </div>
+                          </span>
                           {!isVoided ? (
                             <button
                               type="button"
                               onClick={() => setCancelModalTarget({ kot, itemIndex: idx })}
-                              className="w-6 h-6 rounded flex items-center justify-center text-slate-500 hover:text-rose-400 hover:bg-rose-950/40 border border-transparent hover:border-rose-800/40 transition-colors cursor-pointer shrink-0"
+                              className="w-6 h-6 rounded flex items-center justify-center text-slate-500 hover:text-rose-400 hover:bg-rose-950/40 transition-colors cursor-pointer shrink-0 ml-1"
                               title="Void item"
-                              aria-label={`Void ${itName}`}
                             >
                               <Trash2 className="w-3.5 h-3.5 text-rose-400/70 hover:text-rose-400" />
                             </button>
                           ) : (
-                            <div className="w-6 h-6 shrink-0" />
+                            <div className="w-6 h-6 shrink-0 ml-1" />
                           )}
                         </div>
                       </div>
@@ -640,7 +828,7 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
           {/* New Cart / Punch Items for Currently Selected Table */}
           {(cart || []).length > 0 && (
             <div className="space-y-1">
-              <div className="flex items-center justify-between px-1 pb-1 text-[11px] font-semibold text-amber-400 border-b border-slate-800/60">
+              <div className="flex items-center justify-between px-2 pb-1 text-[11px] font-semibold text-amber-400 border-b border-slate-800/60">
                 <div className="flex items-center gap-2">
                   <span 
                     id="waiter-cart-new-punch-badge"
@@ -658,7 +846,7 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
                     NEW
                   </span>
                   <span className="text-slate-300 font-semibold text-xs uppercase tracking-wider">
-                    PUNCH ITEMS ({cart.length})
+                    ITEMS ({cart.length})
                   </span>
                   {isDraftHeld && (
                     <span 
@@ -686,6 +874,7 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
                 </button>
               </div>
 
+              {/* Line Item Compact Full-Width Spread for Punch Items */}
               <div className="divide-y divide-slate-800/60">
                 {(cart || []).map(cartItem => {
                   const match = cartItem.item.name.match(/^(.*?)\s*\((.*?)\)$/);
@@ -693,125 +882,104 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
                   const variationName = match ? match[2].trim() : undefined;
 
                   return (
-                    <div key={cartItem.item.id} className="py-2 px-1 space-y-1.5">
-                      <div className="flex items-center justify-between gap-2 text-xs">
-                        {/* Left side: Item name (bold/clear) with variation & rate below it */}
-                        <div className="flex-1 min-w-0 pr-2">
-                          <div 
-                            className="waiter-cart-item-title font-semibold truncate leading-tight"
-                            style={{
-                              color: '#ffffff',
-                              fontWeight: 750,
-                              fontSize: '13px',
-                              lineHeight: '1.3'
-                            }}
+                    <div 
+                      key={cartItem.item.id}
+                      className="waiter-cart-line-item-row flex items-center justify-between text-xs w-full hover:bg-slate-800/30 transition-colors"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '6px 10px',
+                        width: '100%',
+                      }}
+                    >
+                      {/* Left Column: Dish Name + Yellow Portion tag + Rate */}
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1 pr-2 truncate">
+                        <span 
+                          className="waiter-cart-item-title font-semibold text-white text-[13px] truncate"
+                          style={{ color: '#ffffff', fontWeight: 650, fontSize: '13px' }}
+                          title={baseName}
+                        >
+                          {baseName}
+                        </span>
+                        {variationName && (
+                          <span 
+                            className="waiter-cart-portion-tag font-bold text-[11px] text-amber-400 shrink-0"
+                            style={{ color: '#fbbf24', fontWeight: 700, fontSize: '11px' }}
                           >
-                            {baseName}
-                          </div>
-                          <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium truncate mt-0.5">
-                            {variationName && (
-                              <span 
-                                className="waiter-cart-portion-tag font-bold"
-                                style={{
-                                  color: '#fbbf24',
-                                  fontWeight: 700,
-                                  fontSize: '11px'
-                                }}
-                              >
-                                {variationName}
-                              </span>
-                            )}
-                            {variationName && <span className="text-slate-600">•</span>}
-                            <span 
-                              className="waiter-cart-rate-tag font-bold"
-                              style={{
-                                color: '#10b981',
-                                fontWeight: 800,
-                                fontSize: '13px'
-                              }}
-                            >
-                              ₹{cartItem.item.price.toFixed(2)}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Right side: Stepper [- Qty +], Item Total Price, and red Trash button */}
-                        <div className="flex items-center gap-2 shrink-0">
-                          {/* Stepper [- Qty +] */}
-                          <div className="flex items-center gap-1">
-                            <button
-                              type="button"
-                              onClick={() => updateCartQuantity(cartItem.item.id, -1)}
-                              className="waiter-cart-qty-btn-minus w-5 h-5 rounded flex items-center justify-center font-bold text-xs cursor-pointer active:scale-95 transition-colors hover:bg-slate-700"
-                              style={{
-                                backgroundColor: '#1e293b',
-                                color: '#ffffff',
-                                border: '1px solid #334155',
-                                borderRadius: '6px'
-                              }}
-                              title="Decrease quantity"
-                              aria-label="Decrease quantity"
-                            >
-                              -
-                            </button>
-                            <span className="w-5 text-center font-bold text-white text-xs">
-                              {cartItem.quantity}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => updateCartQuantity(cartItem.item.id, 1)}
-                              className="w-5 h-5 rounded bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center font-bold text-xs cursor-pointer active:scale-95"
-                            >
-                              +
-                            </button>
-                          </div>
-
-                          {/* Line Total */}
-                          <div className="w-16 text-right font-bold text-xs text-emerald-400 whitespace-nowrap">
-                            ₹{(cartItem.item.price * cartItem.quantity).toFixed(2)}
-                          </div>
-
-                          {/* Delete Button */}
-                          <button
-                            type="button"
-                            onClick={() => removeFromCart(cartItem.item.id)}
-                            className="w-6 h-6 rounded flex items-center justify-center text-rose-500 hover:text-rose-400 hover:bg-rose-950/40 border border-transparent hover:border-rose-800/40 transition-colors cursor-pointer shrink-0"
-                            title="Remove item"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Sub-row: Dine-In vs Parcel Toggle & Note */}
-                      <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-800/60 text-[11px]">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] text-slate-500 font-medium">Order:</span>
-                          <select
-                            id={`waiter-cart-order-select-${cartItem.item.id}`}
-                            value={cartItem.serveType || 'DINE_IN'}
-                            onChange={e => updateCartItemServeType(cartItem.item.id, e.target.value as ItemServeType)}
-                            className="waiter-cart-order-select cursor-pointer transition-colors"
-                            style={{
-                              backgroundColor: '#0f172a',
-                              color: '#f1f5f9',
-                              fontWeight: 600,
-                              fontSize: '12px',
-                              border: '1px solid #334155',
-                              borderRadius: '6px',
-                              padding: '2px 8px',
-                              outline: 'none'
-                            }}
-                          >
-                            <option value="DINE_IN" style={{ backgroundColor: '#0f172a', color: '#ffffff' }} className="bg-[#0f172a] text-white">Dine-In</option>
-                            <option value="PARCEL" style={{ backgroundColor: '#0f172a', color: '#ffffff' }} className="bg-[#0f172a] text-amber-400 font-semibold">Parcel</option>
-                          </select>
-                        </div>
-                        {cartItem.notes && (
-                          <span className="text-[10px] text-amber-300/90 italic truncate max-w-[160px]" title={cartItem.notes}>
-                            Note: {cartItem.notes}
+                            ({variationName})
                           </span>
                         )}
+                        <span className="text-slate-500 shrink-0">•</span>
+                        <span 
+                          className="waiter-cart-rate-tag font-medium text-slate-400 text-xs shrink-0"
+                          style={{ color: '#94a3b8', fontSize: '12px' }}
+                        >
+                          ₹{cartItem.item.price.toFixed(2)}
+                        </span>
+                        {cartItem.serveType === 'PARCEL' && (
+                          <span className="text-[10px] bg-amber-950/60 text-amber-400 border border-amber-600/40 px-1 py-0.2 rounded shrink-0 font-semibold">
+                            Parcel
+                          </span>
+                        )}
+                        {cartItem.notes && (
+                          <span className="text-[11px] text-amber-300/80 italic truncate max-w-[90px]" title={cartItem.notes}>
+                            • {cartItem.notes}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Center/Action Column: Small blue [- 1 +] pill */}
+                      <div 
+                        className="flex items-center gap-1 shrink-0 mx-2"
+                        style={{
+                          backgroundColor: '#1e293b',
+                          border: '1px solid rgba(59, 130, 246, 0.5)',
+                          borderRadius: '8px',
+                          padding: '2px 4px',
+                        }}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => updateCartQuantity(cartItem.item.id, -1)}
+                          className="w-5 h-5 rounded flex items-center justify-center font-bold text-xs text-blue-300 hover:text-white hover:bg-blue-600/40 cursor-pointer transition-colors active:scale-95"
+                          title="Decrease quantity"
+                        >
+                          -
+                        </button>
+                        <span className="w-5 text-center font-bold text-white text-xs">
+                          {cartItem.quantity}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => updateCartQuantity(cartItem.item.id, 1)}
+                          className="w-5 h-5 rounded flex items-center justify-center font-bold text-xs text-blue-300 hover:text-white hover:bg-blue-600/40 cursor-pointer transition-colors active:scale-95"
+                          title="Increase quantity"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      {/* Right Column: Crisp Emerald Green price aligned to far right edge + subtle trash icon */}
+                      <div className="flex items-center justify-end gap-1.5 shrink-0 min-w-[80px]">
+                        <span 
+                          className="font-bold text-[13px] text-emerald-400 text-right whitespace-nowrap"
+                          style={{
+                            color: '#34d399',
+                            fontWeight: 800,
+                            fontSize: '13px',
+                          }}
+                        >
+                          ₹{(cartItem.item.price * cartItem.quantity).toFixed(2)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeFromCart(cartItem.item.id)}
+                          className="w-6 h-6 rounded flex items-center justify-center text-slate-500 hover:text-rose-400 hover:bg-rose-950/40 transition-colors cursor-pointer shrink-0 ml-1"
+                          title="Remove item"
+                        >
+                          <Trash2 className="w-3.5 h-3.5 text-rose-400/70 hover:text-rose-400" />
+                        </button>
                       </div>
                     </div>
                   );
@@ -831,7 +999,7 @@ export const WaiterCart: React.FC<WaiterCartProps> = ({
               }}
               className="waiter-cart-empty-box p-6 text-center text-slate-400 border border-dashed border-[#1e293b] rounded-xl bg-[#080c16]"
             >
-              <p className="text-xs font-medium text-slate-300">No active orders or items for {currentTable}.</p>
+              <p className="text-xs font-medium text-slate-300">No active orders or items for {orderType === 'dine_in' ? currentTable : orderType.toUpperCase()}.</p>
               <p className="text-[11px] mt-1 text-slate-500">Tap items on the menu grid to add.</p>
             </div>
           )}

@@ -587,7 +587,7 @@ export const KdsCard: React.FC<KdsCardProps> = ({
           return (
             <div
               key={idx}
-              className={`flex items-start justify-between gap-2 pt-2.5 first:pt-0 transition-all ${
+              className={`kot-item-row flex items-start justify-between gap-2 pt-2.5 first:pt-0 transition-all ${
                 isVoided ? 'p-2 rounded-lg opacity-80' : ''
               }`}
               style={{

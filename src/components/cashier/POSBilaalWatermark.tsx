@@ -39,7 +39,7 @@ export const POSBilaalWatermark: React.FC<POSBilaalWatermarkProps> = ({
       style={{
         position: 'fixed',
         top: '50%',
-        left: 'calc(140px + (100% - 140px - 380px) / 2)',
+        left: 'calc(215px + (100% - 215px - 470px) / 2)',
         transform: 'translate(-50%, -50%)',
         width: '440px',
         maxWidth: '80%',

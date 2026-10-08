@@ -25,7 +25,8 @@ import {
   ChevronDown,
   Utensils,
   ShoppingBag,
-  Bike
+  Bike,
+  Receipt
 } from 'lucide-react';
 import { KOTCancelModal } from '../KOTCancelModal';
 import { KOTModifyModal } from '../KOTModifyModal';
@@ -37,6 +38,7 @@ export interface CashierCartProps {
   tableNumber: string;
   setTableNumber: (table: string) => void;
   activeSessionKots: KOT[];
+  userRole?: 'cashier' | 'waiter' | 'admin' | string;
 }
 
 export const CashierCart: React.FC<CashierCartProps> = ({
@@ -45,6 +47,7 @@ export const CashierCart: React.FC<CashierCartProps> = ({
   tableNumber,
   setTableNumber,
   activeSessionKots,
+  userRole = 'cashier',
 }) => {
   const {
     cart,
@@ -86,7 +89,27 @@ export const CashierCart: React.FC<CashierCartProps> = ({
     kots,
     currentBranch,
     restaurantSettings,
+    requestBill,
+    pendingBillRequests,
   } = useApp();
+
+  const isWaiter = userRole === 'waiter' || currentUser?.role === 'waiter';
+
+  const pendingBillRequestForCurrentTable = useMemo(() => {
+    if (!tableNumber) return false;
+    return (pendingBillRequests || []).some(
+      r => r.tableNumber?.toLowerCase() === tableNumber.toLowerCase() && r.status === 'pending'
+    );
+  }, [pendingBillRequests, tableNumber]);
+
+  const handleRequestBill = () => {
+    if (!tableNumber) {
+      showToast('Select Table', 'Please select a table to request a bill.', 'warning');
+      return;
+    }
+    requestBill(tableNumber, cartSpecialNotes || undefined);
+    showToast('Bill Requested', `Bill request sent to cashier for ${tableNumber}`, 'success');
+  };
 
   const [cartPaymentMethod, setCartPaymentMethod] = useState<PaymentMethod>('cash');
   const [cartIsComplimentary, setCartIsComplimentary] = useState<boolean>(false);
@@ -207,7 +230,13 @@ export const CashierCart: React.FC<CashierCartProps> = ({
   const [modifyModalTarget, setModifyModalTarget] = useState<{ kot: KOT; itemIndex: number } | null>(null);
 
   const safeBranchTables = Array.isArray(branchTables) ? branchTables : [];
-  const selectedTable = safeBranchTables.find(t => t?.name?.toLowerCase() === tableNumber?.toLowerCase());
+  const selectedTable = safeBranchTables.find(t => {
+    if (!t?.name || !tableNumber) return false;
+    if (t.name.toLowerCase() === tableNumber.toLowerCase()) return true;
+    const tDigits = t.name.replace(/[^0-9]/g, '');
+    const numDigits = tableNumber.replace(/[^0-9]/g, '');
+    return Boolean(tDigits && numDigits && tDigits === numDigits);
+  });
 
   const cartItems = cart || [];
   const hasUnsavedItems = cartItems.length > 0 && cartItems.some(item => item.isNew || !item.isSaved);
@@ -426,7 +455,19 @@ export const CashierCart: React.FC<CashierCartProps> = ({
   };
 
   return (
-    <div id="cashier-billing-panel" className="w-full lg:w-[460px] xl:w-[480px] shrink-0 overflow-hidden bg-[#070b12] border-l border-[#8b0000]/60 h-full flex flex-col shadow-lg z-10 text-slate-100 select-none font-sans">
+    <div 
+      id="cashier-billing-panel" 
+      className="cashier-billing-panel shared-pos-cart-panel overflow-hidden overflow-x-hidden bg-[#070b12] border-l border-[#8b0000]/60 flex flex-col shadow-lg z-10 text-slate-100 select-none font-sans"
+      style={{
+        flex: '0 0 470px',
+        width: '470px',
+        minWidth: '470px',
+        maxWidth: '470px',
+        height: '100%',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+      }}
+    >
       {/* Top Section: Order Type, Table Selector, Customer Details */}
       <div className="p-2 pt-1 border-b border-slate-800/60 space-y-1.5 flex-shrink-0 bg-[#070b12]">
         
@@ -865,7 +906,7 @@ export const CashierCart: React.FC<CashierCartProps> = ({
       </div>
 
       {/* Middle Scrollable: Order Items & KOTs */}
-      <div className="relative flex-1 overflow-y-auto flex flex-col bg-[#070b12] min-h-0">
+      <div className="relative flex-1 overflow-y-auto overflow-x-hidden flex flex-col bg-[#070b12] min-h-0">
         {/* Dynamic Order Type Watermark */}
         <div
           id="pos-cart-order-type-watermark"
@@ -1198,109 +1239,126 @@ export const CashierCart: React.FC<CashierCartProps> = ({
       </div>
 
       {/* Bottom Billing Computations & Checkout Controls */}
-      <div className="px-2 py-1.5 bg-[#070b12] border-t border-slate-800/60 space-y-1 flex-shrink-0">
+      <div className="px-2 py-1.5 bg-[#070b12] border-t border-slate-800/60 space-y-1.5 flex-shrink-0">
+        {/* Special kitchen instruction input */}
+        <div className="w-full">
+          <input
+            id="cart-kitchen-note-input"
+            type="text"
+            value={cartSpecialNotes || ''}
+            onChange={e => setCartSpecialNotes(e.target.value)}
+            placeholder="Special kitchen instruction..."
+            className="w-full px-2.5 py-1 text-xs text-white bg-[#0e1624] border border-slate-700/60 rounded-md focus:border-emerald-500 focus:outline-none transition-colors placeholder-slate-400"
+          />
+        </div>
         {/* 1. Combined Offers & Total Row */}
         <div className="w-full flex items-center justify-between gap-1.5 px-3 py-1">
           {/* Left: Compact Offer Buttons */}
           <div className="flex items-center gap-1 shrink-0">
-            {/* BOGO Offer */}
-            <button
-              id="cashier-cart-btn-bogo"
-              type="button"
-              onClick={() => setCartBogoActive(!cartBogoActive)}
-              style={cartBogoActive ? {
-                backgroundColor: '#059669',
-                background: '#059669',
-                borderColor: '#34d399',
-                color: '#ffffff',
-                fontWeight: 800,
-              } : {
-                backgroundColor: '#F7EECA',
-                background: '#F7EECA',
-                borderColor: 'rgba(0, 0, 0, 0.15)',
-                color: '#0f172a',
-                fontWeight: 700,
-              }}
-              className={`px-2 py-1 rounded-md text-xs border transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap shadow-xs active:scale-95 ${
-                cartBogoActive
-                  ? 'offer-btn-active bg-[#059669] text-white border-[#34d399] font-extrabold shadow-sm'
-                  : 'offer-btn-inactive bg-[#F7EECA] text-[#0f172a] border-black/15 font-bold hover:bg-[#faedd0]'
-              }`}
-              title="Buy One Get One Free"
-            >
-              <Percent className="w-3 h-3 shrink-0" style={{ color: cartBogoActive ? '#ffffff' : '#0f172a' }} />
-              <span style={{ color: cartBogoActive ? '#ffffff' : '#0f172a', fontWeight: cartBogoActive ? 800 : 700 }}>BOGO</span>
-            </button>
+            {!isWaiter ? (
+              <>
+                {/* BOGO Offer */}
+                <button
+                  id="cashier-cart-btn-bogo"
+                  type="button"
+                  onClick={() => setCartBogoActive(!cartBogoActive)}
+                  style={cartBogoActive ? {
+                    backgroundColor: '#059669',
+                    background: '#059669',
+                    borderColor: '#34d399',
+                    color: '#ffffff',
+                    fontWeight: 800,
+                  } : {
+                    backgroundColor: '#F7EECA',
+                    background: '#F7EECA',
+                    borderColor: 'rgba(0, 0, 0, 0.15)',
+                    color: '#0f172a',
+                    fontWeight: 700,
+                  }}
+                  className={`px-2 py-1 rounded-md text-xs border transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap shadow-xs active:scale-95 ${
+                    cartBogoActive
+                      ? 'offer-btn-active bg-[#059669] text-white border-[#34d399] font-extrabold shadow-sm'
+                      : 'offer-btn-inactive bg-[#F7EECA] text-[#0f172a] border-black/15 font-bold hover:bg-[#faedd0]'
+                  }`}
+                  title="Buy One Get One Free"
+                >
+                  <Percent className="w-3 h-3 shrink-0" style={{ color: cartBogoActive ? '#ffffff' : '#0f172a' }} />
+                  <span style={{ color: cartBogoActive ? '#ffffff' : '#0f172a', fontWeight: cartBogoActive ? 800 : 700 }}>BOGO</span>
+                </button>
 
-            {/* Complimentary */}
-            <button
-              id="cashier-cart-btn-comp"
-              type="button"
-              onClick={() => setCartIsComplimentary(!cartIsComplimentary)}
-              style={cartIsComplimentary ? {
-                backgroundColor: '#059669',
-                background: '#059669',
-                borderColor: '#34d399',
-                color: '#ffffff',
-                fontWeight: 800,
-              } : {
-                backgroundColor: '#F7EECA',
-                background: '#F7EECA',
-                borderColor: 'rgba(0, 0, 0, 0.15)',
-                color: '#0f172a',
-                fontWeight: 700,
-              }}
-              className={`px-2 py-1 rounded-md text-xs border transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap shadow-xs active:scale-95 ${
-                cartIsComplimentary
-                  ? 'offer-btn-active bg-[#059669] text-white border-[#34d399] font-extrabold shadow-sm'
-                  : 'offer-btn-inactive bg-[#F7EECA] text-[#0f172a] border-black/15 font-bold hover:bg-[#faedd0]'
-              }`}
-              title="Complimentary Order (100% off)"
-            >
-              <Gift className="w-3 h-3 shrink-0" style={{ color: cartIsComplimentary ? '#ffffff' : '#0f172a' }} />
-              <span style={{ color: cartIsComplimentary ? '#ffffff' : '#0f172a', fontWeight: cartIsComplimentary ? 800 : 700 }}>Comp</span>
-            </button>
+                {/* Complimentary */}
+                <button
+                  id="cashier-cart-btn-comp"
+                  type="button"
+                  onClick={() => setCartIsComplimentary(!cartIsComplimentary)}
+                  style={cartIsComplimentary ? {
+                    backgroundColor: '#059669',
+                    background: '#059669',
+                    borderColor: '#34d399',
+                    color: '#ffffff',
+                    fontWeight: 800,
+                  } : {
+                    backgroundColor: '#F7EECA',
+                    background: '#F7EECA',
+                    borderColor: 'rgba(0, 0, 0, 0.15)',
+                    color: '#0f172a',
+                    fontWeight: 700,
+                  }}
+                  className={`px-2 py-1 rounded-md text-xs border transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap shadow-xs active:scale-95 ${
+                    cartIsComplimentary
+                      ? 'offer-btn-active bg-[#059669] text-white border-[#34d399] font-extrabold shadow-sm'
+                      : 'offer-btn-inactive bg-[#F7EECA] text-[#0f172a] border-black/15 font-bold hover:bg-[#faedd0]'
+                  }`}
+                  title="Complimentary Order (100% off)"
+                >
+                  <Gift className="w-3 h-3 shrink-0" style={{ color: cartIsComplimentary ? '#ffffff' : '#0f172a' }} />
+                  <span style={{ color: cartIsComplimentary ? '#ffffff' : '#0f172a', fontWeight: cartIsComplimentary ? 800 : 700 }}>Comp</span>
+                </button>
 
-            {/* Supervisor Discount / Custom Waiver */}
-            <button
-              id="cashier-cart-btn-discount"
-              type="button"
-              onClick={() => {
-                setTempDiscountPercent(cartDiscountPercent);
-                setTempDiscountAmount(cartCustomDiscount);
-                setSupervisorPin('');
-                setPinError(false);
-                setIsDiscountModalOpen(true);
-              }}
-              style={(cartDiscountPercent > 0 || cartCustomDiscount > 0) ? {
-                backgroundColor: '#059669',
-                background: '#059669',
-                borderColor: '#34d399',
-                color: '#ffffff',
-                fontWeight: 800,
-              } : {
-                backgroundColor: '#F7EECA',
-                background: '#F7EECA',
-                borderColor: 'rgba(0, 0, 0, 0.15)',
-                color: '#0f172a',
-                fontWeight: 700,
-              }}
-              className={`px-2 py-1 rounded-md text-xs border transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap shadow-xs active:scale-95 ${
-                (cartDiscountPercent > 0 || cartCustomDiscount > 0)
-                  ? 'offer-btn-active bg-[#059669] text-white border-[#34d399] font-extrabold shadow-sm'
-                  : 'offer-btn-inactive bg-[#F7EECA] text-[#0f172a] border-black/15 font-bold hover:bg-[#faedd0]'
-              }`}
-              title="Supervisor Discount & Waiver"
-            >
-              <BadgePercent className="w-3 h-3 shrink-0" style={{ color: (cartDiscountPercent > 0 || cartCustomDiscount > 0) ? '#ffffff' : '#0f172a' }} />
-              <span style={{ color: (cartDiscountPercent > 0 || cartCustomDiscount > 0) ? '#ffffff' : '#0f172a', fontWeight: (cartDiscountPercent > 0 || cartCustomDiscount > 0) ? 800 : 700 }}>
-                {cartDiscountPercent > 0 
-                  ? `${cartDiscountPercent}%` 
-                  : cartCustomDiscount > 0 
-                    ? `₹${cartCustomDiscount}` 
-                    : 'Discount'}
-              </span>
-            </button>
+                {/* Supervisor Discount / Custom Waiver */}
+                <button
+                  id="cashier-cart-btn-discount"
+                  type="button"
+                  onClick={() => {
+                    setTempDiscountPercent(cartDiscountPercent);
+                    setTempDiscountAmount(cartCustomDiscount);
+                    setSupervisorPin('');
+                    setPinError(false);
+                    setIsDiscountModalOpen(true);
+                  }}
+                  style={(cartDiscountPercent > 0 || cartCustomDiscount > 0) ? {
+                    backgroundColor: '#059669',
+                    background: '#059669',
+                    borderColor: '#34d399',
+                    color: '#ffffff',
+                    fontWeight: 800,
+                  } : {
+                    backgroundColor: '#F7EECA',
+                    background: '#F7EECA',
+                    borderColor: 'rgba(0, 0, 0, 0.15)',
+                    color: '#0f172a',
+                    fontWeight: 700,
+                  }}
+                  className={`px-2 py-1 rounded-md text-xs border transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap shadow-xs active:scale-95 ${
+                    (cartDiscountPercent > 0 || cartCustomDiscount > 0)
+                      ? 'offer-btn-active bg-[#059669] text-white border-[#34d399] font-extrabold shadow-sm'
+                      : 'offer-btn-inactive bg-[#F7EECA] text-[#0f172a] border-black/15 font-bold hover:bg-[#faedd0]'
+                  }`}
+                  title="Supervisor Discount & Waiver"
+                >
+                  <BadgePercent className="w-3 h-3 shrink-0" style={{ color: (cartDiscountPercent > 0 || cartCustomDiscount > 0) ? '#ffffff' : '#0f172a' }} />
+                  <span style={{ color: (cartDiscountPercent > 0 || cartCustomDiscount > 0) ? '#ffffff' : '#0f172a', fontWeight: (cartDiscountPercent > 0 || cartCustomDiscount > 0) ? 800 : 700 }}>
+                    {cartDiscountPercent > 0 
+                      ? `${cartDiscountPercent}%` 
+                      : cartCustomDiscount > 0 
+                        ? `₹${cartCustomDiscount}` 
+                        : 'Discount'}
+                  </span>
+                </button>
+              </>
+            ) : (
+              <span className="text-xs font-semibold text-slate-400">Order Summary</span>
+            )}
           </div>
 
           {/* Right: Dynamic Total Badge */}
@@ -1353,6 +1411,77 @@ export const CashierCart: React.FC<CashierCartProps> = ({
           const canClickSettle = hasItems && !isSettling;
           const canClickSavePrint = hasItems && !isSettling;
           const canClickSaveEBill = hasItems && !isSettling;
+
+          if (isWaiter) {
+            return (
+              <div className="space-y-1.5 pt-0.5">
+                <div className="grid grid-cols-2 gap-1.5">
+                  {/* Save / Hold Button */}
+                  <button
+                    id="waiter-save-hold-btn"
+                    type="button"
+                    onClick={() => {
+                      if (!canClickSave) return;
+                      handleSaveRunningOrder();
+                    }}
+                    style={{
+                      backgroundColor: '#1e293b',
+                      background: '#1e293b',
+                      color: '#ffffff',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      fontWeight: 700,
+                      fontSize: '13px',
+                    }}
+                    className={`py-2 px-2.5 rounded-lg shadow-xs flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap ${
+                      canClickSave
+                        ? 'pointer-events-auto cursor-pointer hover:bg-[#334155] active:scale-98'
+                        : 'pointer-events-none cursor-not-allowed opacity-50'
+                    }`}
+                    title="Save current order / hold draft"
+                  >
+                    <Save className="w-3.5 h-3.5 shrink-0 text-white" />
+                    <span>Save / Hold</span>
+                  </button>
+
+                  {/* Request Bill Button */}
+                  <button
+                    id="waiter-request-bill-btn"
+                    type="button"
+                    onClick={handleRequestBill}
+                    disabled={!tableNumber || (!canClickSave && activeSessionKots.length === 0)}
+                    className="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-2.5 rounded-lg text-xs flex items-center justify-center gap-1.5 transition-colors active:scale-98 cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Request bill from cashier"
+                  >
+                    <Receipt className="w-3.5 h-3.5" />
+                    <span>{pendingBillRequestForCurrentTable ? 'Bill Pending' : 'Request Bill'}</span>
+                  </button>
+                </div>
+
+                {/* Send KOT Button */}
+                <button
+                  id="waiter-cart-btn-send-kot"
+                  type="button"
+                  onClick={() => {
+                    if (!canClickSendKot) return;
+                    handleSendKOT();
+                  }}
+                  style={{
+                    backgroundColor: '#7a0c1a',
+                    background: '#7a0c1a',
+                  }}
+                  className={`w-full bg-[#7a0c1a] text-white font-bold py-2.5 px-3 rounded-lg shadow-xs text-xs flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap ${
+                    canClickSendKot
+                      ? 'pointer-events-auto cursor-pointer hover:bg-[#8f1020] active:bg-[#4a030c] active:scale-98 shadow-[0_0_14px_rgba(122,12,26,0.45)]'
+                      : 'pointer-events-none cursor-not-allowed opacity-50'
+                  }`}
+                  title="Dispatch KOT to kitchen KDS"
+                >
+                  <Send className="w-3.5 h-3.5 shrink-0" />
+                  <span>{isSendingKot ? 'Sending...' : 'Send KOT'}</span>
+                </button>
+              </div>
+            );
+          }
 
           return (
             <>

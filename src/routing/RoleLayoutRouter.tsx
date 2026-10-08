@@ -24,6 +24,7 @@ import {
 } from '../pages';
 import { WaiterPOSView } from '../components/waiter/WaiterPOSView';
 import { CashierPOSView } from '../components/cashier/CashierPOSView';
+import { WaiterBillsPage } from '../pages/WaiterBillsPage';
 
 // Helper to map pathnames to tab IDs and vice versa per role
 interface RolePathConfig {
@@ -303,7 +304,7 @@ export const RoleLayoutRouter: React.FC = () => {
         return <TablesPage />;
       case 'pos':
         if (currentUser.role === 'waiter') {
-          return <WaiterPOSView />;
+          return <CashierPOSView userRole="waiter" />;
         }
         if (currentUser.role === 'cashier' || currentUser.role === 'manager') {
           return <CashierPOSView />;
@@ -314,6 +315,9 @@ export const RoleLayoutRouter: React.FC = () => {
       case 'kitchen':
         return <KitchenPage />;
       case 'bills':
+        if (currentUser.role === 'waiter') {
+          return <WaiterBillsPage />;
+        }
         return <BillsPage />;
       case 'customers':
         return <CustomersPage />;
